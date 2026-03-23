@@ -1,0 +1,9 @@
+{
+  "itemGroup.s3_advanced.tab": "[TRANSLATE] Steve's Advanced Storage",
+
+  "block.s3_advanced.advanced_storage_core": "[TRANSLATE] Advanced Storage Core",
+  "block.s3_advanced.solar_generator": "[TRANSLATE] Solar Generator",
+  "block.s3_advanced.coal_generator": "[TRANSLATE] Coal Generator",
+
+  "item.s3_advanced.advanced_storage_core_upgrade": "[TRANSLATE] Advanced Storage Core Upgrade"
+}

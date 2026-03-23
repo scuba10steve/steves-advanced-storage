@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IDI",
+    "RWR",
+    "IDI"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "D": {"item": "minecraft:diamond"},
+    "R": {"item": "minecraft:redstone"},
+    "W": {"tag": "minecraft:planks"}
+  },
+  "result": {
+    "id": "s3_advanced:advanced_storage_core_upgrade",
+    "count": 1
+  }
+}

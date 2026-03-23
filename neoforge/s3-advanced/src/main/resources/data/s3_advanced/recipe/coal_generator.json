@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IRI",
+    "IFI",
+    "III"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "R": {"item": "minecraft:redstone"},
+    "F": {"item": "minecraft:furnace"}
+  },
+  "result": {
+    "id": "s3_advanced:coal_generator",
+    "count": 1
+  }
+}

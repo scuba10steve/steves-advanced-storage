@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+
+[[mods]]
+modId="s3_advanced"
+version="${mod_version}"
+displayName="Steve's Advanced Storage"
+description='''Advanced features for Steve's Simple Storage.'''
+authors="scuba10steve"
+
+[[dependencies.s3_advanced]]
+modId="s3"
+type="required"
+versionRange="[0.11.0,)"
+ordering="BEFORE"
+side="BOTH"
+
+[[dependencies.s3_advanced]]
+modId="neoforge"
+type="required"
+versionRange="[21.1,22)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.s3_advanced]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1,1.22)"
+ordering="NONE"
+side="BOTH"

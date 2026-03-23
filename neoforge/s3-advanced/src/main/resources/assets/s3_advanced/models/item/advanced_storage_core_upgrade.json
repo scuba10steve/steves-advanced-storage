@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "s3_advanced:block/advanced_storage_core"
+  }
+}

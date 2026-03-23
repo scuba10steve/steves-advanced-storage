@@ -1,0 +1,67 @@
+plugins {
+    id 's3.neoforge-mod'
+}
+
+version = mod_version
+
+base {
+    archivesName = 's3-advanced'
+}
+
+neoForge {
+    mods {
+        's3-advanced' {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+processResources {
+    def replaceProperties = [mod_version: mod_version]
+    inputs.properties replaceProperties
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand(replaceProperties)
+    }
+}
+
+tasks.register('validateLang') {
+    group = 'verification'
+    description = 'Validates all lang files have the same key set as en_us.json'
+
+    def langDir = file('src/main/resources/assets/s3_advanced/lang')
+    if (langDir.exists()) { inputs.dir(langDir) }
+    outputs.upToDateWhen { true }
+
+    doLast {
+        if (!langDir.exists()) {
+            throw new GradleException("validateLang: lang directory not found: ${langDir}")
+        }
+        def referenceFile = new File(langDir, 'en_us.json')
+        if (!referenceFile.exists()) {
+            throw new GradleException("validateLang: reference file not found: ${referenceFile}")
+        }
+        def reference = new groovy.json.JsonSlurper().parse(referenceFile)
+        def referenceKeys = reference.keySet()
+
+        langDir.listFiles()
+            ?.findAll { it.name.endsWith('.json') && it.name != 'en_us.json' }
+            ?.each { langFile ->
+                def keys
+                try {
+                    keys = new groovy.json.JsonSlurper().parse(langFile).keySet()
+                } catch (Exception e) {
+                    throw new GradleException("validateLang: failed to parse ${langFile.name}: ${e.message}")
+                }
+                def missing = referenceKeys - keys
+                def extra = keys - referenceKeys
+                if (missing || extra) {
+                    def msg = "${langFile.name} key mismatch:"
+                    if (missing) msg += "\n  Missing: ${missing}"
+                    if (extra) msg += "\n  Extra:   ${extra}"
+                    throw new GradleException(msg)
+                }
+            }
+    }
+}
+
+tasks.named('check') { dependsOn('validateLang') }

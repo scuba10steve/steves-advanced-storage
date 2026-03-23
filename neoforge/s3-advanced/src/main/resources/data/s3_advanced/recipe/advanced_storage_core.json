@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IDI",
+    "RSR",
+    "IDI"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "D": {"item": "minecraft:diamond"},
+    "R": {"item": "minecraft:redstone"},
+    "S": {"item": "s3:storage_core"}
+  },
+  "result": {
+    "id": "s3_advanced:advanced_storage_core",
+    "count": 1
+  }
+}
