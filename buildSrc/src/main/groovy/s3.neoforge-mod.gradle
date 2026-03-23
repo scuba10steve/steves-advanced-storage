@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev'
+    id 's3.conventions'
+}
+
+version = rootProject.mod_version
+group = 'io.github.scuba10steve.s3'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    version = neoforge_version
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+}
+
+dependencies {
+    compileOnly "maven.modrinth:steves-simple-storage:${s3_version}"
+    localRuntime "maven.modrinth:steves-simple-storage:${s3_version}"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
