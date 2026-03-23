@@ -1,0 +1,15 @@
+# Gradle build output
+build/
+.gradle/
+
+# NeoForge run directories
+run/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
