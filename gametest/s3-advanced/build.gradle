@@ -1,0 +1,50 @@
+plugins {
+    id 'net.neoforged.moddev'
+    id 's3.conventions'
+}
+
+version = rootProject.mod_version
+group = 'io.github.scuba10steve.s3.test'
+
+neoForge {
+    version = neoforge_version
+
+    runs {
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', 's3_advanced'
+        }
+        data {
+            data()
+            programArguments.addAll(
+                '--mod', 's3_advanced',
+                '--all',
+                '--output', file('src/generated/resources/').getAbsolutePath(),
+                '--existing', file('src/main/resources/').getAbsolutePath(),
+                '--existing', rootProject.file('neoforge/s3-advanced/src/main/resources/').getAbsolutePath()
+            )
+        }
+    }
+
+    mods {
+        's3_advanced' {
+            // Keeps its own local sourceSets.main; only the cross-project call goes lazy
+            sourceSet sourceSets.main
+            modSourceSets.add(providers.provider { project(':neoforge:s3-advanced').sourceSets.main })
+        }
+    }
+}
+
+dependencies {
+    implementation project(':neoforge:s3-advanced')
+    compileOnly "maven.modrinth:steves-simple-storage:${s3_version}"
+    additionalRuntimeClasspath "maven.modrinth:steves-simple-storage:${s3_version}"
+
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.14.3"
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
