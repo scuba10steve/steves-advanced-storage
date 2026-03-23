@@ -1,6 +1,6 @@
 # Steve's Advanced Storage — Planned Features
 
-Features planned for the Steve's Advanced Storage companion mod. These are tracked as GitHub issues on the [main repository](https://github.com/scuba10steve/steves-simple-storage/issues).
+Features planned for Steve's Advanced Storage. These are tracked as GitHub issues on this [repository](https://github.com/scuba10steve/steves-advanced-storage/issues).
 
 ## Advanced Storage Core Block
 
@@ -13,10 +13,10 @@ The **Advanced Storage Core** is a new multiblock component that upgrades a basi
 
 ## New Blocks / Components
 
-- **Smelting Box tiers** — tiered versions of the smelting box, similar to storage box tiers ([#4](https://github.com/scuba10steve/steves-simple-storage/issues/4))
-- **Memory Box** — stores crafting recipes and enables auto-crafting from the storage system ([#5](https://github.com/scuba10steve/steves-simple-storage/issues/5))
-- **Colored cables** — cosmetic or functional cable variants for multiblock connections ([#6](https://github.com/scuba10steve/steves-simple-storage/issues/6))
-- **Tank Block** — liquid/fluid storage integrated with the storage system ([#18](https://github.com/scuba10steve/steves-simple-storage/issues/18))
+- **Smelting Box tiers** — tiered versions of the smelting box, similar to storage box tiers ([#1](https://github.com/scuba10steve/steves-advanced-storage/issues/1))
+- **Memory Box** — stores crafting recipes and enables auto-crafting from the storage system ([#2](https://github.com/scuba10steve/steves-advanced-storage/issues/2))
+- **Colored cables** — cosmetic or functional cable variants for multiblock connections ([#3](https://github.com/scuba10steve/steves-advanced-storage/issues/3))
+- **Tank Block** — liquid/fluid storage integrated with the storage system ([#5](https://github.com/scuba10steve/steves-advanced-storage/issues/5))
 - **Power Cell** — Forge Energy (FE/RF) storage integrated with the storage system, compatible with other redstone-flux mods
 
 
@@ -27,4 +27,4 @@ The **Advanced Storage Core** is a new multiblock component that upgrades a basi
 
 ## Networked Storage
 
-- **Multi-system networking** — connect multiple Storage Core systems via physical bridges, conduits, or wireless links ([#8](https://github.com/scuba10steve/steves-simple-storage/issues/8))
+- **Multi-system networking** — connect multiple Storage Core systems via physical bridges, conduits, or wireless links ([#4](https://github.com/scuba10steve/steves-advanced-storage/issues/4))
