@@ -1,0 +1,22 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.github.scuba10steve.s3.DependencyUpgrade
+displayName: Upgrade NeoForge dependencies + JEI
+recipeList:
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: net.neoforged.moddev
+      newVersion: latest.release
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: mezz.jei
+      artifactId: jei-*
+      newVersion: 19.x
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.github.scuba10steve.s3.BestPractices
+displayName: Best Practices
+recipeList:
+  - org.openrewrite.gradle.GradleBestPractices
+  - org.openrewrite.java.testing.junit5.JUnit5BestPractices
+  - org.openrewrite.staticanalysis.CommonStaticAnalysis
+  - org.openrewrite.java.RemoveUnusedImports
+  - org.openrewrite.java.format.EmptyNewlineAtEndOfFile

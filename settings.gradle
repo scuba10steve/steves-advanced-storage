@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/releases'
+        }
+    }
+    plugins {
+        id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention'
+}
+
+rootProject.name = 'steves-advanced-storage'
+include 'neoforge:s3-advanced'
+include 'gametest:s3-advanced'
