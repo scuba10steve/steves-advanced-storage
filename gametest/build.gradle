@@ -21,7 +21,7 @@ neoForge {
                 '--all',
                 '--output', file('src/generated/resources/').getAbsolutePath(),
                 '--existing', file('src/main/resources/').getAbsolutePath(),
-                '--existing', rootProject.file('neoforge/s3-advanced/src/main/resources/').getAbsolutePath()
+                '--existing', rootProject.file('neoforge/src/main/resources/').getAbsolutePath()
             )
         }
     }
@@ -30,13 +30,13 @@ neoForge {
         's3_advanced' {
             // Keeps its own local sourceSets.main; only the cross-project call goes lazy
             sourceSet sourceSets.main
-            modSourceSets.add(providers.provider { project(':neoforge:s3-advanced').sourceSets.main })
+            modSourceSets.add(providers.provider { project(':neoforge').sourceSets.main })
         }
     }
 }
 
 dependencies {
-    implementation project(':neoforge:s3-advanced')
+    implementation project(':neoforge')
     compileOnly "maven.modrinth:steves-simple-storage:${s3_version}"
     additionalRuntimeClasspath "maven.modrinth:steves-simple-storage:${s3_version}"
 

@@ -16,5 +16,5 @@ plugins {
 }
 
 rootProject.name = 'steves-advanced-storage'
-include 'neoforge:s3-advanced'
-include 'gametest:s3-advanced'
+include 'neoforge'
+include 'gametest'
