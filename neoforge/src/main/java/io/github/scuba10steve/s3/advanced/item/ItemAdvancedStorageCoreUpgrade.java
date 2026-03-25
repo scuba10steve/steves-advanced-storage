@@ -56,6 +56,7 @@ public class ItemAdvancedStorageCoreUpgrade extends BaseItem {
             storedData.putInt("z", pos.getZ());
             newBE.loadWithComponents(storedData, level.registryAccess());
             advancedCore.scanMultiblock();
+            advancedCore.forceSyncToClients(); // Bypass throttle — same tick as onPlace scan
         }
 
         Player player = context.getPlayer();
