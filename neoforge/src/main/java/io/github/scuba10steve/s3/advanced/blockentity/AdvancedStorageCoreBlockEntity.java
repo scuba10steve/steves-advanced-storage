@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
+import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.blockentity.StorageCoreBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -8,11 +9,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.state.BlockState;
+import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
+import io.github.scuba10steve.s3.advanced.crafting.CraftingEngine;
 import net.neoforged.neoforge.energy.EnergyStorage;
 
 public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
     public final InternalEnergyStorage energyStorage;
+    public final CraftingEngine craftingEngine = new CraftingEngine();
+    public final CraftingCoordinator craftingCoordinator = new CraftingCoordinator(craftingEngine);
+    // Field initializer avoids a zero-value window before the constructor body runs.
+    private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
     // ContainerData slots: [0-1] energy, [2-3] capacity, [4] energyPerTick, [5] isPowered
     public final ContainerData containerData = new ContainerData() {
@@ -23,7 +30,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 case 1 -> (energyStorage.getEnergyStored() >> 16) & 0xFFFF;
                 case 2 -> energyStorage.getMaxEnergyStored() & 0xFFFF;
                 case 3 -> (energyStorage.getMaxEnergyStored() >> 16) & 0xFFFF;
-                case 4 -> S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
+                case 4 -> totalPowerDraw;
                 case 5 -> isPowered() ? 1 : 0;
                 default -> 0;
             };
@@ -39,7 +46,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     };
 
     public AdvancedStorageCoreBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
+        super(ModBlockEntities.ADVANCED_STORAGE_CORE.get(), pos, state);
         energyStorage = new InternalEnergyStorage(
             S3AdvancedConfig.CORE_CAPACITY.get(),
             1_000);
@@ -51,15 +58,24 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     }
 
     public boolean isPowered() {
-        return energyStorage.getEnergyStored() >= S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
+        return energyStorage.getEnergyStored() >= totalPowerDraw;
+    }
+
+    @Override
+    public void scanMultiblock() {
+        super.scanMultiblock();
+        // Reset totalPowerDraw to base cost. Future issues (#6 Block Storage, #11 Auto-Crafter,
+        // #12 Machine Interface) will add their per-block FE/t here.
+        totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
     }
 
     @Override
     public void tick() {
         super.tick(); // handles multiblock scan
         if (level == null || level.isClientSide) return;
-        if (energyStorage.consume(S3AdvancedConfig.CORE_ENERGY_PER_TICK.get())) {
+        if (energyStorage.consume(totalPowerDraw)) {
             setChanged();
+            craftingCoordinator.tick(getInventory());
         }
     }
 
