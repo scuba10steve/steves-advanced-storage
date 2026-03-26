@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
 import io.github.scuba10steve.s3.advanced.crafting.RecipePattern;
+import io.github.scuba10steve.s3.advanced.gui.server.RecipeMemoryBoxMenu;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.blockentity.BaseBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -57,8 +58,7 @@ public class RecipeMemoryBoxBlockEntity extends BaseBlockEntity implements MenuP
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        // TODO Task 4: return new RecipeMemoryBoxMenu(containerId, playerInventory, this);
-        return null;
+        return new RecipeMemoryBoxMenu(containerId, playerInventory, this);
     }
 
     // Sync full NBT to client on chunk load and block updates

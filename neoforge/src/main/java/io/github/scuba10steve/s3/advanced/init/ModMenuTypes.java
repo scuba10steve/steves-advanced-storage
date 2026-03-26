@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.init;
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCoreMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.CoalGeneratorMenu;
+import io.github.scuba10steve.s3.advanced.gui.server.RecipeMemoryBoxMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.SolarGeneratorMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
@@ -30,6 +31,13 @@ public class ModMenuTypes {
         MENU_TYPES.register("coal_generator", () ->
             IMenuTypeExtension.create((windowId, inv, data) ->
                 new CoalGeneratorMenu(windowId, inv, data)));
+
+    public static final Supplier<MenuType<RecipeMemoryBoxMenu>> RECIPE_MEMORY_BOX =
+        MENU_TYPES.register("recipe_memory_box", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new RecipeMemoryBoxMenu(windowId, inv, data)));
+
+    // TODO Task 5: register RECIPE_PATTERN menu type here once RecipePatternMenu is created
 
     public static void register(IEventBus eventBus) {
         MENU_TYPES.register(eventBus);

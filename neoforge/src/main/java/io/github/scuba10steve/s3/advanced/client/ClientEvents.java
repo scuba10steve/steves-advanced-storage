@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.client;
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.gui.client.AdvancedStorageCoreScreen;
 import io.github.scuba10steve.s3.advanced.gui.client.CoalGeneratorScreen;
+import io.github.scuba10steve.s3.advanced.gui.client.RecipeMemoryBoxScreen;
 import io.github.scuba10steve.s3.advanced.gui.client.SolarGeneratorScreen;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import net.neoforged.api.distmarker.Dist;
@@ -19,5 +20,7 @@ public class ClientEvents {
         event.register(ModMenuTypes.ADVANCED_STORAGE_CORE.get(), AdvancedStorageCoreScreen::new);
         event.register(ModMenuTypes.SOLAR_GENERATOR.get(), SolarGeneratorScreen::new);
         event.register(ModMenuTypes.COAL_GENERATOR.get(), CoalGeneratorScreen::new);
+        event.register(ModMenuTypes.RECIPE_MEMORY_BOX.get(), RecipeMemoryBoxScreen::new);
+        // TODO Task 5: register RecipePatternScreen here once RecipePatternScreen is created
     }
 }
