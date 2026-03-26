@@ -45,8 +45,9 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
 
     /** Sends a menu button click to the server. */
     private void sendButtonClick(int buttonId) {
-        assert this.minecraft != null;
-        this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, buttonId);
+        if (this.minecraft != null) {
+            this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, buttonId);
+        }
     }
 
     @Override
