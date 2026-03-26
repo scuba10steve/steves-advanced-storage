@@ -31,6 +31,23 @@ public class RecipeMemoryBoxScreen extends AbstractContainerScreen<RecipeMemoryB
             graphics.fill(slotX, slotY, slotX + 18, slotY + 18, 0xFF373737);
             graphics.fill(slotX + 1, slotY + 1, slotX + 17, slotY + 17, 0xFF8B8B8B);
         }
+
+        // Player inventory (3 rows × 9 cols)
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                int slotX = x + 7 + col * 18;
+                int slotY = y + 83 + row * 18;
+                graphics.fill(slotX, slotY, slotX + 18, slotY + 18, 0xFF373737);
+                graphics.fill(slotX + 1, slotY + 1, slotX + 17, slotY + 17, 0xFF8B8B8B);
+            }
+        }
+        // Hotbar (9 slots)
+        for (int col = 0; col < 9; col++) {
+            int slotX = x + 7 + col * 18;
+            int slotY = y + 141;
+            graphics.fill(slotX, slotY, slotX + 18, slotY + 18, 0xFF373737);
+            graphics.fill(slotX + 1, slotY + 1, slotX + 17, slotY + 17, 0xFF8B8B8B);
+        }
     }
 
     @Override

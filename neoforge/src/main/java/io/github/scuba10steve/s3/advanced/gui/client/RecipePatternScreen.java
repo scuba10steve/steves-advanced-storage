@@ -76,9 +76,27 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
             graphics.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF8B8B8B);
         }
 
-        // Output slot background
-        graphics.fill(x + 123, y + 34, x + 141, y + 52, 0xFF373737);
+        // Output slot — dark outer border + white inner border to distinguish from ingredient slots
+        graphics.fill(x + 122, y + 33, x + 142, y + 53, 0xFF373737);
+        graphics.fill(x + 123, y + 34, x + 141, y + 52, 0xFFFFFFFF);
         graphics.fill(x + 124, y + 35, x + 140, y + 51, 0xFF8B8B8B);
+
+        // Player inventory (3 rows × 9 cols)
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                int sx = x + 7 + col * 18;
+                int sy = y + 83 + row * 18;
+                graphics.fill(sx, sy, sx + 18, sy + 18, 0xFF373737);
+                graphics.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF8B8B8B);
+            }
+        }
+        // Hotbar (9 slots)
+        for (int col = 0; col < 9; col++) {
+            int sx = x + 7 + col * 18;
+            int sy = y + 141;
+            graphics.fill(sx, sy, sx + 18, sy + 18, 0xFF373737);
+            graphics.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF8B8B8B);
+        }
 
         // Match count label (when multiple recipes found)
         int matchCount = menu.getMatchCount();
