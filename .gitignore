@@ -16,3 +16,5 @@ Thumbs.db
 
 # Superpowers specs/plans (not for version control)
 docs/superpowers/
+
+logs/
