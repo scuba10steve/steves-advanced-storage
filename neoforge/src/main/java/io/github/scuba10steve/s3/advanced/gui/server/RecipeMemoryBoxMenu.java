@@ -77,19 +77,18 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
     /**
      * Intercepts clicks on the 9 pattern display slots (server side only).
      * Opens the RecipePatternMenu for the clicked slot index.
-     * TODO Task 5: uncomment RecipePatternMenu.createMenuProvider call once Task 5 is done.
      */
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (slotId >= PATTERN_SLOTS_START && slotId < PATTERN_SLOTS_START + PATTERN_SLOT_COUNT
                 && blockEntity != null && player instanceof ServerPlayer serverPlayer) {
-            // int patternIndex = slotId - PATTERN_SLOTS_START;
-            // serverPlayer.openMenu(
-            //     RecipePatternMenu.createMenuProvider(blockEntity, patternIndex),
-            //     buf -> {
-            //         buf.writeBlockPos(blockEntity.getBlockPos());
-            //         buf.writeInt(patternIndex);
-            //     });
+            int patternIndex = slotId - PATTERN_SLOTS_START;
+            serverPlayer.openMenu(
+                RecipePatternMenu.createMenuProvider(blockEntity, patternIndex),
+                buf -> {
+                    buf.writeBlockPos(blockEntity.getBlockPos());
+                    buf.writeInt(patternIndex);
+                });
             return;
         }
         super.clicked(slotId, button, clickType, player);
