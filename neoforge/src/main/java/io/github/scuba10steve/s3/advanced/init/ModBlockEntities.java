@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.init;
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.CoalGeneratorBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.SolarGeneratorBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -26,6 +27,11 @@ public class ModBlockEntities {
     public static final Supplier<BlockEntityType<CoalGeneratorBlockEntity>> COAL_GENERATOR =
         BLOCK_ENTITIES.register("coal_generator", () ->
             BlockEntityType.Builder.of(CoalGeneratorBlockEntity::new, ModBlocks.COAL_GENERATOR.get()).build(null));
+
+    public static final Supplier<BlockEntityType<RecipeMemoryBoxBlockEntity>> RECIPE_MEMORY_BOX =
+        BLOCK_ENTITIES.register("recipe_memory_box", () ->
+            BlockEntityType.Builder.of(RecipeMemoryBoxBlockEntity::new,
+                ModBlocks.RECIPE_MEMORY_BOX.get()).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
