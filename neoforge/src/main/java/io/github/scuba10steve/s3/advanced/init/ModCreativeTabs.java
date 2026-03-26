@@ -23,6 +23,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.ADVANCED_STORAGE_CORE_UPGRADE.get());
                 output.accept(ModItems.SOLAR_GENERATOR.get());
                 output.accept(ModItems.COAL_GENERATOR.get());
+                output.accept(ModItems.RECIPE_MEMORY_BOX.get());
             })
             .build()
     );

@@ -208,6 +208,15 @@ public class RecipePatternMenu extends AbstractContainerMenu {
     public int getMatchCount() { return data.get(DATA_MATCH_COUNT); }
     public int getSelectedIndex() { return data.get(DATA_SELECTED_INDEX); }
 
+    /** Called from the JEI ghost-slot fill packet handler to bulk-set ingredient slots. */
+    public void setIngredients(List<ItemStack> items) {
+        for (int i = 0; i < INGREDIENT_SLOTS; i++) {
+            ItemStack stack = i < items.size() ? items.get(i) : ItemStack.EMPTY;
+            ingredientContainer.setItem(i, stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1));
+        }
+        resolveRecipes();
+    }
+
     /** Factory method used by RecipeMemoryBoxMenu to open this menu for a specific pattern slot. */
     public static MenuProvider createMenuProvider(RecipeMemoryBoxBlockEntity be, int patternIndex) {
         return new MenuProvider() {
