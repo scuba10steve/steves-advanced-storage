@@ -106,19 +106,19 @@ public class CraftingInfrastructureGameTests {
     }
 
     @GameTest(template = "core_with_storage_box", setupTicks = 5)
-    public static void crafting_coordinator_auto_stock_deduplicated(GameTestHelper helper) {
+    public static void crafting_coordinator_auto_buffer_deduplicated(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
             if (core == null) return;
 
             PatternKey key = new PatternKey(new BlockPos(5, 5, 5), 0);
 
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_STOCK);
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_STOCK); // duplicate
+            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_BUFFER);
+            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_BUFFER); // duplicate
 
             int size = core.craftingCoordinator.getQueueSize();
             if (size != 1) {
-                helper.fail("Expected 1 job after AUTO_STOCK deduplication, got " + size);
+                helper.fail("Expected 1 job after AUTO_BUFFER deduplication, got " + size);
                 return;
             }
             helper.succeed();
@@ -133,12 +133,12 @@ public class CraftingInfrastructureGameTests {
 
             PatternKey key = new PatternKey(new BlockPos(5, 5, 5), 0);
 
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_STOCK);
+            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_BUFFER);
             core.craftingCoordinator.enqueue(key, 1, CraftingSource.GUI_REQUEST); // not deduplicated
 
             int size = core.craftingCoordinator.getQueueSize();
             if (size != 2) {
-                helper.fail("Expected 2 jobs (AUTO_STOCK + GUI_REQUEST), got " + size);
+                helper.fail("Expected 2 jobs (AUTO_BUFFER + GUI_REQUEST), got " + size);
                 return;
             }
             helper.succeed();
