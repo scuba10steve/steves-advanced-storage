@@ -55,11 +55,13 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
             Component.literal("<"),
             btn -> sendButtonClick(1))
             .bounds(x + 108, y + 17, 20, 14).build());
+        prevButton.visible = false;
 
         nextButton = addRenderableWidget(Button.builder(
             Component.literal(">"),
             btn -> sendButtonClick(2))
             .bounds(x + 150, y + 17, 20, 14).build());
+        nextButton.visible = false;
     }
 
     /** Sends a menu button click to the server. */
