@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMenu> {
 
     private Button saveButton;
+    private Button clearButton;
     private Button prevButton;
     private Button nextButton;
     private Button backButton;
@@ -37,6 +38,12 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
             Component.translatable("gui.s3_advanced.save"),
             btn -> sendButtonClick(0))
             .bounds(x + 108, y + 55, 50, 14).build());
+
+        // Clear button — wipes all ingredient slots
+        clearButton = addRenderableWidget(Button.builder(
+            Component.translatable("gui.s3_advanced.clear"),
+            btn -> sendButtonClick(4))
+            .bounds(x + 108, y + 71, 50, 14).build());
 
         // Prev/Next recipe buttons (only visible when multiple recipes match)
         prevButton = addRenderableWidget(Button.builder(

@@ -10,5 +10,6 @@
   "block.s3_advanced.recipe_memory_box": "Recipe Memory Box",
 
   "gui.s3_advanced.save": "Save",
+  "gui.s3_advanced.clear": "Clear",
   "gui.s3_advanced.recipe_pattern": "Recipe Pattern"
 }

@@ -181,6 +181,13 @@ public class RecipePatternMenu extends AbstractContainerMenu {
             }
             return true;
         }
+        if (id == 4) {
+            for (int i = 0; i < INGREDIENT_SLOTS; i++) {
+                ingredientContainer.setItem(i, ItemStack.EMPTY);
+            }
+            resolveRecipes();
+            return true;
+        }
         int count = data.get(DATA_MATCH_COUNT);
         if (count == 0) return false;
         int idx = data.get(DATA_SELECTED_INDEX);
