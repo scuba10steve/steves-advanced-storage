@@ -136,7 +136,13 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         if (level == null || level.isClientSide) return;
         if (energyStorage.consume(totalPowerDraw)) {
             setChanged();
-            craftingCoordinator.tick(getInventory());
+            List<CraftingCoordinator.BoxData> boxSnapshots = recipeMemoryBoxes.stream()
+                    .map(be -> new CraftingCoordinator.BoxData(be.getBlockPos(), be.getPatterns()))
+                    .toList();
+            List<CraftingCoordinator.CrafterData> crafterSnapshots = autoCrafters.stream()
+                    .map(be -> new CraftingCoordinator.CrafterData(be.getAssignments()))
+                    .toList();
+            craftingCoordinator.tick(getInventory(), boxSnapshots, crafterSnapshots);
         }
     }
 
