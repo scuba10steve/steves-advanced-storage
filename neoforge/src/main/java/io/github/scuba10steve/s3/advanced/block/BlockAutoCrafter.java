@@ -1,7 +1,10 @@
 package io.github.scuba10steve.s3.advanced.block;
 
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
+import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
+import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -36,7 +39,16 @@ public class BlockAutoCrafter extends StorageMultiblock implements EntityBlock {
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             if (level.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) {
-                serverPlayer.openMenu(be, buf -> buf.writeBlockPos(pos));
+                serverPlayer.openMenu(be, buf -> {
+                    buf.writeBlockPos(pos);
+                    Map<PatternKey, PerPatternConfig> assignments = be.getAssignments();
+                    buf.writeInt(assignments.size());
+                    for (Map.Entry<PatternKey, PerPatternConfig> entry : assignments.entrySet()) {
+                        buf.writeBlockPos(entry.getKey().pos());
+                        buf.writeInt(entry.getKey().index());
+                        entry.getValue().encode(buf);
+                    }
+                });
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
