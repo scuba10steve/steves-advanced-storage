@@ -167,11 +167,18 @@ public class RecipePatternMenu extends AbstractContainerMenu {
      * Button 0 = Save pattern.
      * Button 1 = Previous matching recipe.
      * Button 2 = Next matching recipe.
+     * Button 3 = Back (reopen RecipeMemoryBoxMenu).
      */
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (id == 0) {
             savePattern(player);
+            return true;
+        }
+        if (id == 3) {
+            if (blockEntity != null) {
+                player.openMenu(blockEntity);
+            }
             return true;
         }
         int count = data.get(DATA_MATCH_COUNT);

@@ -12,6 +12,7 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
     private Button saveButton;
     private Button prevButton;
     private Button nextButton;
+    private Button backButton;
 
     public RecipePatternScreen(RecipePatternMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -24,6 +25,12 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
         super.init();
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
+
+        // Back button — top-right corner of the panel
+        backButton = addRenderableWidget(Button.builder(
+            Component.literal("×"),
+            btn -> sendButtonClick(3))
+            .bounds(x + imageWidth - 16, y + 4, 12, 12).build());
 
         // Save button
         saveButton = addRenderableWidget(Button.builder(
