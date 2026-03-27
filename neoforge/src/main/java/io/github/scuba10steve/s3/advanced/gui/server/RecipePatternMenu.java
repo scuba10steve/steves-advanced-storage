@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -176,8 +177,9 @@ public class RecipePatternMenu extends AbstractContainerMenu {
             return true;
         }
         if (id == 3) {
-            if (blockEntity != null) {
-                player.openMenu(blockEntity);
+            if (blockEntity != null && player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.openMenu(blockEntity,
+                    buf -> buf.writeBlockPos(blockEntity.getBlockPos()));
             }
             return true;
         }
