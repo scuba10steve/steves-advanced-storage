@@ -9,6 +9,7 @@ public class S3AdvancedConfig {
     // Advanced Storage Core
     public static final ModConfigSpec.IntValue CORE_CAPACITY;
     public static final ModConfigSpec.IntValue CORE_ENERGY_PER_TICK;
+    public static final ModConfigSpec.IntValue RECIPE_MEMORY_BOX_ENERGY_PER_TICK;
 
     // Solar Generator
     public static final ModConfigSpec.IntValue SOLAR_CAPACITY;
@@ -31,6 +32,9 @@ public class S3AdvancedConfig {
         CORE_ENERGY_PER_TICK = builder
             .comment("FE consumed per tick while active")
             .defineInRange("energy_per_tick", 80, 0, Integer.MAX_VALUE);
+        RECIPE_MEMORY_BOX_ENERGY_PER_TICK = builder
+            .comment("FE consumed per tick per Recipe Memory Box in the multiblock")
+            .defineInRange("recipe_memory_box_energy_per_tick", 10, 0, Integer.MAX_VALUE);
         builder.pop();
 
         builder.comment("Solar Generator").push("solar_generator");

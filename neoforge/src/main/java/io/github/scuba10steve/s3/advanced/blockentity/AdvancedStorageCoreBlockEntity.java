@@ -1,9 +1,12 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
+import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.blockentity.StorageCoreBlockEntity;
+import io.github.scuba10steve.s3.util.BlockRef;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -13,13 +16,23 @@ import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingEngine;
 import net.neoforged.neoforge.energy.EnergyStorage;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
 public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
+
+    private final List<RecipeMemoryBoxBlockEntity> recipeMemoryBoxes = new ArrayList<>();
+    // Field initializer avoids a zero-value window before the constructor body runs.
+    private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
     public final InternalEnergyStorage energyStorage;
     public final CraftingEngine craftingEngine = new CraftingEngine();
     public final CraftingCoordinator craftingCoordinator = new CraftingCoordinator(craftingEngine);
-    // Field initializer avoids a zero-value window before the constructor body runs.
-    private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
     // ContainerData slots: [0-1] energy, [2-3] capacity, [4] energyPerTick, [5] isPowered
     public final ContainerData containerData = new ContainerData() {
@@ -61,12 +74,47 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         return energyStorage.getEnergyStored() >= totalPowerDraw;
     }
 
+    public List<RecipeMemoryBoxBlockEntity> getRecipeMemoryBoxes() {
+        return Collections.unmodifiableList(recipeMemoryBoxes);
+    }
+
     @Override
     public void scanMultiblock() {
+        recipeMemoryBoxes.clear();
         super.scanMultiblock();
-        // Reset totalPowerDraw to base cost. Future issues (#6 Block Storage, #11 Auto-Crafter,
-        // #12 Machine Interface) will add their per-block FE/t here.
         totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
+
+        if (level == null) return;
+
+        // BFS from the core position over all blocks confirmed as multiblock members,
+        // collecting RecipeMemoryBox block entities and accumulating their FE/t.
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        queue.add(worldPosition);
+        visited.add(worldPosition);
+
+        while (!queue.isEmpty()) {
+            BlockPos pos = queue.poll();
+            BlockState state = level.getBlockState(pos);
+
+            if (state.getBlock() instanceof BlockRecipeMemoryBox) {
+                if (level.getBlockEntity(pos) instanceof RecipeMemoryBoxBlockEntity rmb) {
+                    recipeMemoryBoxes.add(rmb);
+                    totalPowerDraw += S3AdvancedConfig.RECIPE_MEMORY_BOX_ENERGY_PER_TICK.get();
+                }
+            }
+
+            for (Direction dir : Direction.values()) {
+                BlockPos neighbor = pos.relative(dir);
+                if (!visited.contains(neighbor)) {
+                    BlockRef ref = new BlockRef(level.getBlockState(neighbor).getBlock(), neighbor);
+                    if (isPartOfMultiblock(ref)) {
+                        visited.add(neighbor);
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
     }
 
     @Override

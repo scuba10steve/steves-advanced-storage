@@ -26,6 +26,9 @@ public class ModItems {
     public static final Supplier<Item> ADVANCED_STORAGE_CORE_UPGRADE = ITEMS.register("advanced_storage_core_upgrade",
         ItemAdvancedStorageCoreUpgrade::new);
 
+    public static final Supplier<Item> RECIPE_MEMORY_BOX = ITEMS.register("recipe_memory_box",
+        () -> new BlockItem(ModBlocks.RECIPE_MEMORY_BOX.get(), new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }
