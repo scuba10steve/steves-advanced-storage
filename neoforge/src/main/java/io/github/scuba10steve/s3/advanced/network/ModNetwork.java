@@ -2,6 +2,7 @@ package io.github.scuba10steve.s3.advanced.network;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
+import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -51,7 +52,9 @@ public class ModNetwork {
     private static void handleAssignPattern(AssignPatternPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
-            if (player.level() instanceof ServerLevel level
+            if (player.containerMenu instanceof AutoCrafterMenu menu
+                    && menu.stillValid(player)
+                    && player.level() instanceof ServerLevel level
                     && level.getBlockEntity(packet.crafterPos()) instanceof AutoCrafterBlockEntity be) {
                 be.assign(packet.patternKey());
             }
@@ -61,7 +64,9 @@ public class ModNetwork {
     private static void handleUnassignPattern(UnassignPatternPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
-            if (player.level() instanceof ServerLevel level
+            if (player.containerMenu instanceof AutoCrafterMenu menu
+                    && menu.stillValid(player)
+                    && player.level() instanceof ServerLevel level
                     && level.getBlockEntity(packet.crafterPos()) instanceof AutoCrafterBlockEntity be) {
                 be.unassign(packet.patternKey());
             }
@@ -71,9 +76,12 @@ public class ModNetwork {
     private static void handleUpdatePatternConfig(UpdatePatternConfigPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
-            if (player.level() instanceof ServerLevel level
+            if (player.containerMenu instanceof AutoCrafterMenu menu
+                    && menu.stillValid(player)
+                    && player.level() instanceof ServerLevel level
                     && level.getBlockEntity(packet.crafterPos()) instanceof AutoCrafterBlockEntity be) {
-                be.updateConfig(packet.patternKey(), packet.autoEnabled(), packet.minimumBuffer());
+                int minimumBuffer = Math.max(0, packet.minimumBuffer());
+                be.updateConfig(packet.patternKey(), packet.autoEnabled(), minimumBuffer);
             }
         });
     }
