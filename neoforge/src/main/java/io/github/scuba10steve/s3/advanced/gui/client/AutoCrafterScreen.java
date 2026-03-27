@@ -91,7 +91,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
         if (rows.size() > VISIBLE_ROWS) {
             int total = rows.size();
             int scrollbarHeight = (int) ((float) VISIBLE_ROWS / total * (VISIBLE_ROWS * ROW_HEIGHT));
-            int scrollbarY = guiY + LIST_TOP + (int) ((float) scrollOffset / total * (VISIBLE_ROWS * ROW_HEIGHT));
+            int scrollbarY = guiY + LIST_TOP + (int) ((float) scrollOffset / (total - VISIBLE_ROWS) * (VISIBLE_ROWS * ROW_HEIGHT));
             graphics.fill(guiX + 168, guiY + LIST_TOP, guiX + 170, guiY + LIST_TOP + VISIBLE_ROWS * ROW_HEIGHT, 0xFF444444);
             graphics.fill(guiX + 168, scrollbarY, guiX + 170, scrollbarY + scrollbarHeight, 0xFFCCCCCC);
         }
@@ -109,12 +109,16 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(this.font, this.title, 8, 6, 0xFFFFFF, false);
-        graphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, 0xAAAAAA, false);
+        graphics.drawString(this.font, this.title, 8, 6, 0xFFFFFFFF, false);
+        graphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, 0xFFAAAAAA, false);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button != 0) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
         int guiX = (this.width - this.imageWidth) / 2;
         int guiY = (this.height - this.imageHeight) / 2;
 
