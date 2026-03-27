@@ -13,35 +13,39 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
     public static final int PATTERN_SLOT_COUNT = RecipeMemoryBoxBlockEntity.MAX_PATTERNS;
-    /** Pattern-output display slots occupy indices 0–8 in the menu. */
     private static final int PATTERN_SLOTS_START = 0;
 
     private final BlockPos pos;
-    /** Non-null only on the server side. */
     private final RecipeMemoryBoxBlockEntity blockEntity;
+    /** Positions of Auto-Crafters in the multiblock; populated on server, read on client. */
+    private final List<BlockPos> crafterPositions;
 
-    // Client constructor — called by IMenuTypeExtension factory
+    // Client constructor
     public RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, buf.readBlockPos(), null,
-             new SimpleContainer(PATTERN_SLOT_COUNT));
+             new SimpleContainer(PATTERN_SLOT_COUNT), readCrafterPositions(buf));
     }
 
-    // Server constructor — called from RecipeMemoryBoxBlockEntity.createMenu()
+    // Server constructor
     public RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, RecipeMemoryBoxBlockEntity be) {
         this(containerId, playerInventory, be.getBlockPos(), be,
-             buildDisplayContainer(be));
+             buildDisplayContainer(be), List.of());
     }
 
     private RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, BlockPos pos,
-                                 RecipeMemoryBoxBlockEntity be, SimpleContainer displayContainer) {
+                                 RecipeMemoryBoxBlockEntity be, SimpleContainer displayContainer,
+                                 List<BlockPos> crafterPositions) {
         super(ModMenuTypes.RECIPE_MEMORY_BOX.get(), containerId);
         this.pos = pos;
         this.blockEntity = be;
+        this.crafterPositions = List.copyOf(crafterPositions);
 
-        // 9 read-only pattern-output display slots (3×3 grid)
         for (int i = 0; i < PATTERN_SLOT_COUNT; i++) {
             int row = i / 3;
             int col = i % 3;
@@ -52,20 +56,25 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
                 public boolean mayPlace(ItemStack stack) { return false; }
             });
         }
-
-        // Player inventory (rows 0-2)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
-        // Player hotbar
         for (int col = 0; col < 9; col++) {
             addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
         }
     }
 
-    /** Populates the display container with each pattern's output item. */
+    /** Returns the list of Auto-Crafter positions in this multiblock (client-side). */
+    public List<BlockPos> getCrafterPositions() {
+        return crafterPositions;
+    }
+
+    public BlockPos getRmbPos() {
+        return pos;
+    }
+
     private static SimpleContainer buildDisplayContainer(RecipeMemoryBoxBlockEntity be) {
         SimpleContainer container = new SimpleContainer(PATTERN_SLOT_COUNT);
         for (int i = 0; i < PATTERN_SLOT_COUNT; i++) {
@@ -74,10 +83,15 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
         return container;
     }
 
-    /**
-     * Intercepts clicks on the 9 pattern display slots (server side only).
-     * Opens the RecipePatternMenu for the clicked slot index.
-     */
+    private static List<BlockPos> readCrafterPositions(FriendlyByteBuf buf) {
+        int count = buf.readInt();
+        List<BlockPos> result = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            result.add(buf.readBlockPos());
+        }
+        return result;
+    }
+
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (slotId >= PATTERN_SLOTS_START && slotId < PATTERN_SLOTS_START + PATTERN_SLOT_COUNT
@@ -96,7 +110,7 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        return ItemStack.EMPTY; // No shift-clicking in this menu
+        return ItemStack.EMPTY;
     }
 
     @Override
