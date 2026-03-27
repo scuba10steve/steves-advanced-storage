@@ -4,6 +4,7 @@ import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCoreMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.CoalGeneratorMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipeMemoryBoxMenu;
+import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.SolarGeneratorMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -42,6 +43,11 @@ public class ModMenuTypes {
         MENU_TYPES.register("recipe_pattern", () ->
             IMenuTypeExtension.create((windowId, inv, data) ->
                 new RecipePatternMenu(windowId, inv, data)));
+
+    public static final Supplier<MenuType<AutoCrafterMenu>> AUTO_CRAFTER =
+        MENU_TYPES.register("auto_crafter", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new AutoCrafterMenu(windowId, inv, data)));
 
     public static void register(IEventBus eventBus) {
         MENU_TYPES.register(eventBus);
