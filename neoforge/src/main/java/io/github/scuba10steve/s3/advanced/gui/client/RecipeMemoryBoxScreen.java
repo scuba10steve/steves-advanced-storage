@@ -67,7 +67,7 @@ public class RecipeMemoryBoxScreen extends AbstractContainerScreen<RecipeMemoryB
             int btnY = guiY + slot.y + 9;
             int bgColor = isInBounds(mouseX, mouseY, btnX, btnY, 7, 7) ? 0xFF00CC00 : 0xFF007700;
             graphics.fill(btnX, btnY, btnX + 7, btnY + 7, bgColor);
-            graphics.drawString(this.font, "A", btnX + 1, btnY, 0xFFFFFFFF, false);
+            graphics.drawString(this.font, "A", btnX + 1, btnY + 1, 0xFFFFFFFF, false);
         }
     }
 
