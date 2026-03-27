@@ -1,12 +1,6 @@
 {
-  "parent": "minecraft:block/cube",
+  "parent": "minecraft:block/cube_all",
   "textures": {
-    "particle": "s3_advanced:block/advanced_storage_core",
-    "down": "s3_advanced:block/coal_generator",
-    "up": "s3_advanced:block/solar_generator",
-    "north": "s3_advanced:block/coal_generator",
-    "east": "s3_advanced:block/coal_generator",
-    "south": "s3_advanced:block/coal_generator",
-    "west": "s3_advanced:block/coal_generator"
+    "all": "s3_advanced:block/recipe_memory_box"
   }
 }
