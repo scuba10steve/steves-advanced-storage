@@ -1,13 +1,18 @@
 package io.github.scuba10steve.s3.advanced.gui.client;
 
+import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMenu> {
+
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
+        StevesAdvancedStorage.MOD_ID, "textures/gui/recipe_pattern.png");
 
     private Button saveButton;
     private Button clearButton;
@@ -77,42 +82,9 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        // Background
-        graphics.fill(x, y, x + imageWidth, y + imageHeight, 0xFFC6C6C6);
-        graphics.fill(x + 1, y + 1, x + imageWidth - 1, y + imageHeight - 1, 0xFF8B8B8B);
+        graphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
 
-        // 3×3 ingredient grid slot backgrounds
-        for (int i = 0; i < 9; i++) {
-            int row = i / 3, col = i % 3;
-            int sx = x + 26 + col * 18;
-            int sy = y + 17 + row * 18;
-            graphics.fill(sx, sy, sx + 18, sy + 18, 0xFF373737);
-            graphics.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF8B8B8B);
-        }
-
-        // Output slot — dark outer border + white inner border to distinguish from ingredient slots
-        graphics.fill(x + 122, y + 33, x + 142, y + 53, 0xFF373737);
-        graphics.fill(x + 123, y + 34, x + 141, y + 52, 0xFFFFFFFF);
-        graphics.fill(x + 124, y + 35, x + 140, y + 51, 0xFF8B8B8B);
-
-        // Player inventory (3 rows × 9 cols)
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                int sx = x + 7 + col * 18;
-                int sy = y + 83 + row * 18;
-                graphics.fill(sx, sy, sx + 18, sy + 18, 0xFF373737);
-                graphics.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF8B8B8B);
-            }
-        }
-        // Hotbar (9 slots)
-        for (int col = 0; col < 9; col++) {
-            int sx = x + 7 + col * 18;
-            int sy = y + 141;
-            graphics.fill(sx, sy, sx + 18, sy + 18, 0xFF373737);
-            graphics.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF8B8B8B);
-        }
-
-        // Match count label (when multiple recipes found)
+        // Match count label (dynamic — not part of the static texture)
         int matchCount = menu.getMatchCount();
         if (matchCount > 1) {
             String label = (menu.getSelectedIndex() + 1) + "/" + matchCount;
