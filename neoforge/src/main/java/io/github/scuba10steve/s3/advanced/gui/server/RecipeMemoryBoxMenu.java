@@ -1,8 +1,13 @@
 package io.github.scuba10steve.s3.advanced.gui.server;
 
+import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
+import io.github.scuba10steve.s3.advanced.block.BlockAdvancedStorageCore;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
+import io.github.scuba10steve.s3.block.StorageMultiblock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -12,9 +17,15 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
@@ -90,6 +101,48 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
             result.add(buf.readBlockPos());
         }
         return result;
+    }
+
+    /**
+     * Writes the full extra data expected by the client constructor:
+     * BlockPos + crafter count + crafter positions.
+     * Call this whenever opening a RecipeMemoryBoxMenu from any server-side path.
+     */
+    public static void writeMenuExtraData(FriendlyByteBuf buf, RecipeMemoryBoxBlockEntity be, Level level) {
+        buf.writeBlockPos(be.getBlockPos());
+        AdvancedStorageCoreBlockEntity core = findCore(level, be.getBlockPos());
+        List<BlockPos> crafterPositions = core != null
+            ? core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos).toList()
+            : List.of();
+        buf.writeInt(crafterPositions.size());
+        for (BlockPos cp : crafterPositions) {
+            buf.writeBlockPos(cp);
+        }
+    }
+
+    private static AdvancedStorageCoreBlockEntity findCore(Level level, BlockPos start) {
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        queue.add(start);
+        visited.add(start);
+        while (!queue.isEmpty()) {
+            BlockPos pos = queue.poll();
+            Block block = level.getBlockState(pos).getBlock();
+            if (block instanceof BlockAdvancedStorageCore
+                    && level.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity core) {
+                return core;
+            }
+            if (block instanceof StorageMultiblock || block instanceof BlockAdvancedStorageCore) {
+                for (Direction dir : Direction.values()) {
+                    BlockPos neighbor = pos.relative(dir);
+                    if (!visited.contains(neighbor)) {
+                        visited.add(neighbor);
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override

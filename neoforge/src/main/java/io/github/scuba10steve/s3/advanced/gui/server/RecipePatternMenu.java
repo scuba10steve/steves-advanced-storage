@@ -179,7 +179,7 @@ public class RecipePatternMenu extends AbstractContainerMenu {
         if (id == 3) {
             if (blockEntity != null && player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.openMenu(blockEntity,
-                    buf -> buf.writeBlockPos(blockEntity.getBlockPos()));
+                    buf -> RecipeMemoryBoxMenu.writeMenuExtraData(buf, blockEntity, player.level()));
             }
             return true;
         }
