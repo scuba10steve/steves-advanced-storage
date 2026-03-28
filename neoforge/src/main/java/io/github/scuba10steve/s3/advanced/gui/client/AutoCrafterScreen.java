@@ -153,7 +153,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
 
             // Min buffer increment (click on region right of "Min: N")
             if (isInBounds(mouseX, mouseY, rowX + 22 + 40, rowY + 13, 20, 10)) {
-                int newMin = cfg.minimumBuffer() + 1;
+                int newMin = Math.min(cfg.minimumBuffer() + 1, 9999);
                 rows.set(dataIndex, Map.entry(key, new PerPatternConfig(cfg.autoEnabled(), newMin)));
                 PacketDistributor.sendToServer(new UpdatePatternConfigPacket(
                     menu.getBlockPos(), key, cfg.autoEnabled(), newMin));
