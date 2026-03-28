@@ -27,6 +27,16 @@ public class S3AdvancedGameTestDataGeneration {
         addCoreWithBlock(provider, "hyper_storage_box");
         addCoreWithBlock(provider, "ultimate_storage_box");
 
+        // Core (1,0,1) + storage box (2,0,1) for inventory + auto-crafter (0,0,1)
+        provider.add("core_with_auto_crafter", 3, 3, 3, new StructureContent(
+            List.of(
+                new BlockPlacement("s3_advanced:advanced_storage_core", 1, 0, 1),
+                new BlockPlacement("s3:storage_box", 2, 0, 1),
+                new BlockPlacement("s3_advanced:auto_crafter", 0, 0, 1)
+            ),
+            List.of(), List.of()
+        ));
+
         // Large multiblock: 10x10x5 filled with ultimate boxes + advanced core at center
         addLargeUltimateStructure(provider);
 
