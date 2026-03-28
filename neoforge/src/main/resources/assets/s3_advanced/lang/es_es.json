@@ -14,5 +14,6 @@
 
   "gui.s3_advanced.save": "[TRANSLATE] Save",
   "gui.s3_advanced.clear": "[TRANSLATE] Clear",
+  "gui.s3_advanced.assign": "[TRANSLATE] Assign",
   "gui.s3_advanced.recipe_pattern": "[TRANSLATE] Recipe Pattern"
 }

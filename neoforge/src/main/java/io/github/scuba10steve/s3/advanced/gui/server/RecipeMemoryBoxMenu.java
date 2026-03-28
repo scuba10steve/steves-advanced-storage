@@ -46,7 +46,15 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
     // Server constructor
     public RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, RecipeMemoryBoxBlockEntity be) {
         this(containerId, playerInventory, be.getBlockPos(), be,
-             buildDisplayContainer(be), List.of());
+             buildDisplayContainer(be), computeCrafterPositions(be));
+    }
+
+    private static List<BlockPos> computeCrafterPositions(RecipeMemoryBoxBlockEntity be) {
+        Level level = be.getLevel();
+        if (level == null) return List.of();
+        AdvancedStorageCoreBlockEntity core = findCore(level, be.getBlockPos());
+        if (core == null) return List.of();
+        return core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos).toList();
     }
 
     private RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, BlockPos pos,
@@ -58,8 +66,8 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
         this.crafterPositions = List.copyOf(crafterPositions);
 
         for (int i = 0; i < PATTERN_SLOT_COUNT; i++) {
-            int row = i / 3;
-            int col = i % 3;
+            int row = i / 2;
+            int col = i % 2;
             addSlot(new Slot(displayContainer, i, 26 + col * 18, 17 + row * 18) {
                 @Override
                 public boolean mayPickup(Player player) { return false; }
@@ -151,10 +159,12 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
                 && blockEntity != null && player instanceof ServerPlayer serverPlayer) {
             int patternIndex = slotId - PATTERN_SLOTS_START;
             serverPlayer.openMenu(
-                RecipePatternMenu.createMenuProvider(blockEntity, patternIndex),
+                RecipePatternMenu.createMenuProvider(blockEntity, patternIndex, crafterPositions),
                 buf -> {
                     buf.writeBlockPos(blockEntity.getBlockPos());
                     buf.writeInt(patternIndex);
+                    buf.writeInt(crafterPositions.size());
+                    for (BlockPos cp : crafterPositions) buf.writeBlockPos(cp);
                 });
             return;
         }

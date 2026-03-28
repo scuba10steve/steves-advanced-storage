@@ -6,9 +6,11 @@ import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.advanced.network.UnassignPatternPacket;
 import io.github.scuba10steve.s3.advanced.network.UpdatePatternConfigPacket;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
     public AutoCrafterScreen(AutoCrafterMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 176;
-        this.imageHeight = 166;
+        this.imageHeight = 112;
     }
 
     @Override
@@ -72,16 +74,26 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
             // Row background
             graphics.fill(rowX, rowY, rowX + 160, rowY + ROW_HEIGHT - 1, 0x22FFFFFF);
 
-            // Output item icon placeholder
-            graphics.fill(rowX + 2, rowY + 3, rowX + 18, rowY + 19, 0xFF888888);
+            // Output item icon
+            ItemStack outputItem = menu.getOutputItems().getOrDefault(entry.getKey(), ItemStack.EMPTY);
+            if (!outputItem.isEmpty()) {
+                graphics.renderItem(outputItem, rowX + 2, rowY + 3);
+            } else {
+                graphics.fill(rowX + 2, rowY + 3, rowX + 18, rowY + 19, 0xFF555555);
+            }
 
             // Auto-buffer toggle
             String autoLabel = cfg.autoEnabled() ? "Auto: ON" : "Auto: OFF";
             int autoColor = cfg.autoEnabled() ? 0xFF00FF00 : 0xFFAAAAAA;
             graphics.drawString(this.font, autoLabel, rowX + 22, rowY + 3, autoColor, false);
 
-            // Min buffer display
-            graphics.drawString(this.font, "Min: " + cfg.minimumBuffer(), rowX + 22, rowY + 13, 0xFFFFFFFF, false);
+            // Min buffer: "Min: [-] N [+]"
+            graphics.drawString(this.font, "Min:", rowX + 22, rowY + 13, 0xFFAAAAAA, false);
+            boolean decHovered = isInBounds(mouseX, mouseY, rowX + 48, rowY + 11, 14, 10);
+            boolean incHovered = isInBounds(mouseX, mouseY, rowX + 92, rowY + 11, 14, 10);
+            graphics.drawString(this.font, "[-]", rowX + 48, rowY + 13, decHovered ? 0xFFFFFFFF : 0xFFFF8888, false);
+            graphics.drawString(this.font, String.valueOf(cfg.minimumBuffer()), rowX + 66, rowY + 13, 0xFFFFFFFF, false);
+            graphics.drawString(this.font, "[+]", rowX + 92, rowY + 13, incHovered ? 0xFFFFFFFF : 0xFF88FF88, false);
 
             // Remove indicator
             graphics.drawString(this.font, "[X]", rowX + 145, rowY + 7, 0xFFFF4444, false);
@@ -101,16 +113,12 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        // Solid dark background (no custom texture needed yet)
         graphics.fill(x, y, x + this.imageWidth, y + this.imageHeight, 0xFF2D2D2D);
-        // Player inventory area — lighter fill
-        graphics.fill(x + 7, y + 83, x + 169, y + 161, 0xFF3A3A3A);
     }
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(this.font, this.title, 8, 6, 0xFFFFFFFF, false);
-        graphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, 0xFFAAAAAA, false);
     }
 
     @Override
@@ -142,18 +150,24 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
                 return true;
             }
 
-            // Min buffer decrement (click on "Min: N" label region left half)
-            if (isInBounds(mouseX, mouseY, rowX + 22, rowY + 13, 20, 10)) {
-                int newMin = Math.max(0, cfg.minimumBuffer() - 1);
+            // [-] decrement button
+            if (isInBounds(mouseX, mouseY, rowX + 48, rowY + 11, 14, 10)) {
+                ItemStack outputItem = menu.getOutputItems().getOrDefault(key, ItemStack.EMPTY);
+                int amount = Screen.hasShiftDown() && !outputItem.isEmpty()
+                    ? outputItem.getMaxStackSize() : 1;
+                int newMin = Math.max(0, cfg.minimumBuffer() - amount);
                 rows.set(dataIndex, Map.entry(key, new PerPatternConfig(cfg.autoEnabled(), newMin)));
                 PacketDistributor.sendToServer(new UpdatePatternConfigPacket(
                     menu.getBlockPos(), key, cfg.autoEnabled(), newMin));
                 return true;
             }
 
-            // Min buffer increment (click on region right of "Min: N")
-            if (isInBounds(mouseX, mouseY, rowX + 22 + 40, rowY + 13, 20, 10)) {
-                int newMin = Math.min(cfg.minimumBuffer() + 1, 9999);
+            // [+] increment button
+            if (isInBounds(mouseX, mouseY, rowX + 92, rowY + 11, 14, 10)) {
+                ItemStack outputItem = menu.getOutputItems().getOrDefault(key, ItemStack.EMPTY);
+                int amount = Screen.hasShiftDown() && !outputItem.isEmpty()
+                    ? outputItem.getMaxStackSize() : 1;
+                int newMin = Math.min(cfg.minimumBuffer() + amount, 9999);
                 rows.set(dataIndex, Map.entry(key, new PerPatternConfig(cfg.autoEnabled(), newMin)));
                 PacketDistributor.sendToServer(new UpdatePatternConfigPacket(
                     menu.getBlockPos(), key, cfg.autoEnabled(), newMin));

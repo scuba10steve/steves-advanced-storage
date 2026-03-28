@@ -14,5 +14,6 @@
 
   "gui.s3_advanced.save": "Save",
   "gui.s3_advanced.clear": "Clear",
+  "gui.s3_advanced.assign": "Assign",
   "gui.s3_advanced.recipe_pattern": "Recipe Pattern"
 }

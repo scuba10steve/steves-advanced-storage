@@ -25,6 +25,8 @@ import java.util.Map;
 
 public class AutoCrafterBlockEntity extends BaseBlockEntity implements MenuProvider {
 
+    public static final int MAX_ASSIGNMENTS = 4;
+
     private final Map<PatternKey, PerPatternConfig> assignments = new LinkedHashMap<>();
 
     public AutoCrafterBlockEntity(BlockPos pos, BlockState state) {
@@ -36,10 +38,12 @@ public class AutoCrafterBlockEntity extends BaseBlockEntity implements MenuProvi
         return Collections.unmodifiableMap(assignments);
     }
 
-    /** Adds patternKey with DEFAULT config if not already assigned. */
+    /** Adds patternKey with DEFAULT config if not already assigned and below the slot cap. */
     public void assign(PatternKey key) {
-        assignments.putIfAbsent(key, PerPatternConfig.DEFAULT);
-        setChanged();
+        if (assignments.size() < MAX_ASSIGNMENTS) {
+            assignments.putIfAbsent(key, PerPatternConfig.DEFAULT);
+            setChanged();
+        }
     }
 
     /** Removes the assignment for patternKey (no-op if not present). */

@@ -24,7 +24,7 @@ import java.util.List;
 
 public class RecipeMemoryBoxBlockEntity extends BaseBlockEntity implements MenuProvider {
 
-    public static final int MAX_PATTERNS = 9;
+    public static final int MAX_PATTERNS = 4;
 
     private final List<RecipePattern> patterns = new ArrayList<>(MAX_PATTERNS);
 
