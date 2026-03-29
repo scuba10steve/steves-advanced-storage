@@ -68,7 +68,9 @@ public class RecipePattern {
     /** Returns true if no ingredient slots are filled. */
     public boolean isEmpty() {
         for (ItemStack s : grid) {
-            if (!s.isEmpty()) return false;
+            if (!s.isEmpty()) {
+                return false;
+            }
         }
         return true;
     }

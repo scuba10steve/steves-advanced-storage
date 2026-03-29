@@ -62,8 +62,12 @@ tasks.register('validateLang') {
                 def extra = keys - referenceKeys
                 if (missing || extra) {
                     def msg = "${langFile.name} key mismatch:"
-                    if (missing) msg += "\n  Missing: ${missing}"
-                    if (extra) msg += "\n  Extra:   ${extra}"
+                    if (missing) {
+                        msg += "\n  Missing: ${missing}"
+                    }
+                    if (extra) {
+                        msg += "\n  Extra:   ${extra}"
+                    }
                     throw new GradleException(msg)
                 }
             }
@@ -71,3 +75,6 @@ tasks.register('validateLang') {
 }
 
 tasks.named('check') { dependsOn('validateLang') }
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}

@@ -1,11 +1,7 @@
 package io.github.scuba10steve.s3.advanced;
 
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
-import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
-import io.github.scuba10steve.s3.advanced.init.ModBlocks;
-import io.github.scuba10steve.s3.advanced.init.ModCreativeTabs;
-import io.github.scuba10steve.s3.advanced.init.ModItems;
-import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
+import io.github.scuba10steve.s3.advanced.init.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

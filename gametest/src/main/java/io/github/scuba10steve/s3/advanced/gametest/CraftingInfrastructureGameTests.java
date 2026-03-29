@@ -24,7 +24,9 @@ public class CraftingInfrastructureGameTests {
     public static void crafting_engine_succeeds_with_sufficient_ingredients(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
             inv.insertItem(new ItemStack(Items.OAK_PLANKS, 4));
@@ -54,7 +56,9 @@ public class CraftingInfrastructureGameTests {
     public static void crafting_engine_fails_and_rolls_back_with_insufficient_ingredients(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
             inv.insertItem(new ItemStack(Items.OAK_PLANKS, 2)); // need 4
@@ -80,7 +84,9 @@ public class CraftingInfrastructureGameTests {
     public static void crafting_engine_rolls_back_partial_extractions(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
             inv.insertItem(new ItemStack(Items.OAK_PLANKS, 4));
@@ -109,7 +115,9 @@ public class CraftingInfrastructureGameTests {
     public static void crafting_coordinator_auto_buffer_deduplicated(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             PatternKey key = new PatternKey(new BlockPos(5, 5, 5), 0);
 
@@ -129,7 +137,9 @@ public class CraftingInfrastructureGameTests {
     public static void crafting_coordinator_gui_request_not_deduplicated(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             PatternKey key = new PatternKey(new BlockPos(5, 5, 5), 0);
 

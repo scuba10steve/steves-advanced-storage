@@ -26,7 +26,9 @@ public class RecipeMemoryBoxGameTests {
     public static void recipe_memory_box_discovered_in_multiblock(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             // Place a Recipe Memory Box adjacent to the core (east side)
             BlockPos rmbPos = CORE_POS.east();
@@ -62,7 +64,9 @@ public class RecipeMemoryBoxGameTests {
     public static void recipe_pattern_nbt_roundtrip(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             // Build a pattern with some ingredients and an output
             RecipePattern original = new RecipePattern();
@@ -108,7 +112,9 @@ public class RecipeMemoryBoxGameTests {
     public static void recipe_memory_box_removed_from_multiblock_on_break(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             BlockPos rmbPos = CORE_POS.east();
             helper.setBlock(rmbPos, ModBlocks.RECIPE_MEMORY_BOX.get().defaultBlockState());

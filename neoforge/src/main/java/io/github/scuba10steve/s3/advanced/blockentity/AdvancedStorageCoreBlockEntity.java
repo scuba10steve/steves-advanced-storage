@@ -1,9 +1,11 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
-import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
 import io.github.scuba10steve.s3.advanced.block.BlockAutoCrafter;
+import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
+import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
+import io.github.scuba10steve.s3.advanced.crafting.CraftingEngine;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.blockentity.StorageCoreBlockEntity;
 import io.github.scuba10steve.s3.util.BlockRef;
@@ -14,17 +16,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.state.BlockState;
-import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
-import io.github.scuba10steve.s3.advanced.crafting.CraftingEngine;
 import net.neoforged.neoforge.energy.EnergyStorage;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
@@ -92,7 +86,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         super.scanMultiblock();
         totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
-        if (level == null) return;
+        if (level == null) {
+            return;
+        }
 
         // BFS from the core position over all blocks confirmed as multiblock members,
         // collecting RecipeMemoryBox block entities and accumulating their FE/t.
@@ -133,7 +129,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     @Override
     public void tick() {
         super.tick(); // handles multiblock scan
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
         if (energyStorage.consume(totalPowerDraw)) {
             setChanged();
             List<CraftingCoordinator.BoxData> boxSnapshots = recipeMemoryBoxes.stream()
@@ -165,7 +163,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         }
 
         public boolean consume(int amount) {
-            if (energy < amount) return false;
+            if (energy < amount) {
+                return false;
+            }
             energy -= amount;
             return true;
         }

@@ -29,8 +29,8 @@ public class CoalGeneratorBlockEntity extends BaseBlockEntity implements MenuPro
     public static final int DEFAULT_GENERATION_RATE = 160;
     public static final int DEFAULT_MAX_OUTPUT = 200;
 
-    public int litTime = 0;
-    public int litDuration = 0;
+    public int litTime;
+    public int litDuration;
 
     public final ItemStackHandler fuelHandler = new ItemStackHandler(1) {
         @Override
@@ -63,9 +63,10 @@ public class CoalGeneratorBlockEntity extends BaseBlockEntity implements MenuPro
 
         @Override
         public void set(int index, int value) {
-            switch (index) {
-                case 0 -> litTime = value;
-                case 1 -> litDuration = value;
+            if (index == 0) {
+                litTime = value;
+            } else if (index == 1) {
+                litDuration = value;
             }
         }
 
@@ -83,15 +84,23 @@ public class CoalGeneratorBlockEntity extends BaseBlockEntity implements MenuPro
     }
 
     public static int getBurnTime(ItemStack stack) {
-        if (stack.isEmpty()) return 0;
+        if (stack.isEmpty()) {
+            return 0;
+        }
         Item item = stack.getItem();
-        if (item == Items.COAL || item == Items.CHARCOAL) return 1600;
-        if (item == Items.COAL_BLOCK) return 16000;
+        if (item == Items.COAL || item == Items.CHARCOAL) {
+            return 1600;
+        }
+        if (item == Items.COAL_BLOCK) {
+            return 16000;
+        }
         return 0;
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, CoalGeneratorBlockEntity be) {
-        if (level.isClientSide()) return;
+        if (level.isClientSide()) {
+            return;
+        }
 
         boolean wasBurning = be.litTime > 0;
 

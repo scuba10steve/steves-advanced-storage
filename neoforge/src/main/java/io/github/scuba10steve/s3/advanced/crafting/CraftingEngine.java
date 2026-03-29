@@ -27,7 +27,9 @@ public class CraftingEngine {
         List<ItemStack> extracted = new ArrayList<>();
 
         for (ItemStack ingredient : ingredients) {
-            if (ingredient.isEmpty()) continue;
+            if (ingredient.isEmpty()) {
+                continue;
+            }
 
             ItemStack got = inventory.extractItem(ingredient, ingredient.getCount());
             if (got.getCount() < ingredient.getCount()) {

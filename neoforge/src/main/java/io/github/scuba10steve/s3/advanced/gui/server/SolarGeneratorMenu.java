@@ -47,7 +47,9 @@ public class SolarGeneratorMenu extends AbstractContainerMenu {
 
     public int getEnergyPercent() {
         int capacity = getCapacity();
-        if (capacity == 0) return 0;
+        if (capacity == 0) {
+            return 0;
+        }
         return getEnergyStored() * 100 / capacity;
     }
 

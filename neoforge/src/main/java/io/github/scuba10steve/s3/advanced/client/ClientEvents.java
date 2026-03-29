@@ -1,12 +1,7 @@
 package io.github.scuba10steve.s3.advanced.client;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
-import io.github.scuba10steve.s3.advanced.gui.client.AdvancedStorageCoreScreen;
-import io.github.scuba10steve.s3.advanced.gui.client.AutoCrafterScreen;
-import io.github.scuba10steve.s3.advanced.gui.client.CoalGeneratorScreen;
-import io.github.scuba10steve.s3.advanced.gui.client.RecipeMemoryBoxScreen;
-import io.github.scuba10steve.s3.advanced.gui.client.RecipePatternScreen;
-import io.github.scuba10steve.s3.advanced.gui.client.SolarGeneratorScreen;
+import io.github.scuba10steve.s3.advanced.gui.client.*;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

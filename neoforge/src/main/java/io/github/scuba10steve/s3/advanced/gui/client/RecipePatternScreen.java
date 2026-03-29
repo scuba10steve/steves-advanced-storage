@@ -28,7 +28,7 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
     private Button assignButton;
 
     /** Whether the crafter-picker overlay is open. */
-    private boolean pickerOpen = false;
+    private boolean pickerOpen;
 
     public RecipePatternScreen(RecipePatternMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -147,7 +147,9 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
             int entryY = panelY + 12 + i * 12;
             String label = cp.getX() + ", " + cp.getY() + ", " + cp.getZ();
             boolean hovered = isInBounds(mouseX, mouseY, panelX + 2, entryY, panelW - 4, 11);
-            if (hovered) graphics.fill(panelX + 2, entryY, panelX + panelW - 2, entryY + 11, 0xFF3A6A3A);
+            if (hovered) {
+                graphics.fill(panelX + 2, entryY, panelX + panelW - 2, entryY + 11, 0xFF3A6A3A);
+            }
             graphics.drawString(this.font, label, panelX + 4, entryY + 2, 0xFFFFFFFF, false);
         }
     }
