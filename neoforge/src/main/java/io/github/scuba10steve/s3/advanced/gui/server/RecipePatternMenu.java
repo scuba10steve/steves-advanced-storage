@@ -23,6 +23,8 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 
+import net.minecraft.core.BlockPos;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,27 +48,30 @@ public class RecipePatternMenu extends AbstractContainerMenu {
     private final ContainerData data;
     /** Server-only: recipes that match the current ingredient grid. */
     private final List<RecipeHolder<CraftingRecipe>> matchedRecipes = new ArrayList<>();
+    /** Auto-Crafter positions in this multiblock; populated on server, read on client. */
+    private final List<BlockPos> crafterPositions;
 
     // Client constructor
     public RecipePatternMenu(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, buf.readBlockPos(), buf.readInt(), null,
              new SimpleContainer(INGREDIENT_SLOTS), new SimpleContainer(1),
-             new SimpleContainerData(DATA_COUNT));
+             new SimpleContainerData(DATA_COUNT), readCrafterPositions(buf));
     }
 
     // Server constructor — opened from RecipeMemoryBoxMenu.clicked()
     public RecipePatternMenu(int containerId, Inventory playerInventory,
-                              RecipeMemoryBoxBlockEntity be, int patternIndex) {
+                              RecipeMemoryBoxBlockEntity be, int patternIndex,
+                              List<BlockPos> crafterPositions) {
         this(containerId, playerInventory, be.getBlockPos(), patternIndex, be,
              buildIngredientContainer(be.getPattern(patternIndex)), new SimpleContainer(1),
-             new SimpleContainerData(DATA_COUNT));
+             new SimpleContainerData(DATA_COUNT), crafterPositions);
         // Resolve recipes from the pre-loaded ingredient grid
         resolveRecipes();
     }
 
     private RecipePatternMenu(int containerId, Inventory playerInventory, BlockPos pos, int patternIndex,
                                RecipeMemoryBoxBlockEntity be, SimpleContainer ingredients,
-                               SimpleContainer output, ContainerData data) {
+                               SimpleContainer output, ContainerData data, List<BlockPos> crafterPositions) {
         super(ModMenuTypes.RECIPE_PATTERN.get(), containerId);
         this.pos = pos;
         this.patternIndex = patternIndex;
@@ -74,6 +79,7 @@ public class RecipePatternMenu extends AbstractContainerMenu {
         this.ingredientContainer = ingredients;
         this.outputContainer = output;
         this.data = data;
+        this.crafterPositions = List.copyOf(crafterPositions);
         addDataSlots(data);
 
         // Ingredient ghost slots (3×3 grid). Interaction is overridden in clicked().
@@ -179,7 +185,7 @@ public class RecipePatternMenu extends AbstractContainerMenu {
         if (id == 3) {
             if (blockEntity != null && player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.openMenu(blockEntity,
-                    buf -> buf.writeBlockPos(blockEntity.getBlockPos()));
+                    buf -> RecipeMemoryBoxMenu.writeMenuExtraData(buf, blockEntity, player.level()));
             }
             return true;
         }
@@ -223,6 +229,16 @@ public class RecipePatternMenu extends AbstractContainerMenu {
 
     public int getMatchCount() { return data.get(DATA_MATCH_COUNT); }
     public int getSelectedIndex() { return data.get(DATA_SELECTED_INDEX); }
+    public List<BlockPos> getCrafterPositions() { return crafterPositions; }
+    public BlockPos getRmbPos() { return pos; }
+    public int getPatternIndex() { return patternIndex; }
+
+    private static List<BlockPos> readCrafterPositions(FriendlyByteBuf buf) {
+        int count = buf.readInt();
+        List<BlockPos> result = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) result.add(buf.readBlockPos());
+        return result;
+    }
 
     /** Called from the JEI ghost-slot fill packet handler to bulk-set ingredient slots. */
     public void setIngredients(List<ItemStack> items) {
@@ -234,7 +250,8 @@ public class RecipePatternMenu extends AbstractContainerMenu {
     }
 
     /** Factory method used by RecipeMemoryBoxMenu to open this menu for a specific pattern slot. */
-    public static MenuProvider createMenuProvider(RecipeMemoryBoxBlockEntity be, int patternIndex) {
+    public static MenuProvider createMenuProvider(RecipeMemoryBoxBlockEntity be, int patternIndex,
+                                                   List<BlockPos> crafterPositions) {
         return new MenuProvider() {
             @Override
             public Component getDisplayName() {
@@ -242,7 +259,7 @@ public class RecipePatternMenu extends AbstractContainerMenu {
             }
             @Override
             public AbstractContainerMenu createMenu(int containerId, Inventory inv, Player player) {
-                return new RecipePatternMenu(containerId, inv, be, patternIndex);
+                return new RecipePatternMenu(containerId, inv, be, patternIndex, crafterPositions);
             }
         };
     }

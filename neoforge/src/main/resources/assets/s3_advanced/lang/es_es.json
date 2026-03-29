@@ -9,7 +9,11 @@
 
   "block.s3_advanced.recipe_memory_box": "[TRANSLATE] Recipe Memory Box",
 
+  "block.s3_advanced.auto_crafter": "[TRANSLATE] Auto-Crafter",
+  "container.s3_advanced.auto_crafter": "[TRANSLATE] Auto-Crafter",
+
   "gui.s3_advanced.save": "[TRANSLATE] Save",
   "gui.s3_advanced.clear": "[TRANSLATE] Clear",
+  "gui.s3_advanced.assign": "[TRANSLATE] Assign",
   "gui.s3_advanced.recipe_pattern": "[TRANSLATE] Recipe Pattern"
 }

@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.block;
 
 import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
+import io.github.scuba10steve.s3.advanced.gui.server.RecipeMemoryBoxMenu;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,7 +29,7 @@ public class BlockRecipeMemoryBox extends StorageMultiblock implements EntityBlo
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
-        return null; // No ticking needed; passive pattern storage
+        return null;
     }
 
     @Override
@@ -36,9 +37,10 @@ public class BlockRecipeMemoryBox extends StorageMultiblock implements EntityBlo
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             if (level.getBlockEntity(pos) instanceof RecipeMemoryBoxBlockEntity be) {
-                serverPlayer.openMenu(be, buf -> buf.writeBlockPos(pos));
+                serverPlayer.openMenu(be, buf -> RecipeMemoryBoxMenu.writeMenuExtraData(buf, be, level));
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
+
 }

@@ -29,6 +29,9 @@ public class ModItems {
     public static final Supplier<Item> RECIPE_MEMORY_BOX = ITEMS.register("recipe_memory_box",
         () -> new BlockItem(ModBlocks.RECIPE_MEMORY_BOX.get(), new Item.Properties()));
 
+    public static final Supplier<Item> AUTO_CRAFTER = ITEMS.register("auto_crafter",
+        () -> new BlockItem(ModBlocks.AUTO_CRAFTER.get(), new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

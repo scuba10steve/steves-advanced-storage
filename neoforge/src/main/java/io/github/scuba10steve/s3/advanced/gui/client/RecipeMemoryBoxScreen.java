@@ -31,11 +31,4 @@ public class RecipeMemoryBoxScreen extends AbstractContainerScreen<RecipeMemoryB
         graphics.drawString(this.font, this.title, 8, 6, 0x404040, false);
         graphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, 0x404040, false);
     }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTick);
-        super.render(graphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(graphics, mouseX, mouseY);
-    }
 }

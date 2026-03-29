@@ -24,6 +24,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.SOLAR_GENERATOR.get());
                 output.accept(ModItems.COAL_GENERATOR.get());
                 output.accept(ModItems.RECIPE_MEMORY_BOX.get());
+                output.accept(ModItems.AUTO_CRAFTER.get());
             })
             .build()
     );

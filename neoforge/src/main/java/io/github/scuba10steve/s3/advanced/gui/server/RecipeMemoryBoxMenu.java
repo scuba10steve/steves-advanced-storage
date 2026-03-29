@@ -1,8 +1,13 @@
 package io.github.scuba10steve.s3.advanced.gui.server;
 
+import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
+import io.github.scuba10steve.s3.advanced.block.BlockAdvancedStorageCore;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
+import io.github.scuba10steve.s3.block.StorageMultiblock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -12,39 +17,57 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
     public static final int PATTERN_SLOT_COUNT = RecipeMemoryBoxBlockEntity.MAX_PATTERNS;
-    /** Pattern-output display slots occupy indices 0–8 in the menu. */
     private static final int PATTERN_SLOTS_START = 0;
 
     private final BlockPos pos;
-    /** Non-null only on the server side. */
     private final RecipeMemoryBoxBlockEntity blockEntity;
+    /** Positions of Auto-Crafters in the multiblock; populated on server, read on client. */
+    private final List<BlockPos> crafterPositions;
 
-    // Client constructor — called by IMenuTypeExtension factory
+    // Client constructor
     public RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, buf.readBlockPos(), null,
-             new SimpleContainer(PATTERN_SLOT_COUNT));
+             new SimpleContainer(PATTERN_SLOT_COUNT), readCrafterPositions(buf));
     }
 
-    // Server constructor — called from RecipeMemoryBoxBlockEntity.createMenu()
+    // Server constructor
     public RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, RecipeMemoryBoxBlockEntity be) {
         this(containerId, playerInventory, be.getBlockPos(), be,
-             buildDisplayContainer(be));
+             buildDisplayContainer(be), computeCrafterPositions(be));
+    }
+
+    private static List<BlockPos> computeCrafterPositions(RecipeMemoryBoxBlockEntity be) {
+        Level level = be.getLevel();
+        if (level == null) return List.of();
+        AdvancedStorageCoreBlockEntity core = findCore(level, be.getBlockPos());
+        if (core == null) return List.of();
+        return core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos).toList();
     }
 
     private RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, BlockPos pos,
-                                 RecipeMemoryBoxBlockEntity be, SimpleContainer displayContainer) {
+                                 RecipeMemoryBoxBlockEntity be, SimpleContainer displayContainer,
+                                 List<BlockPos> crafterPositions) {
         super(ModMenuTypes.RECIPE_MEMORY_BOX.get(), containerId);
         this.pos = pos;
         this.blockEntity = be;
+        this.crafterPositions = List.copyOf(crafterPositions);
 
-        // 9 read-only pattern-output display slots (3×3 grid)
         for (int i = 0; i < PATTERN_SLOT_COUNT; i++) {
-            int row = i / 3;
-            int col = i % 3;
+            int row = i / 2;
+            int col = i % 2;
             addSlot(new Slot(displayContainer, i, 26 + col * 18, 17 + row * 18) {
                 @Override
                 public boolean mayPickup(Player player) { return false; }
@@ -52,20 +75,25 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
                 public boolean mayPlace(ItemStack stack) { return false; }
             });
         }
-
-        // Player inventory (rows 0-2)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
-        // Player hotbar
         for (int col = 0; col < 9; col++) {
             addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
         }
     }
 
-    /** Populates the display container with each pattern's output item. */
+    /** Returns the list of Auto-Crafter positions in this multiblock (client-side). */
+    public List<BlockPos> getCrafterPositions() {
+        return crafterPositions;
+    }
+
+    public BlockPos getRmbPos() {
+        return pos;
+    }
+
     private static SimpleContainer buildDisplayContainer(RecipeMemoryBoxBlockEntity be) {
         SimpleContainer container = new SimpleContainer(PATTERN_SLOT_COUNT);
         for (int i = 0; i < PATTERN_SLOT_COUNT; i++) {
@@ -74,20 +102,69 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
         return container;
     }
 
+    private static List<BlockPos> readCrafterPositions(FriendlyByteBuf buf) {
+        int count = buf.readInt();
+        List<BlockPos> result = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            result.add(buf.readBlockPos());
+        }
+        return result;
+    }
+
     /**
-     * Intercepts clicks on the 9 pattern display slots (server side only).
-     * Opens the RecipePatternMenu for the clicked slot index.
+     * Writes the full extra data expected by the client constructor:
+     * BlockPos + crafter count + crafter positions.
+     * Call this whenever opening a RecipeMemoryBoxMenu from any server-side path.
      */
+    public static void writeMenuExtraData(FriendlyByteBuf buf, RecipeMemoryBoxBlockEntity be, Level level) {
+        buf.writeBlockPos(be.getBlockPos());
+        AdvancedStorageCoreBlockEntity core = findCore(level, be.getBlockPos());
+        List<BlockPos> crafterPositions = core != null
+            ? core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos).toList()
+            : List.of();
+        buf.writeInt(crafterPositions.size());
+        for (BlockPos cp : crafterPositions) {
+            buf.writeBlockPos(cp);
+        }
+    }
+
+    private static AdvancedStorageCoreBlockEntity findCore(Level level, BlockPos start) {
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        queue.add(start);
+        visited.add(start);
+        while (!queue.isEmpty()) {
+            BlockPos pos = queue.poll();
+            Block block = level.getBlockState(pos).getBlock();
+            if (block instanceof BlockAdvancedStorageCore
+                    && level.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity core) {
+                return core;
+            }
+            if (block instanceof StorageMultiblock || block instanceof BlockAdvancedStorageCore) {
+                for (Direction dir : Direction.values()) {
+                    BlockPos neighbor = pos.relative(dir);
+                    if (!visited.contains(neighbor)) {
+                        visited.add(neighbor);
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (slotId >= PATTERN_SLOTS_START && slotId < PATTERN_SLOTS_START + PATTERN_SLOT_COUNT
                 && blockEntity != null && player instanceof ServerPlayer serverPlayer) {
             int patternIndex = slotId - PATTERN_SLOTS_START;
             serverPlayer.openMenu(
-                RecipePatternMenu.createMenuProvider(blockEntity, patternIndex),
+                RecipePatternMenu.createMenuProvider(blockEntity, patternIndex, crafterPositions),
                 buf -> {
                     buf.writeBlockPos(blockEntity.getBlockPos());
                     buf.writeInt(patternIndex);
+                    buf.writeInt(crafterPositions.size());
+                    for (BlockPos cp : crafterPositions) buf.writeBlockPos(cp);
                 });
             return;
         }
@@ -96,7 +173,7 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        return ItemStack.EMPTY; // No shift-clicking in this menu
+        return ItemStack.EMPTY;
     }
 
     @Override
