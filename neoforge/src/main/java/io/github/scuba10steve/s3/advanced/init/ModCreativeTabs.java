@@ -25,6 +25,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.COAL_GENERATOR.get());
                 output.accept(ModItems.RECIPE_MEMORY_BOX.get());
                 output.accept(ModItems.AUTO_CRAFTER.get());
+                output.accept(ModItems.MACHINE_INTERFACE.get());
             })
             .build()
     );

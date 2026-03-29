@@ -32,6 +32,9 @@ public class ModItems {
     public static final Supplier<Item> AUTO_CRAFTER = ITEMS.register("auto_crafter",
         () -> new BlockItem(ModBlocks.AUTO_CRAFTER.get(), new Item.Properties()));
 
+    public static final Supplier<Item> MACHINE_INTERFACE = ITEMS.register("machine_interface",
+        () -> new BlockItem(ModBlocks.MACHINE_INTERFACE.get(), new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

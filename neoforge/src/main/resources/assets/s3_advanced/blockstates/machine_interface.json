@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "s3_advanced:block/machine_interface"
+    }
+  }
+}

@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.gui.server;
 import io.github.scuba10steve.s3.advanced.block.BlockAdvancedStorageCore;
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
@@ -46,14 +48,13 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
     private static List<BlockPos> computeCrafterPositions(RecipeMemoryBoxBlockEntity be) {
         Level level = be.getLevel();
-        if (level == null) {
-            return List.of();
-        }
+        if (level == null) return List.of();
         AdvancedStorageCoreBlockEntity core = findCore(level, be.getBlockPos());
-        if (core == null) {
-            return List.of();
-        }
-        return core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos).toList();
+        if (core == null) return List.of();
+        return Stream.concat(
+            core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos),
+            core.getMachineInterfaces().stream().map(MachineInterfaceBlockEntity::getBlockPos)
+        ).toList();
     }
 
     private RecipeMemoryBoxMenu(int containerId, Inventory playerInventory, BlockPos pos,
@@ -119,7 +120,10 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
         buf.writeBlockPos(be.getBlockPos());
         AdvancedStorageCoreBlockEntity core = findCore(level, be.getBlockPos());
         List<BlockPos> crafterPositions = core != null
-            ? core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos).toList()
+            ? Stream.concat(
+                core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos),
+                core.getMachineInterfaces().stream().map(MachineInterfaceBlockEntity::getBlockPos)
+              ).toList()
             : List.of();
         buf.writeInt(crafterPositions.size());
         for (BlockPos cp : crafterPositions) {

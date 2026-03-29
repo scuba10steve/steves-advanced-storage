@@ -35,12 +35,31 @@ neoForge {
     }
 }
 
+configurations {
+    s3ModRuntime {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+}
+
 dependencies {
     implementation project(':neoforge')
     compileOnly "maven.modrinth:steves-simple-storage:${s3_version}"
-    additionalRuntimeClasspath "maven.modrinth:steves-simple-storage:${s3_version}"
+    s3ModRuntime "maven.modrinth:steves-simple-storage:${s3_version}"
 
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.14.3"
+}
+
+// Copy the s3 upstream mod JAR into run/mods/ so NeoForge FML discovers it as a mod.
+// additionalRuntimeClasspath only adds to the legacy Java classpath — not to fml.modFolders —
+// so FML never sees it as an installed mod without this step.
+tasks.register('syncS3Mod', Copy) {
+    from configurations.s3ModRuntime
+    into layout.projectDirectory.dir('run/mods')
+}
+
+tasks.named('runGameTestServer') {
+    dependsOn tasks.named('syncS3Mod')
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'

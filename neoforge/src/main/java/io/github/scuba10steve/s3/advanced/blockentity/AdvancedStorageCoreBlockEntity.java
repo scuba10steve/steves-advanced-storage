@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
 import io.github.scuba10steve.s3.advanced.block.BlockAutoCrafter;
+import io.github.scuba10steve.s3.advanced.block.BlockMachineInterface;
 import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
@@ -24,6 +25,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
     private final List<RecipeMemoryBoxBlockEntity> recipeMemoryBoxes = new ArrayList<>();
     private final List<AutoCrafterBlockEntity> autoCrafters = new ArrayList<>();
+    private final List<MachineInterfaceBlockEntity> machineInterfaces = new ArrayList<>();
     // Field initializer avoids a zero-value window before the constructor body runs.
     private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
@@ -79,10 +81,15 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         return Collections.unmodifiableList(autoCrafters);
     }
 
+    public List<MachineInterfaceBlockEntity> getMachineInterfaces() {
+        return Collections.unmodifiableList(machineInterfaces);
+    }
+
     @Override
     public void scanMultiblock() {
         recipeMemoryBoxes.clear();
         autoCrafters.clear();
+        machineInterfaces.clear();
         super.scanMultiblock();
         totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
@@ -110,6 +117,11 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 if (level.getBlockEntity(pos) instanceof AutoCrafterBlockEntity ac) {
                     autoCrafters.add(ac);
                     totalPowerDraw += S3AdvancedConfig.AUTO_CRAFTER_ENERGY_PER_TICK.get();
+                }
+            } else if (state.getBlock() instanceof BlockMachineInterface) {
+                if (level.getBlockEntity(pos) instanceof MachineInterfaceBlockEntity mi) {
+                    machineInterfaces.add(mi);
+                    totalPowerDraw += S3AdvancedConfig.MACHINE_INTERFACE_ENERGY_PER_TICK.get();
                 }
             }
 
@@ -141,6 +153,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                     .map(be -> new CraftingCoordinator.CrafterData(be.getAssignments()))
                     .toList();
             craftingCoordinator.tick(getInventory(), boxSnapshots, crafterSnapshots);
+            for (MachineInterfaceBlockEntity mi : machineInterfaces) {
+                mi.tryTick(getInventory(), level, boxSnapshots);
+            }
         }
     }
 
