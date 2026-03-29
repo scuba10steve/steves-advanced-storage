@@ -44,6 +44,11 @@ public class ModMenuTypes {
             IMenuTypeExtension.create((windowId, inv, data) ->
                 new AutoCrafterMenu(windowId, inv, data)));
 
+    public static final Supplier<MenuType<MachineInterfaceMenu>> MACHINE_INTERFACE =
+        MENU_TYPES.register("machine_interface", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new MachineInterfaceMenu(windowId, inv, data)));
+
     public static void register(IEventBus eventBus) {
         MENU_TYPES.register(eventBus);
     }

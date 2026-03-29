@@ -12,6 +12,13 @@
   "block.s3_advanced.auto_crafter": "Auto-Crafter",
   "container.s3_advanced.auto_crafter": "Auto-Crafter",
 
+  "block.s3_advanced.machine_interface": "Machine Interface",
+  "container.s3_advanced.machine_interface": "Machine Interface",
+  "gui.s3_advanced.status.idle": "Idle",
+  "gui.s3_advanced.status.pushing": "Pushing",
+  "gui.s3_advanced.status.waiting": "Waiting",
+  "gui.s3_advanced.tick_interval": "Every:",
+
   "gui.s3_advanced.save": "Save",
   "gui.s3_advanced.clear": "Clear",
   "gui.s3_advanced.assign": "Assign",

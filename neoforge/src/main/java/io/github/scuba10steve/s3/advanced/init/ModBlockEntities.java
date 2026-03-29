@@ -35,6 +35,11 @@ public class ModBlockEntities {
             BlockEntityType.Builder.of(AutoCrafterBlockEntity::new,
                 ModBlocks.AUTO_CRAFTER.get()).build(null));
 
+    public static final Supplier<BlockEntityType<MachineInterfaceBlockEntity>> MACHINE_INTERFACE =
+        BLOCK_ENTITIES.register("machine_interface", () ->
+            BlockEntityType.Builder.of(MachineInterfaceBlockEntity::new,
+                ModBlocks.MACHINE_INTERFACE.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }
