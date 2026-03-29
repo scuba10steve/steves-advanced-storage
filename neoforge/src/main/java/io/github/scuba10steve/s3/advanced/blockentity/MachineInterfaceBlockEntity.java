@@ -76,6 +76,9 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
     public void clearPattern() {
         this.assignedPattern = null;
         setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
     }
 
     public int getTickInterval() { return tickInterval; }
@@ -155,6 +158,7 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
             }
             extracted.add(got);
         }
+        boolean fullyInserted = true;
         for (ItemStack stack : extracted) {
             ItemStack remaining = stack;
             for (int i = 0; i < handler.getSlots() && !remaining.isEmpty(); i++) {
@@ -162,15 +166,17 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
             }
             if (!remaining.isEmpty()) {
                 inventory.insertItem(remaining);
+                fullyInserted = false;
             }
         }
-        return true;
+        return fullyInserted;
     }
 
     private RecipePattern resolvePattern(List<CraftingCoordinator.BoxData> boxes) {
         for (CraftingCoordinator.BoxData box : boxes) {
             if (box.pos().equals(assignedPattern.pos())) {
-                return box.get(assignedPattern.index());
+                RecipePattern p = box.get(assignedPattern.index());
+                return (p != null && !p.isEmpty()) ? p : null;
             }
         }
         return null;
