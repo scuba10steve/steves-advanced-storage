@@ -1,0 +1,22 @@
+plugins {
+    id 'org.openrewrite.rewrite' version 'latest.release'
+}
+
+rewrite {
+    activeRecipe(
+        // The following recipes can be found in ./rewrite.yml
+        'io.github.scuba10steve.s3.BestPractices',
+        'io.github.scuba10steve.s3.DependencyUpgrade',
+    )
+    setExportDatatables(true)
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    rewrite platform('org.openrewrite.recipe:rewrite-recipe-bom:latest.release')
+    rewrite("org.openrewrite.recipe:rewrite-testing-frameworks")
+    rewrite("org.openrewrite.recipe:rewrite-static-analysis")
+}
