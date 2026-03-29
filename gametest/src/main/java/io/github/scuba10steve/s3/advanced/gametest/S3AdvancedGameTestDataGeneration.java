@@ -37,6 +37,17 @@ public class S3AdvancedGameTestDataGeneration {
             List.of(), List.of()
         ));
 
+        // Core (1,0,1) + storage box (2,0,1) + machine interface (0,0,1) + furnace (0,0,0) adjacent to MI
+        provider.add("core_with_machine_interface", 3, 3, 3, new StructureContent(
+            List.of(
+                new BlockPlacement("s3_advanced:advanced_storage_core", 1, 0, 1),
+                new BlockPlacement("s3:storage_box", 2, 0, 1),
+                new BlockPlacement("s3_advanced:machine_interface", 0, 0, 1),
+                new BlockPlacement("minecraft:furnace", 0, 0, 0)
+            ),
+            List.of(), List.of()
+        ));
+
         // Large multiblock: 10x10x5 filled with ultimate boxes + advanced core at center
         addLargeUltimateStructure(provider);
 
