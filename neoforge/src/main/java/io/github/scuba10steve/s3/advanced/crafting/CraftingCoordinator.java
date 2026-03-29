@@ -4,13 +4,7 @@ import io.github.scuba10steve.s3.storage.StorageInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class CraftingCoordinator {
 
@@ -20,7 +14,9 @@ public class CraftingCoordinator {
      */
     public record BoxData(BlockPos pos, List<RecipePattern> patterns) {
         public RecipePattern get(int index) {
-            if (index < 0 || index >= patterns.size()) return null;
+            if (index < 0 || index >= patterns.size()) {
+                return null;
+            }
             return patterns.get(index);
         }
     }
@@ -73,11 +69,17 @@ public class CraftingCoordinator {
             for (Map.Entry<PatternKey, PerPatternConfig> entry : crafter.assignments().entrySet()) {
                 PatternKey key = entry.getKey();
                 PerPatternConfig config = entry.getValue();
-                if (!config.autoEnabled()) continue;
-                if (pendingAutoBuffer.contains(key)) continue;
+                if (!config.autoEnabled()) {
+                    continue;
+                }
+                if (pendingAutoBuffer.contains(key)) {
+                    continue;
+                }
 
                 RecipePattern pattern = resolvePattern(key, boxes);
-                if (pattern == null) continue;
+                if (pattern == null) {
+                    continue;
+                }
 
                 int current = countItem(inventory, pattern.getOutput());
                 if (current < config.minimumBuffer()) {
@@ -94,12 +96,16 @@ public class CraftingCoordinator {
             }
 
             RecipePattern pattern = resolvePattern(job.patternKey(), boxes);
-            if (pattern == null) continue; // pattern box removed — drop job
+            if (pattern == null) {
+                continue; // pattern box removed — drop job
 
+            }
             boolean hasCrafter = crafters.stream()
                 .anyMatch(c -> c.assignments().containsKey(job.patternKey()));
-            if (!hasCrafter) continue; // no crafter assigned — drop job
+            if (!hasCrafter) {
+                continue; // no crafter assigned — drop job
 
+            }
             List<ItemStack> ingredients = Arrays.asList(pattern.getGrid());
             for (int i = 0; i < job.quantity(); i++) {
                 if (!craftingEngine.execute(ingredients, pattern.getOutput(), inventory)) {
@@ -116,7 +122,9 @@ public class CraftingCoordinator {
      * and sum counts for matching entries.
      */
     private int countItem(StorageInventory inventory, ItemStack template) {
-        if (template.isEmpty()) return 0;
+        if (template.isEmpty()) {
+            return 0;
+        }
         long total = 0;
         for (var stored : inventory.getStoredItems()) {
             if (ItemStack.isSameItemSameComponents(stored.getItemStack(), template)) {
@@ -130,7 +138,7 @@ public class CraftingCoordinator {
         for (BoxData box : boxes) {
             if (box.pos().equals(key.pos())) {
                 RecipePattern p = box.get(key.index());
-                return (p != null && !p.isEmpty()) ? p : null;
+                return p != null && !p.isEmpty() ? p : null;
             }
         }
         return null;

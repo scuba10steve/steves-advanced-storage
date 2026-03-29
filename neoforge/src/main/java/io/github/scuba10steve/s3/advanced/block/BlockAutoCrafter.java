@@ -5,12 +5,11 @@ import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity
 import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
 import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
-import java.util.Map;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
@@ -19,6 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.Map;
 
 public class BlockAutoCrafter extends StorageMultiblock implements EntityBlock {
 

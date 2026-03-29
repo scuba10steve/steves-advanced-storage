@@ -1,11 +1,7 @@
 package io.github.scuba10steve.s3.advanced.init;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
-import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
-import io.github.scuba10steve.s3.advanced.blockentity.CoalGeneratorBlockEntity;
-import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
-import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
-import io.github.scuba10steve.s3.advanced.blockentity.SolarGeneratorBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;

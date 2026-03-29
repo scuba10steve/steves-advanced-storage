@@ -67,7 +67,9 @@ public class AdvancedStorageGameTests {
     public static void hyper_storage_extract_insert_performance(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
 
@@ -140,7 +142,9 @@ public class AdvancedStorageGameTests {
 
         helper.runAfterDelay(20, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, corePos);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
 
@@ -238,7 +242,9 @@ public class AdvancedStorageGameTests {
     public static void insert_when_full_returns_original_stack(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
 
@@ -273,7 +279,9 @@ public class AdvancedStorageGameTests {
     public static void core_placement_triggers_multiblock_scan(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             // Verify initial capacity from template
             long initialCapacity = core.getInventory().getMaxItems();
@@ -291,7 +299,9 @@ public class AdvancedStorageGameTests {
             // Wait a few ticks for the multiblock scan to complete
             helper.runAfterDelay(10, () -> {
                 AdvancedStorageCoreBlockEntity newCore = getAdvancedCore(helper, CORE_POS);
-                if (newCore == null) return;
+                if (newCore == null) {
+                    return;
+                }
 
                 long restoredCapacity = newCore.getInventory().getMaxItems();
                 if (restoredCapacity != 10000) {
@@ -309,7 +319,9 @@ public class AdvancedStorageGameTests {
     public static void stored_items_preserve_insertion_order(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
 
@@ -348,7 +360,9 @@ public class AdvancedStorageGameTests {
     public static void extract_changes_total_count_not_item_types(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
 
@@ -400,7 +414,9 @@ public class AdvancedStorageGameTests {
     public static void crafting_menu_removed_clears_grid_server_side(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
             long countBefore = inv.getTotalItemCount();
@@ -464,7 +480,9 @@ public class AdvancedStorageGameTests {
     private static void assertMultiblockFormsAndStores(GameTestHelper helper, long expectedCapacity) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             StorageInventory inv = core.getInventory();
 

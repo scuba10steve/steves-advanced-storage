@@ -7,11 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
@@ -72,14 +68,18 @@ public class CoalGeneratorMenu extends AbstractContainerMenu {
     public int getBurnProgress() {
         int litTime = containerData.get(0);
         int litDuration = containerData.get(1);
-        if (litDuration == 0) return 0;
+        if (litDuration == 0) {
+            return 0;
+        }
         return litTime * 13 / litDuration;
     }
 
     /** Returns 0-100 for the energy bar fill percentage. */
     public int getEnergyPercent() {
         int capacity = getCapacity();
-        if (capacity == 0) return 0;
+        if (capacity == 0) {
+            return 0;
+        }
         return getEnergyStored() * 100 / capacity;
     }
 
@@ -99,18 +99,24 @@ public class CoalGeneratorMenu extends AbstractContainerMenu {
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if (slot == null || !slot.hasItem()) return result;
+        if (slot == null || !slot.hasItem()) {
+            return result;
+        }
 
         ItemStack slotStack = slot.getItem();
         result = slotStack.copy();
 
         if (index == 0) {
             // Fuel slot -> player inventory
-            if (!this.moveItemStackTo(slotStack, 1, 37, false)) return ItemStack.EMPTY;
+            if (!this.moveItemStackTo(slotStack, 1, 37, false)) {
+                return ItemStack.EMPTY;
+            }
         } else {
             // Player inventory -> fuel slot if valid
             if (blockEntity.fuelHandler.isItemValid(0, slotStack)) {
-                if (!this.moveItemStackTo(slotStack, 0, 1, false)) return ItemStack.EMPTY;
+                if (!this.moveItemStackTo(slotStack, 0, 1, false)) {
+                    return ItemStack.EMPTY;
+                }
             } else {
                 return ItemStack.EMPTY;
             }

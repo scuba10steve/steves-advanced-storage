@@ -21,7 +21,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class SolarGeneratorBlockEntity extends BaseBlockEntity implements MenuProvider {
 
-    private int currentRate = 0;
+    private int currentRate;
 
     public final GeneratorEnergyStorage energyStorage;
 
@@ -41,7 +41,9 @@ public class SolarGeneratorBlockEntity extends BaseBlockEntity implements MenuPr
 
         @Override
         public void set(int index, int value) {
-            if (index == 4) currentRate = value;
+            if (index == 4) {
+                currentRate = value;
+            }
         }
 
         @Override
@@ -58,7 +60,9 @@ public class SolarGeneratorBlockEntity extends BaseBlockEntity implements MenuPr
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, SolarGeneratorBlockEntity be) {
-        if (level.isClientSide()) return;
+        if (level.isClientSide()) {
+            return;
+        }
 
         int maxOutput = S3AdvancedConfig.SOLAR_MAX_OUTPUT.get();
 

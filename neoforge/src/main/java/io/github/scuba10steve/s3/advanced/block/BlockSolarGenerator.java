@@ -28,7 +28,9 @@ public class BlockSolarGenerator extends Block implements EntityBlock {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) return null;
+        if (level.isClientSide()) {
+            return null;
+        }
         return type == ModBlockEntities.SOLAR_GENERATOR.get()
             ? (lvl, pos, blockState, be) -> {
                 if (be instanceof SolarGeneratorBlockEntity sgbe) {

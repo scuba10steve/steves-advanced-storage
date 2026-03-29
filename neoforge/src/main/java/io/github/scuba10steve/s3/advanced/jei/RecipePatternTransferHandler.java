@@ -3,12 +3,12 @@ package io.github.scuba10steve.s3.advanced.jei;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import io.github.scuba10steve.s3.advanced.network.GhostSlotFillPacket;
+import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
-import mezz.jei.api.constants.RecipeTypes;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -18,11 +18,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * JEI recipe transfer handler for RecipePatternMenu.
