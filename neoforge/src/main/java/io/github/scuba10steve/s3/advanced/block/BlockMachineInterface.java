@@ -1,14 +1,22 @@
 package io.github.scuba10steve.s3.advanced.block;
 
 import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
+import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class BlockMachineInterface extends StorageMultiblock implements EntityBlock {
 
@@ -25,5 +33,29 @@ public class BlockMachineInterface extends StorageMultiblock implements EntityBl
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
         return null; // Core drives all logic; this block does not tick independently.
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            if (level.getBlockEntity(pos) instanceof MachineInterfaceBlockEntity be) {
+                serverPlayer.openMenu(be, buf -> {
+                    buf.writeBlockPos(pos);
+                    PatternKey key = be.getAssignedPattern();
+                    buf.writeBoolean(key != null);
+                    if (key != null) {
+                        buf.writeBlockPos(key.pos());
+                        buf.writeInt(key.index());
+                        ItemStack output = ItemStack.EMPTY;
+                        if (level.getBlockEntity(key.pos()) instanceof RecipeMemoryBoxBlockEntity rmbBe) {
+                            output = rmbBe.getPattern(key.index()).getOutput();
+                        }
+                        ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buf, output);
+                    }
+                });
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 }

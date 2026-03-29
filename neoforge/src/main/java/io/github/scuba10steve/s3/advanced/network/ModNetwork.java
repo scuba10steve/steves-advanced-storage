@@ -2,7 +2,9 @@ package io.github.scuba10steve.s3.advanced.network;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
 import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
+import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -38,6 +40,11 @@ public class ModNetwork {
             UpdatePatternConfigPacket.TYPE,
             UpdatePatternConfigPacket.STREAM_CODEC,
             ModNetwork::handleUpdatePatternConfig);
+
+        registrar.playToServer(
+            UpdateMachineInterfaceTickPacket.TYPE,
+            UpdateMachineInterfaceTickPacket.STREAM_CODEC,
+            ModNetwork::handleUpdateMachineTick);
     }
 
     private static void handleGhostSlotFill(GhostSlotFillPacket packet, IPayloadContext context) {
@@ -83,6 +90,18 @@ public class ModNetwork {
                     && level.getBlockEntity(packet.crafterPos()) instanceof AutoCrafterBlockEntity be) {
                 int minimumBuffer = Math.max(0, Math.min(packet.minimumBuffer(), 9999));
                 be.updateConfig(packet.patternKey(), packet.autoEnabled(), minimumBuffer);
+            }
+        });
+    }
+
+    private static void handleUpdateMachineTick(UpdateMachineInterfaceTickPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
+            if (player.containerMenu instanceof MachineInterfaceMenu menu
+                    && menu.stillValid(player)
+                    && player.level() instanceof ServerLevel level
+                    && level.getBlockEntity(packet.pos()) instanceof MachineInterfaceBlockEntity be) {
+                be.setTickInterval(Math.max(1, Math.min(packet.tickInterval(), 1200)));
             }
         });
     }
