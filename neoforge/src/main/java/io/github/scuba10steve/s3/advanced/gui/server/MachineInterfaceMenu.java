@@ -47,7 +47,7 @@ public class MachineInterfaceMenu extends AbstractContainerMenu {
         addDataSlots(this.containerData);
     }
 
-    private static ItemStack resolveOutput(MachineInterfaceBlockEntity be) {
+    public static ItemStack resolveOutput(MachineInterfaceBlockEntity be) {
         PatternKey key = be.getAssignedPattern();
         if (key == null) return ItemStack.EMPTY;
         Level level = be.getLevel();

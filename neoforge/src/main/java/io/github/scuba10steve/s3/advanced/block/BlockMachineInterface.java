@@ -1,8 +1,8 @@
 package io.github.scuba10steve.s3.advanced.block;
 
 import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
-import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
 import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
+import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -47,11 +47,8 @@ public class BlockMachineInterface extends StorageMultiblock implements EntityBl
                     if (key != null) {
                         buf.writeBlockPos(key.pos());
                         buf.writeInt(key.index());
-                        ItemStack output = ItemStack.EMPTY;
-                        if (level.getBlockEntity(key.pos()) instanceof RecipeMemoryBoxBlockEntity rmbBe) {
-                            output = rmbBe.getPattern(key.index()).getOutput();
-                        }
-                        ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buf, output);
+                        ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buf,
+                            MachineInterfaceMenu.resolveOutput(be));
                     }
                 });
             }
