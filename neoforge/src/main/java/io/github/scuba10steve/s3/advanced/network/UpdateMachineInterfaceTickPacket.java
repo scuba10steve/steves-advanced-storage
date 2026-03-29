@@ -2,7 +2,7 @@ package io.github.scuba10steve.s3.advanced.network;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryRegistryFriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
