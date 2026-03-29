@@ -4,6 +4,7 @@ import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity
 import io.github.scuba10steve.s3.advanced.crafting.RecipePattern;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -12,18 +13,12 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-
-import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +79,8 @@ public class RecipePatternMenu extends AbstractContainerMenu {
 
         // Ingredient ghost slots (3×3 grid). Interaction is overridden in clicked().
         for (int i = 0; i < INGREDIENT_SLOTS; i++) {
-            int row = i / 3, col = i % 3;
+            int row = i / 3;
+            int col = i % 3;
             addSlot(new Slot(ingredientContainer, i, 26 + col * 18, 17 + row * 18) {
                 // Slot contents are managed exclusively via clicked(); block default behavior.
                 @Override
@@ -147,7 +143,9 @@ public class RecipePatternMenu extends AbstractContainerMenu {
 
     /** Resolves crafting recipes from the current ingredient grid (server only). */
     private void resolveRecipes() {
-        if (blockEntity == null || !(blockEntity.getLevel() instanceof ServerLevel serverLevel)) return;
+        if (blockEntity == null || !(blockEntity.getLevel() instanceof ServerLevel serverLevel)) {
+            return;
+        }
         matchedRecipes.clear();
 
         List<ItemStack> items = new ArrayList<>(INGREDIENT_SLOTS);
@@ -197,7 +195,9 @@ public class RecipePatternMenu extends AbstractContainerMenu {
             return true;
         }
         int count = data.get(DATA_MATCH_COUNT);
-        if (count == 0) return false;
+        if (count == 0) {
+            return false;
+        }
         int idx = data.get(DATA_SELECTED_INDEX);
         if (id == 1) { // Prev
             data.set(DATA_SELECTED_INDEX, (idx - 1 + count) % count);
@@ -213,7 +213,9 @@ public class RecipePatternMenu extends AbstractContainerMenu {
     }
 
     private void savePattern(Player player) {
-        if (blockEntity == null || !(blockEntity.getLevel() instanceof ServerLevel serverLevel)) return;
+        if (blockEntity == null || !(blockEntity.getLevel() instanceof ServerLevel serverLevel)) {
+            return;
+        }
         RecipePattern pattern = new RecipePattern();
         for (int i = 0; i < INGREDIENT_SLOTS; i++) {
             pattern.setIngredient(i, ingredientContainer.getItem(i));
@@ -236,7 +238,9 @@ public class RecipePatternMenu extends AbstractContainerMenu {
     private static List<BlockPos> readCrafterPositions(FriendlyByteBuf buf) {
         int count = buf.readInt();
         List<BlockPos> result = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) result.add(buf.readBlockPos());
+        for (int i = 0; i < count; i++) {
+            result.add(buf.readBlockPos());
+        }
         return result;
     }
 

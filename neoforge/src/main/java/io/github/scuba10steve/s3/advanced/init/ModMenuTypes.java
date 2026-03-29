@@ -1,12 +1,7 @@
 package io.github.scuba10steve.s3.advanced.init;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
-import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCoreMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.CoalGeneratorMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.RecipeMemoryBoxMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.SolarGeneratorMenu;
+import io.github.scuba10steve.s3.advanced.gui.server.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.IEventBus;

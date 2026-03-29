@@ -1,9 +1,9 @@
 package io.github.scuba10steve.s3.advanced.gui.server;
 
+import io.github.scuba10steve.s3.advanced.block.BlockAdvancedStorageCore;
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
-import io.github.scuba10steve.s3.advanced.block.BlockAdvancedStorageCore;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
 import net.minecraft.core.BlockPos;
@@ -20,12 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
@@ -51,9 +46,13 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
 
     private static List<BlockPos> computeCrafterPositions(RecipeMemoryBoxBlockEntity be) {
         Level level = be.getLevel();
-        if (level == null) return List.of();
+        if (level == null) {
+            return List.of();
+        }
         AdvancedStorageCoreBlockEntity core = findCore(level, be.getBlockPos());
-        if (core == null) return List.of();
+        if (core == null) {
+            return List.of();
+        }
         return core.getAutoCrafters().stream().map(AutoCrafterBlockEntity::getBlockPos).toList();
     }
 
@@ -164,7 +163,9 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
                     buf.writeBlockPos(blockEntity.getBlockPos());
                     buf.writeInt(patternIndex);
                     buf.writeInt(crafterPositions.size());
-                    for (BlockPos cp : crafterPositions) buf.writeBlockPos(cp);
+                    for (BlockPos cp : crafterPositions) {
+                        buf.writeBlockPos(cp);
+                    }
                 });
             return;
         }

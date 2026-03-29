@@ -2,11 +2,7 @@ package io.github.scuba10steve.s3.advanced.gametest;
 
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
-import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
-import io.github.scuba10steve.s3.advanced.crafting.CraftingSource;
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
-import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
-import io.github.scuba10steve.s3.advanced.crafting.RecipePattern;
+import io.github.scuba10steve.s3.advanced.crafting.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -31,7 +27,9 @@ public class AutoCrafterGameTests {
     public static void auto_crafter_discovered_in_multiblock(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             if (core.getAutoCrafters().isEmpty()) {
                 helper.fail("Expected auto-crafter to be discovered in multiblock scan");
@@ -48,7 +46,9 @@ public class AutoCrafterGameTests {
     public static void auto_crafter_contributes_power_draw(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             // totalPowerDraw must be greater than CORE_ENERGY_PER_TICK alone.
             int draw = core.containerData.get(4);
@@ -67,7 +67,9 @@ public class AutoCrafterGameTests {
     public static void auto_crafter_assignments_persist_nbt(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AutoCrafterBlockEntity crafter = getCrafter(helper, AUTO_CRAFTER_POS);
-            if (crafter == null) return;
+            if (crafter == null) {
+                return;
+            }
 
             PatternKey key = new PatternKey(new BlockPos(10, 10, 10), 0);
             crafter.assign(key);
@@ -103,7 +105,9 @@ public class AutoCrafterGameTests {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             AutoCrafterBlockEntity crafter = getCrafter(helper, AUTO_CRAFTER_POS);
-            if (core == null || crafter == null) return;
+            if (core == null || crafter == null) {
+                return;
+            }
 
             // Set up: recipe for 4 OAK_PLANKS → 1 CRAFTING_TABLE
             BlockPos rmbPos = new BlockPos(99, 99, 99); // synthetic box pos (not in world)
@@ -146,7 +150,9 @@ public class AutoCrafterGameTests {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             AutoCrafterBlockEntity crafter = getCrafter(helper, AUTO_CRAFTER_POS);
-            if (core == null || crafter == null) return;
+            if (core == null || crafter == null) {
+                return;
+            }
 
             BlockPos rmbPos = new BlockPos(99, 99, 99);
             PatternKey key = new PatternKey(rmbPos, 0);
@@ -183,13 +189,17 @@ public class AutoCrafterGameTests {
     // Helpers
     // -----------------------------------------------------------------------
     private static AdvancedStorageCoreBlockEntity getCore(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) {
+            return be;
+        }
         helper.fail("AdvancedStorageCoreBlockEntity not found at " + pos);
         return null;
     }
 
     private static AutoCrafterBlockEntity getCrafter(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) {
+            return be;
+        }
         helper.fail("AutoCrafterBlockEntity not found at " + pos);
         return null;
     }

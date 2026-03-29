@@ -52,7 +52,9 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
 
     private static Map<PatternKey, ItemStack> resolveOutputItems(AutoCrafterBlockEntity be) {
         Level level = be.getLevel();
-        if (level == null) return Map.of();
+        if (level == null) {
+            return Map.of();
+        }
         Map<PatternKey, ItemStack> result = new LinkedHashMap<>();
         for (PatternKey key : be.getAssignments().keySet()) {
             ItemStack output = ItemStack.EMPTY;

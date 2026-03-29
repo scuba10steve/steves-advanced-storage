@@ -27,7 +27,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
     /** X of the list area within the GUI background. */
     private static final int LIST_LEFT = 8;
 
-    private int scrollOffset = 0;
+    private int scrollOffset;
 
     /** Snapshot of assignments, updated from menu and on optimistic client updates. */
     private final List<Map.Entry<PatternKey, PerPatternConfig>> rows = new ArrayList<>();
@@ -64,7 +64,9 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
 
         for (int i = 0; i < VISIBLE_ROWS; i++) {
             int dataIndex = i + scrollOffset;
-            if (dataIndex >= rows.size()) break;
+            if (dataIndex >= rows.size()) {
+                break;
+            }
 
             Map.Entry<PatternKey, PerPatternConfig> entry = rows.get(dataIndex);
             PerPatternConfig cfg = entry.getValue();
@@ -132,7 +134,9 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
 
         for (int i = 0; i < VISIBLE_ROWS; i++) {
             int dataIndex = i + scrollOffset;
-            if (dataIndex >= rows.size()) break;
+            if (dataIndex >= rows.size()) {
+                break;
+            }
 
             Map.Entry<PatternKey, PerPatternConfig> entry = rows.get(dataIndex);
             PatternKey key = entry.getKey();

@@ -23,7 +23,9 @@ public class BlockAdvancedStorageCore extends BlockStorageCore {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) return null;
+        if (level.isClientSide()) {
+            return null;
+        }
         return type == ModBlockEntities.ADVANCED_STORAGE_CORE.get()
             ? (lvl, pos, blockState, be) -> {
                 if (be instanceof AdvancedStorageCoreBlockEntity asc) {

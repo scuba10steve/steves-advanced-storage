@@ -44,3 +44,6 @@ dependencies {
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
