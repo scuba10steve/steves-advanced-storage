@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.network;
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
@@ -59,12 +60,17 @@ public class ModNetwork {
     private static void handleAssignPattern(AssignPatternPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
-            // AssignPatternPacket is sent from RecipePatternScreen
-            if (player.containerMenu instanceof RecipePatternMenu menu
-                    && menu.stillValid(player)
-                    && player.level() instanceof ServerLevel level
-                    && level.getBlockEntity(packet.crafterPos()) instanceof AutoCrafterBlockEntity be) {
-                be.assign(packet.patternKey());
+            if (!(player.containerMenu instanceof RecipePatternMenu menu) || !menu.stillValid(player)) {
+                return;
+            }
+            if (!(player.level() instanceof ServerLevel level)) {
+                return;
+            }
+            BlockEntity be = level.getBlockEntity(packet.crafterPos());
+            if (be instanceof AutoCrafterBlockEntity ac) {
+                ac.assign(packet.patternKey());
+            } else if (be instanceof MachineInterfaceBlockEntity mi) {
+                mi.setPattern(packet.patternKey());
             }
         });
     }
