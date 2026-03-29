@@ -1,5 +1,6 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
+import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.blockentity.BaseBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -18,11 +19,11 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("container.s3_advanced.machine_interface");
+        return Component.translatable("block.s3_advanced.machine_interface");
     }
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
-        return null;
+        return new MachineInterfaceMenu(id, inv, this);
     }
 }

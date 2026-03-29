@@ -24,6 +24,6 @@ public class BlockMachineInterface extends StorageMultiblock implements EntityBl
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
-        return null;
+        return null; // Core drives all logic; this block does not tick independently.
     }
 }
