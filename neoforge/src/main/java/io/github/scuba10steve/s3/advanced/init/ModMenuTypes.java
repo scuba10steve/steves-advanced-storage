@@ -49,6 +49,16 @@ public class ModMenuTypes {
             IMenuTypeExtension.create((windowId, inv, data) ->
                 new MachineInterfaceMenu(windowId, inv, data)));
 
+    public static final Supplier<MenuType<AdvancedStorageDisplayMenu>> ADVANCED_STORAGE_DISPLAY =
+        MENU_TYPES.register("advanced_storage_display", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new AdvancedStorageDisplayMenu(windowId, inv, data)));
+
+    public static final Supplier<MenuType<AdvancedStorageCraftingDisplayMenu>> ADVANCED_STORAGE_CRAFTING_DISPLAY =
+        MENU_TYPES.register("advanced_storage_crafting_display", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new AdvancedStorageCraftingDisplayMenu(windowId, inv, data)));
+
     public static void register(IEventBus eventBus) {
         MENU_TYPES.register(eventBus);
     }
