@@ -7,7 +7,13 @@ import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingEngine;
+import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
+import io.github.scuba10steve.s3.advanced.crafting.RecipePattern;
+import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCraftingDisplayMenu;
+import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageDisplayMenu;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
+import io.github.scuba10steve.s3.advanced.network.CraftableSyncPacket;
+import io.github.scuba10steve.s3.block.BlockCraftingBox;
 import io.github.scuba10steve.s3.blockentity.StorageCoreBlockEntity;
 import io.github.scuba10steve.s3.util.BlockRef;
 import net.minecraft.core.BlockPos;
@@ -15,9 +21,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -26,6 +37,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     private final List<RecipeMemoryBoxBlockEntity> recipeMemoryBoxes = new ArrayList<>();
     private final List<AutoCrafterBlockEntity> autoCrafters = new ArrayList<>();
     private final List<MachineInterfaceBlockEntity> machineInterfaces = new ArrayList<>();
+    private boolean advancedHasCraftingBox = false;
     // Field initializer avoids a zero-value window before the constructor body runs.
     private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
@@ -90,6 +102,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         recipeMemoryBoxes.clear();
         autoCrafters.clear();
         machineInterfaces.clear();
+        advancedHasCraftingBox = false;
         super.scanMultiblock();
         totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
@@ -123,6 +136,8 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                     machineInterfaces.add(mi);
                     totalPowerDraw += S3AdvancedConfig.MACHINE_INTERFACE_ENERGY_PER_TICK.get();
                 }
+            } else if (state.getBlock() instanceof BlockCraftingBox) {
+                advancedHasCraftingBox = true;
             }
 
             for (Direction dir : Direction.values()) {
@@ -135,6 +150,10 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                     }
                 }
             }
+        }
+
+        if (level != null && !level.isClientSide) {
+            sendCraftableSyncToViewers();
         }
     }
 
@@ -169,6 +188,54 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         energyStorage.setEnergy(tag.getInt("energy"));
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        // Call super to trigger StorageSyncPacket delivery (side effect).
+        // Return value is discarded.
+        super.createMenu(containerId, playerInventory, player);
+
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer,
+                new CraftableSyncPacket(worldPosition, collectCraftableEntries()));
+        }
+
+        if (advancedHasCraftingBox) {
+            return new AdvancedStorageCraftingDisplayMenu(containerId, playerInventory, worldPosition);
+        } else {
+            return new AdvancedStorageDisplayMenu(containerId, playerInventory, worldPosition);
+        }
+    }
+
+    private List<CraftableSyncPacket.Entry> collectCraftableEntries() {
+        List<CraftableSyncPacket.Entry> entries = new ArrayList<>();
+        for (RecipeMemoryBoxBlockEntity rmb : recipeMemoryBoxes) {
+            List<RecipePattern> patterns = rmb.getPatterns();
+            for (int i = 0; i < patterns.size(); i++) {
+                RecipePattern pattern = patterns.get(i);
+                if (!pattern.isEmpty() && !pattern.getOutput().isEmpty()) {
+                    entries.add(new CraftableSyncPacket.Entry(
+                        new PatternKey(rmb.getBlockPos(), i),
+                        pattern.getOutput().copy()
+                    ));
+                }
+            }
+        }
+        return entries;
+    }
+
+    private void sendCraftableSyncToViewers() {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        CraftableSyncPacket packet = new CraftableSyncPacket(worldPosition, collectCraftableEntries());
+        for (net.minecraft.server.level.ServerPlayer player : serverLevel.players()) {
+            if ((player.containerMenu instanceof AdvancedStorageDisplayMenu m && m.getPos().equals(worldPosition))
+                    || (player.containerMenu instanceof AdvancedStorageCraftingDisplayMenu m2 && m2.getPos().equals(worldPosition))) {
+                PacketDistributor.sendToPlayer(player, packet);
+            }
+        }
     }
 
     public static class InternalEnergyStorage extends EnergyStorage {
