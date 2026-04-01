@@ -58,6 +58,10 @@ tasks.register('syncS3Mod', Copy) {
     into layout.projectDirectory.dir('run/mods')
 }
 
+tasks.named('runData') {
+    dependsOn tasks.named('syncS3Mod')
+}
+
 tasks.named('runGameTestServer') {
     dependsOn tasks.named('syncS3Mod')
 }
