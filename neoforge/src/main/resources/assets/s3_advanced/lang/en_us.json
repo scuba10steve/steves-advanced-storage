@@ -22,5 +22,9 @@
   "gui.s3_advanced.save": "Save",
   "gui.s3_advanced.clear": "Clear",
   "gui.s3_advanced.assign": "Assign",
-  "gui.s3_advanced.recipe_pattern": "Recipe Pattern"
+  "gui.s3_advanced.recipe_pattern": "Recipe Pattern",
+  "tooltip.s3_advanced.craftable": "Craftable (Ctrl+click)",
+  "gui.s3_advanced.craft_quantity": "Quantity:",
+  "gui.s3_advanced.craft_confirm": "Craft",
+  "gui.s3_advanced.craft_cancel": "Cancel"
 }
