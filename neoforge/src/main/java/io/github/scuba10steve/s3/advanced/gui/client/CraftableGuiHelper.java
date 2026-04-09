@@ -2,11 +2,13 @@ package io.github.scuba10steve.s3.advanced.gui.client;
 
 import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
 import io.github.scuba10steve.s3.advanced.network.CraftableSyncPacket;
+import io.github.scuba10steve.s3.storage.StoredItemStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,5 +64,32 @@ public class CraftableGuiHelper {
      */
     public static boolean isCraftTrigger(int button) {
         return button == 0 && Screen.hasControlDown();
+    }
+
+    /**
+     * Returns a new list that is {@code base} plus one virtual entry (count 0) for each
+     * craftable output that is not already present in {@code base}.
+     * Used by screen subclasses to show craftable-but-not-stored items in the display.
+     */
+    public static List<StoredItemStack> withCraftableItems(List<StoredItemStack> base,
+                                                            List<CraftableSyncPacket.Entry> entries) {
+        if (entries.isEmpty()) {
+            return base;
+        }
+        List<StoredItemStack> result = new ArrayList<>(base);
+        outer:
+        for (CraftableSyncPacket.Entry entry : entries) {
+            ItemStack output = entry.output();
+            if (output.isEmpty()) {
+                continue;
+            }
+            for (StoredItemStack existing : base) {
+                if (ItemStack.isSameItemSameComponents(existing.getItemStack(), output)) {
+                    continue outer; // already present in storage
+                }
+            }
+            result.add(new StoredItemStack(output.copyWithCount(1), 0));
+        }
+        return result;
     }
 }

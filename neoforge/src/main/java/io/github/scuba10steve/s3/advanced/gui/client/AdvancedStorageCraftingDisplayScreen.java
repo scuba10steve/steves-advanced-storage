@@ -25,6 +25,19 @@ public class AdvancedStorageCraftingDisplayScreen extends StorageCoreCraftingScr
     }
 
     @Override
+    public List<StoredItemStack> getDisplayItems() {
+        return CraftableGuiHelper.withCraftableItems(
+            super.getDisplayItems(), CraftableClientData.get(menu.getPos()));
+    }
+
+    @Override
+    protected void updateFilteredItems() {
+        super.updateFilteredItems();
+        filteredItems = CraftableGuiHelper.withCraftableItems(
+            filteredItems, CraftableClientData.get(menu.getPos()));
+    }
+
+    @Override
     protected List<Component> getTooltipFromContainerItem(ItemStack stack) {
         List<Component> tooltip = new ArrayList<>(super.getTooltipFromContainerItem(stack));
         CraftableGuiHelper.appendCraftableTooltip(
