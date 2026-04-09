@@ -1,7 +1,7 @@
 package io.github.scuba10steve.s3.advanced.network;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
+import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -19,7 +19,7 @@ import java.util.List;
 public record CraftableSyncPacket(BlockPos corePos, List<Entry> entries)
         implements CustomPacketPayload {
 
-    public record Entry(PatternKey patternKey, ItemStack output) {}
+    public record Entry(CrafterSlot crafterSlot, ItemStack output) {}
 
     public static final Type<CraftableSyncPacket> TYPE = new Type<>(
         ResourceLocation.fromNamespaceAndPath(StevesAdvancedStorage.MOD_ID, "craftable_sync"));
@@ -31,8 +31,8 @@ public record CraftableSyncPacket(BlockPos corePos, List<Entry> entries)
         buf.writeBlockPos(p.corePos());
         buf.writeInt(p.entries().size());
         for (Entry e : p.entries()) {
-            buf.writeBlockPos(e.patternKey().pos());
-            buf.writeInt(e.patternKey().index());
+            buf.writeBlockPos(e.crafterSlot().crafterPos());
+            buf.writeInt(e.crafterSlot().slotIndex());
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, e.output());
         }
     }
@@ -42,9 +42,9 @@ public record CraftableSyncPacket(BlockPos corePos, List<Entry> entries)
         int count = buf.readInt();
         List<Entry> entries = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            PatternKey key = new PatternKey(buf.readBlockPos(), buf.readInt());
+            CrafterSlot slot = new CrafterSlot(buf.readBlockPos(), buf.readInt());
             ItemStack output = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
-            entries.add(new Entry(key, output));
+            entries.add(new Entry(slot, output));
         }
         return new CraftableSyncPacket(corePos, entries);
     }

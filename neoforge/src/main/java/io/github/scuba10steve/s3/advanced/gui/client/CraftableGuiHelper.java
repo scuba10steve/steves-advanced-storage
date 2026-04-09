@@ -1,6 +1,6 @@
 package io.github.scuba10steve.s3.advanced.gui.client;
 
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
+import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
 import io.github.scuba10steve.s3.advanced.network.CraftableSyncPacket;
 import io.github.scuba10steve.s3.storage.StoredItemStack;
 import net.minecraft.ChatFormatting;
@@ -33,13 +33,13 @@ public class CraftableGuiHelper {
     }
 
     /**
-     * Returns the PatternKey for the first entry whose output matches the item,
+     * Returns the CrafterSlot for the first entry whose output matches the item,
      * or empty if the item is not craftable.
      */
-    public static Optional<PatternKey> findPatternKey(ItemStack item, List<CraftableSyncPacket.Entry> entries) {
+    public static Optional<CrafterSlot> findCrafterSlot(ItemStack item, List<CraftableSyncPacket.Entry> entries) {
         for (CraftableSyncPacket.Entry e : entries) {
             if (ItemStack.isSameItemSameComponents(e.output(), item)) {
-                return Optional.of(e.patternKey());
+                return Optional.of(e.crafterSlot());
             }
         }
         return Optional.empty();

@@ -7,9 +7,9 @@ import io.github.scuba10steve.s3.advanced.block.BlockMachineInterface;
 import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
+import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingEngine;
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
 import io.github.scuba10steve.s3.advanced.crafting.RecipePattern;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCraftingDisplayMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageDisplayMenu;
@@ -28,6 +28,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
@@ -44,6 +45,8 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     private final List<AutoCrafterBlockEntity> autoCrafters = new ArrayList<>();
     private final List<MachineInterfaceBlockEntity> machineInterfaces = new ArrayList<>();
     private final List<IEnergyStorage> energyProviders = new ArrayList<>();
+    private final Map<RecipeMemoryBoxBlockEntity, AutoCrafterBlockEntity> rmbToCrafter = new LinkedHashMap<>();
+    private final Map<RecipeMemoryBoxBlockEntity, MachineInterfaceBlockEntity> rmbToMachineInterface = new LinkedHashMap<>();
     private boolean advancedHasCraftingBox = false;
     // Field initializer avoids a zero-value window before the constructor body runs.
     private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
@@ -102,6 +105,57 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
     public List<MachineInterfaceBlockEntity> getMachineInterfaces() {
         return Collections.unmodifiableList(machineInterfaces);
+    }
+
+    /** Returns the RMB currently paired to the given crafter, or null. */
+    public RecipeMemoryBoxBlockEntity getRmbForCrafter(AutoCrafterBlockEntity crafter) {
+        return rmbToCrafter.entrySet().stream()
+            .filter(e -> e.getValue() == crafter)
+            .map(Map.Entry::getKey)
+            .findFirst().orElse(null);
+    }
+
+    /** Returns the RMB currently paired to the given MI, or null. */
+    public RecipeMemoryBoxBlockEntity getRmbForMachineInterface(MachineInterfaceBlockEntity mi) {
+        return rmbToMachineInterface.entrySet().stream()
+            .filter(e -> e.getValue() == mi)
+            .map(Map.Entry::getKey)
+            .findFirst().orElse(null);
+    }
+
+    /** Read-only view of the RMB→crafter map, for tests. */
+    public Map<RecipeMemoryBoxBlockEntity, AutoCrafterBlockEntity> getRmbToCrafter() {
+        return Collections.unmodifiableMap(rmbToCrafter);
+    }
+
+    /**
+     * BFS from start, following multiblock-connected blocks, to find the
+     * AdvancedStorageCoreBlockEntity. Used by menus that need core state on GUI open.
+     */
+    public static AdvancedStorageCoreBlockEntity findCore(Level level, BlockPos start) {
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<BlockPos> bfsQueue = new ArrayDeque<>();
+        bfsQueue.add(start);
+        visited.add(start);
+        while (!bfsQueue.isEmpty()) {
+            BlockPos pos = bfsQueue.poll();
+            net.minecraft.world.level.block.Block block = level.getBlockState(pos).getBlock();
+            if (block instanceof io.github.scuba10steve.s3.advanced.block.BlockAdvancedStorageCore
+                    && level.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity core) {
+                return core;
+            }
+            if (block instanceof io.github.scuba10steve.s3.block.StorageMultiblock
+                    || block instanceof io.github.scuba10steve.s3.advanced.block.BlockAdvancedStorageCore) {
+                for (Direction dir : Direction.values()) {
+                    BlockPos neighbor = pos.relative(dir);
+                    if (!visited.contains(neighbor)) {
+                        visited.add(neighbor);
+                        bfsQueue.add(neighbor);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -167,6 +221,27 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
             }
         }
 
+        // Resolve RMB → crafter pairs based on RMB facing direction
+        rmbToCrafter.clear();
+        rmbToMachineInterface.clear();
+        Set<Object> claimed = new HashSet<>();
+        for (RecipeMemoryBoxBlockEntity rmb : recipeMemoryBoxes) {
+            if (level == null) continue;
+            Direction facing = rmb.getBlockState().getValue(
+                io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox.FACING);
+            BlockPos facingPos = rmb.getBlockPos().relative(facing);
+            net.minecraft.world.level.block.entity.BlockEntity facingBe = level.getBlockEntity(facingPos);
+            if (facingBe instanceof AutoCrafterBlockEntity ac
+                    && autoCrafters.contains(ac) && !claimed.contains(ac)) {
+                rmbToCrafter.put(rmb, ac);
+                claimed.add(ac);
+            } else if (facingBe instanceof MachineInterfaceBlockEntity mi
+                    && machineInterfaces.contains(mi) && !claimed.contains(mi)) {
+                rmbToMachineInterface.put(rmb, mi);
+                claimed.add(mi);
+            }
+        }
+
         if (level != null && !level.isClientSide) {
             sendCraftableSyncToViewers();
         }
@@ -186,17 +261,14 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         }
         if (energyStorage.consume(totalPowerDraw)) {
             setChanged();
-            List<CraftingCoordinator.BoxData> boxSnapshots = recipeMemoryBoxes.stream()
-                    .map(be -> new CraftingCoordinator.BoxData(be.getBlockPos(), be.getPatterns()))
-                    .toList();
-            List<CraftingCoordinator.CrafterData> crafterSnapshots = autoCrafters.stream()
-                    .map(be -> new CraftingCoordinator.CrafterData(be.getAssignments()))
-                    .toList();
-            if (craftingCoordinator.tick(getInventory(), boxSnapshots, crafterSnapshots)) {
+            if (craftingCoordinator.tick(getInventory(), rmbToCrafter)) {
                 forceSyncToClients();
             }
             for (MachineInterfaceBlockEntity mi : machineInterfaces) {
-                mi.tryTick(getInventory(), level, boxSnapshots);
+                RecipeMemoryBoxBlockEntity pairedRmb = getRmbForMachineInterface(mi);
+                RecipePattern pattern = pairedRmb != null ? pairedRmb.getPattern(0) : null;
+                mi.tryTick(getInventory(), level,
+                    (pattern != null && !pattern.isEmpty()) ? pattern : null);
             }
         } else if (craftingCoordinator.getQueueSize() > 0) {
             LOGGER.debug("[Core] Energy check failed: stored={} needed={} queueSize={}",
@@ -236,13 +308,15 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
     private List<CraftableSyncPacket.Entry> collectCraftableEntries() {
         List<CraftableSyncPacket.Entry> entries = new ArrayList<>();
-        for (RecipeMemoryBoxBlockEntity rmb : recipeMemoryBoxes) {
+        for (Map.Entry<RecipeMemoryBoxBlockEntity, AutoCrafterBlockEntity> entry : rmbToCrafter.entrySet()) {
+            RecipeMemoryBoxBlockEntity rmb = entry.getKey();
+            AutoCrafterBlockEntity crafter = entry.getValue();
             List<RecipePattern> patterns = rmb.getPatterns();
             for (int i = 0; i < patterns.size(); i++) {
                 RecipePattern pattern = patterns.get(i);
                 if (!pattern.isEmpty() && !pattern.getOutput().isEmpty()) {
                     entries.add(new CraftableSyncPacket.Entry(
-                        new PatternKey(rmb.getBlockPos(), i),
+                        new CrafterSlot(crafter.getBlockPos(), i),
                         pattern.getOutput().copy()
                     ));
                 }
