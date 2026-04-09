@@ -1,5 +1,7 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.github.scuba10steve.s3.advanced.block.BlockAutoCrafter;
 import io.github.scuba10steve.s3.advanced.block.BlockMachineInterface;
 import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
@@ -27,16 +29,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
 public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedStorageCoreBlockEntity.class);
+
     private final List<RecipeMemoryBoxBlockEntity> recipeMemoryBoxes = new ArrayList<>();
     private final List<AutoCrafterBlockEntity> autoCrafters = new ArrayList<>();
     private final List<MachineInterfaceBlockEntity> machineInterfaces = new ArrayList<>();
+    private final List<IEnergyStorage> energyProviders = new ArrayList<>();
     private boolean advancedHasCraftingBox = false;
     // Field initializer avoids a zero-value window before the constructor body runs.
     private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
@@ -102,6 +109,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         recipeMemoryBoxes.clear();
         autoCrafters.clear();
         machineInterfaces.clear();
+        energyProviders.clear();
         advancedHasCraftingBox = false;
         super.scanMultiblock();
         totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
@@ -147,6 +155,13 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                     if (isPartOfMultiblock(ref)) {
                         visited.add(neighbor);
                         queue.add(neighbor);
+                    } else {
+                        // Non-multiblock neighbor: collect as energy provider if it can be extracted from.
+                        IEnergyStorage provider = level.getCapability(
+                            Capabilities.EnergyStorage.BLOCK, neighbor, dir.getOpposite());
+                        if (provider != null && provider.canExtract()) {
+                            energyProviders.add(provider);
+                        }
                     }
                 }
             }
@@ -163,6 +178,12 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         if (level == null || level.isClientSide) {
             return;
         }
+        for (IEnergyStorage provider : energyProviders) {
+            int space = energyStorage.receiveEnergy(Integer.MAX_VALUE, true);
+            if (space <= 0) break;
+            int extracted = provider.extractEnergy(space, false);
+            if (extracted > 0) energyStorage.receiveEnergy(extracted, false);
+        }
         if (energyStorage.consume(totalPowerDraw)) {
             setChanged();
             List<CraftingCoordinator.BoxData> boxSnapshots = recipeMemoryBoxes.stream()
@@ -171,10 +192,15 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
             List<CraftingCoordinator.CrafterData> crafterSnapshots = autoCrafters.stream()
                     .map(be -> new CraftingCoordinator.CrafterData(be.getAssignments()))
                     .toList();
-            craftingCoordinator.tick(getInventory(), boxSnapshots, crafterSnapshots);
+            if (craftingCoordinator.tick(getInventory(), boxSnapshots, crafterSnapshots)) {
+                forceSyncToClients();
+            }
             for (MachineInterfaceBlockEntity mi : machineInterfaces) {
                 mi.tryTick(getInventory(), level, boxSnapshots);
             }
+        } else if (craftingCoordinator.getQueueSize() > 0) {
+            LOGGER.debug("[Core] Energy check failed: stored={} needed={} queueSize={}",
+                energyStorage.getEnergyStored(), totalPowerDraw, craftingCoordinator.getQueueSize());
         }
     }
 

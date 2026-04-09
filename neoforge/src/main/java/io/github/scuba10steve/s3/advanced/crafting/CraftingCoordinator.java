@@ -3,10 +3,14 @@ package io.github.scuba10steve.s3.advanced.crafting;
 import io.github.scuba10steve.s3.storage.StorageInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class CraftingCoordinator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CraftingCoordinator.class);
 
     /**
      * Snapshot of one Recipe Memory Box: its world position and pattern list.
@@ -63,7 +67,8 @@ public class CraftingCoordinator {
      * @param boxes      Snapshot of all Recipe Memory Boxes (patterns by box position).
      * @param crafters   Snapshot of all Auto-Crafters (assignments per crafter).
      */
-    public void tick(StorageInventory inventory, List<BoxData> boxes, List<CrafterData> crafters) {
+    public boolean tick(StorageInventory inventory, List<BoxData> boxes, List<CrafterData> crafters) {
+        boolean crafted = false;
         // 1. Auto-buffer check: enqueue jobs for patterns below their minimum buffer.
         for (CrafterData crafter : crafters) {
             for (Map.Entry<PatternKey, PerPatternConfig> entry : crafter.assignments().entrySet()) {
@@ -91,28 +96,35 @@ public class CraftingCoordinator {
         // 2. Dispatch: drain the queue, resolve pattern, find a crafter, execute.
         while (!queue.isEmpty()) {
             CraftingJob job = queue.poll();
+            LOGGER.debug("[Coordinator] Dispatching job patternKey={} qty={} source={}", job.patternKey(), job.quantity(), job.source());
             if (job.source() == CraftingSource.AUTO_BUFFER) {
                 pendingAutoBuffer.remove(job.patternKey());
             }
 
             RecipePattern pattern = resolvePattern(job.patternKey(), boxes);
             if (pattern == null) {
+                LOGGER.debug("[Coordinator] DROPPED: resolvePattern returned null for {} (boxes={})", job.patternKey(), boxes.stream().map(BoxData::pos).toList());
                 continue; // pattern box removed — drop job
-
             }
             boolean hasCrafter = crafters.stream()
                 .anyMatch(c -> c.assignments().containsKey(job.patternKey()));
             if (!hasCrafter) {
+                LOGGER.debug("[Coordinator] DROPPED: no crafter assigned for {} (crafter keys={})",
+                    job.patternKey(), crafters.stream().flatMap(c -> c.assignments().keySet().stream()).toList());
                 continue; // no crafter assigned — drop job
-
             }
             List<ItemStack> ingredients = Arrays.asList(pattern.getGrid());
             for (int i = 0; i < job.quantity(); i++) {
-                if (!craftingEngine.execute(ingredients, pattern.getOutput(), inventory)) {
+                boolean success = craftingEngine.execute(ingredients, pattern.getOutput(), inventory);
+                LOGGER.debug("[Coordinator] execute iteration {}/{}: {}", i + 1, job.quantity(), success ? "OK" : "FAILED (missing ingredients)");
+                if (success) {
+                    crafted = true;
+                } else {
                     break; // missing ingredients — stop this job without retry
                 }
             }
         }
+        return crafted;
     }
 
     /**
