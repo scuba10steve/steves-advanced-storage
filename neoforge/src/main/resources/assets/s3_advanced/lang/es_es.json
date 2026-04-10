@@ -21,7 +21,8 @@
 
   "gui.s3_advanced.save": "[TRANSLATE] Save",
   "gui.s3_advanced.clear": "[TRANSLATE] Clear",
-  "gui.s3_advanced.assign": "[TRANSLATE] Assign",
+  "gui.s3_advanced.auto_crafter_name": "[TRANSLATE] Name (optional)",
+  "gui.s3_advanced.no_paired_rmb": "[TRANSLATE] No paired Recipe Memory Box",
   "gui.s3_advanced.recipe_pattern": "[TRANSLATE] Recipe Pattern",
   "tooltip.s3_advanced.craftable": "[TRANSLATE] Craftable (Ctrl+click)",
   "gui.s3_advanced.craft_quantity": "[TRANSLATE] Quantity:",
