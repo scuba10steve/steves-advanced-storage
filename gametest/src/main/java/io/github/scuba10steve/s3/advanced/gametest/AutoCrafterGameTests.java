@@ -2,23 +2,21 @@ package io.github.scuba10steve.s3.advanced.gametest;
 
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
-import io.github.scuba10steve.s3.advanced.crafting.*;
+import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-
-import java.util.List;
 
 @GameTestHolder("s3_advanced")
 @PrefixGameTestTemplate(false)
 public class AutoCrafterGameTests {
 
+    // core_with_auto_crafter template: Core at (1,0,1), AutoCrafter at (0,0,1).
+    // Game test helper adds 1 to Y (floor is Y=0 in template, Y=1 in test coords).
     private static final BlockPos CORE_POS         = new BlockPos(1, 1, 1);
-    private static final BlockPos AUTO_CRAFTER_POS  = new BlockPos(0, 1, 1);
+    private static final BlockPos AUTO_CRAFTER_POS = new BlockPos(0, 1, 1);
 
     // -----------------------------------------------------------------------
     // Test: Auto-Crafter is discovered by scanMultiblock
@@ -50,7 +48,7 @@ public class AutoCrafterGameTests {
                 return;
             }
 
-            // totalPowerDraw must be greater than CORE_ENERGY_PER_TICK alone.
+            // totalPowerDraw must be greater than zero (core base draw + auto-crafter draw).
             int draw = core.containerData.get(4);
             if (draw <= 0) {
                 helper.fail("totalPowerDraw not updated after auto-crafter joined multiblock");
@@ -61,30 +59,23 @@ public class AutoCrafterGameTests {
     }
 
     // -----------------------------------------------------------------------
-    // Test: Assign/unassign persists in NBT
+    // Test: PerPatternConfig persists across NBT round-trip
     // -----------------------------------------------------------------------
     @GameTest(template = "core_with_auto_crafter", setupTicks = 5)
-    public static void auto_crafter_assignments_persist_nbt(GameTestHelper helper) {
+    public static void auto_crafter_configs_persist_nbt(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AutoCrafterBlockEntity crafter = getCrafter(helper, AUTO_CRAFTER_POS);
             if (crafter == null) {
                 return;
             }
 
-            PatternKey key = new PatternKey(new BlockPos(10, 10, 10), 0);
-            crafter.assign(key);
-            crafter.updateConfig(key, true, 5);
+            crafter.setConfig(0, new PerPatternConfig(true, 5));
 
             // Simulate save/load via NBT round-trip
-            // getUpdateTag() delegates to saveWithoutMetadata() which calls saveAdditional()
             net.minecraft.nbt.CompoundTag tag = crafter.getUpdateTag(helper.getLevel().registryAccess());
             crafter.loadAdditional(tag, helper.getLevel().registryAccess());
 
-            PerPatternConfig loaded = crafter.getAssignments().get(key);
-            if (loaded == null) {
-                helper.fail("Assignment lost after NBT round-trip");
-                return;
-            }
+            PerPatternConfig loaded = crafter.getConfigs()[0];
             if (!loaded.autoEnabled()) {
                 helper.fail("autoEnabled should be true after NBT round-trip");
                 return;
@@ -98,87 +89,24 @@ public class AutoCrafterGameTests {
     }
 
     // -----------------------------------------------------------------------
-    // Test: Coordinator dispatches GUI_REQUEST job to the auto-crafter
+    // Test: Custom name persists across NBT round-trip
     // -----------------------------------------------------------------------
-    @GameTest(template = "core_with_auto_crafter", setupTicks = 10)
-    public static void coordinator_dispatches_gui_request(GameTestHelper helper) {
+    @GameTest(template = "core_with_auto_crafter", setupTicks = 5)
+    public static void auto_crafter_custom_name_persists_nbt(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
-            AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             AutoCrafterBlockEntity crafter = getCrafter(helper, AUTO_CRAFTER_POS);
-            if (core == null || crafter == null) {
+            if (crafter == null) {
                 return;
             }
 
-            // Set up: recipe for 4 OAK_PLANKS → 1 CRAFTING_TABLE
-            BlockPos rmbPos = new BlockPos(99, 99, 99); // synthetic box pos (not in world)
-            PatternKey key = new PatternKey(rmbPos, 0);
+            crafter.setCustomName("FurnaceCrafter");
 
-            RecipePattern pattern = new RecipePattern();
-            pattern.setIngredient(0, new ItemStack(Items.OAK_PLANKS, 4));
-            pattern.setOutput(new ItemStack(Items.CRAFTING_TABLE, 1));
+            net.minecraft.nbt.CompoundTag tag = crafter.getUpdateTag(helper.getLevel().registryAccess());
+            crafter.loadAdditional(tag, helper.getLevel().registryAccess());
 
-            // Assign the pattern to the crafter
-            crafter.assign(key);
-
-            // Put ingredients in inventory
-            core.getInventory().insertItem(new ItemStack(Items.OAK_PLANKS, 4));
-
-            // Manually tick the coordinator with the pattern data
-            var boxData = List.of(
-                new CraftingCoordinator.BoxData(rmbPos, List.of(pattern)));
-            var crafterData = List.of(
-                new CraftingCoordinator.CrafterData(crafter.getAssignments()));
-
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.GUI_REQUEST);
-            core.craftingCoordinator.tick(core.getInventory(), boxData, crafterData);
-
-            // Verify output was produced
-            ItemStack result = core.getInventory().extractItem(new ItemStack(Items.CRAFTING_TABLE), 1);
-            if (result.isEmpty()) {
-                helper.fail("Expected CRAFTING_TABLE in inventory after dispatch");
-                return;
-            }
-            helper.succeed();
-        });
-    }
-
-    // -----------------------------------------------------------------------
-    // Test: Auto-buffer enqueues a job when stock is below minimum
-    // -----------------------------------------------------------------------
-    @GameTest(template = "core_with_auto_crafter", setupTicks = 10)
-    public static void coordinator_auto_buffer_enqueues_when_below_minimum(GameTestHelper helper) {
-        helper.runAfterDelay(5, () -> {
-            AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
-            AutoCrafterBlockEntity crafter = getCrafter(helper, AUTO_CRAFTER_POS);
-            if (core == null || crafter == null) {
-                return;
-            }
-
-            BlockPos rmbPos = new BlockPos(99, 99, 99);
-            PatternKey key = new PatternKey(rmbPos, 0);
-
-            RecipePattern pattern = new RecipePattern();
-            pattern.setIngredient(0, new ItemStack(Items.OAK_PLANKS, 4));
-            pattern.setOutput(new ItemStack(Items.CRAFTING_TABLE, 1));
-
-            // Assign with autoEnabled=true, minimumBuffer=1 (inventory has 0 crafting tables)
-            crafter.assign(key);
-            crafter.updateConfig(key, true, 1);
-
-            // Put ingredients in inventory
-            core.getInventory().insertItem(new ItemStack(Items.OAK_PLANKS, 4));
-
-            var boxData = List.of(
-                new CraftingCoordinator.BoxData(rmbPos, List.of(pattern)));
-            var crafterData = List.of(
-                new CraftingCoordinator.CrafterData(crafter.getAssignments()));
-
-            // tick() should auto-enqueue and dispatch
-            core.craftingCoordinator.tick(core.getInventory(), boxData, crafterData);
-
-            ItemStack result = core.getInventory().extractItem(new ItemStack(Items.CRAFTING_TABLE), 1);
-            if (result.isEmpty()) {
-                helper.fail("Expected CRAFTING_TABLE crafted by auto-buffer");
+            if (!"FurnaceCrafter".equals(crafter.getCustomName())) {
+                helper.fail("customName should be 'FurnaceCrafter' after NBT round-trip, got: "
+                    + crafter.getCustomName());
                 return;
             }
             helper.succeed();

@@ -37,6 +37,18 @@ public class S3AdvancedGameTestDataGeneration {
             List.of(), List.of()
         ));
 
+        // Core (1,0,1) + RecipeMemoryBox (2,0,1) facing east + AutoCrafter (3,0,1)
+        // RMB FACING=east means it points toward positive X, i.e., toward the crafter at X=3.
+        provider.add("core_with_rmb_and_crafter", 5, 3, 3, new StructureContent(
+            List.of(
+                new BlockPlacement("s3_advanced:advanced_storage_core", 1, 0, 1),
+                new BlockPlacement("s3_advanced:recipe_memory_box", 2, 0, 1,
+                    java.util.Map.of("facing", "east")),
+                new BlockPlacement("s3_advanced:auto_crafter", 3, 0, 1)
+            ),
+            List.of(), List.of()
+        ));
+
         // Core (1,0,1) + storage box (2,0,1) + machine interface (0,0,1) + chest (0,0,0) adjacent to MI.
         // A chest is used rather than a furnace: furnaces only accept items through specific faces
         // (input slot = TOP, fuel = SIDES), so a horizontally-adjacent furnace would reject items.
