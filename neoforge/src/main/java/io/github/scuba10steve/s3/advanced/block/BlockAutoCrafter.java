@@ -1,7 +1,10 @@
 package io.github.scuba10steve.s3.advanced.block;
 
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
+import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
+import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -36,8 +39,16 @@ public class BlockAutoCrafter extends StorageMultiblock implements EntityBlock {
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             if (level.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) {
-                // Stub buf writer to match the stub client constructor (Task 5 will expand this)
-                serverPlayer.openMenu(be, buf -> buf.writeBlockPos(pos));
+                serverPlayer.openMenu(be, buf -> {
+                    buf.writeBlockPos(be.getBlockPos());
+                    buf.writeUtf(be.getCustomName(), 32);
+                    ItemStack[] outputs = AutoCrafterMenu.resolveOutputItems(be);
+                    PerPatternConfig[] configs = be.getConfigs();
+                    for (int i = 0; i < AutoCrafterBlockEntity.SLOT_COUNT; i++) {
+                        configs[i].encode(buf);
+                        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, outputs[i]);
+                    }
+                });
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
