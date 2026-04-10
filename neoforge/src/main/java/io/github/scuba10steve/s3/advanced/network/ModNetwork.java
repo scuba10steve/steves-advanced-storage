@@ -2,22 +2,25 @@ package io.github.scuba10steve.s3.advanced.network;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingSource;
+import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import io.github.scuba10steve.s3.advanced.gui.client.CraftableClientData;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCraftingDisplayMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageDisplayMenu;
+import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @EventBusSubscriber(modid = StevesAdvancedStorage.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ModNetwork {
@@ -34,16 +37,6 @@ public class ModNetwork {
             ModNetwork::handleGhostSlotFill);
 
         registrar.playToServer(
-            AssignPatternPacket.TYPE,
-            AssignPatternPacket.STREAM_CODEC,
-            ModNetwork::handleAssignPattern);
-
-        registrar.playToServer(
-            UnassignPatternPacket.TYPE,
-            UnassignPatternPacket.STREAM_CODEC,
-            ModNetwork::handleUnassignPattern);
-
-        registrar.playToServer(
             UpdatePatternConfigPacket.TYPE,
             UpdatePatternConfigPacket.STREAM_CODEC,
             ModNetwork::handleUpdatePatternConfig);
@@ -52,6 +45,11 @@ public class ModNetwork {
             UpdateMachineInterfaceTickPacket.TYPE,
             UpdateMachineInterfaceTickPacket.STREAM_CODEC,
             ModNetwork::handleUpdateMachineTick);
+
+        registrar.playToServer(
+            RenameAutoCrafterPacket.TYPE,
+            RenameAutoCrafterPacket.STREAM_CODEC,
+            ModNetwork::handleRenameAutoCrafter);
 
         registrar.playToClient(
             CraftableSyncPacket.TYPE,
@@ -73,16 +71,17 @@ public class ModNetwork {
         });
     }
 
-    private static void handleAssignPattern(AssignPatternPacket packet, IPayloadContext context) {
-        // TODO Task 4/5: update to use face-based pairing; no-op until then
-    }
-
-    private static void handleUnassignPattern(UnassignPatternPacket packet, IPayloadContext context) {
-        // TODO Task 4/5: update to use face-based pairing; no-op until then
-    }
-
     private static void handleUpdatePatternConfig(UpdatePatternConfigPacket packet, IPayloadContext context) {
-        // TODO Task 4/5: update to use CrafterSlot-based config; no-op until then
+        context.enqueueWork(() -> {
+            Player player = context.player();
+            if (player.containerMenu instanceof AutoCrafterMenu menu
+                    && menu.stillValid(player)
+                    && player.level() instanceof ServerLevel level
+                    && level.getBlockEntity(packet.crafterPos()) instanceof AutoCrafterBlockEntity be) {
+                int minBuffer = Math.max(0, Math.min(packet.minimumBuffer(), 9999));
+                be.setConfig(packet.slotIndex(), new PerPatternConfig(packet.autoEnabled(), minBuffer));
+            }
+        });
     }
 
     private static void handleUpdateMachineTick(UpdateMachineInterfaceTickPacket packet, IPayloadContext context) {
@@ -93,6 +92,18 @@ public class ModNetwork {
                     && player.level() instanceof ServerLevel level
                     && level.getBlockEntity(packet.pos()) instanceof MachineInterfaceBlockEntity be) {
                 be.setTickInterval(Math.max(1, Math.min(packet.tickInterval(), 1200)));
+            }
+        });
+    }
+
+    private static void handleRenameAutoCrafter(RenameAutoCrafterPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
+            if (player.containerMenu instanceof AutoCrafterMenu menu
+                    && menu.stillValid(player)
+                    && player.level() instanceof ServerLevel level
+                    && level.getBlockEntity(packet.crafterPos()) instanceof AutoCrafterBlockEntity be) {
+                be.setCustomName(packet.name());
             }
         });
     }

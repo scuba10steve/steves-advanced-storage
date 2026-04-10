@@ -1,9 +1,7 @@
 package io.github.scuba10steve.s3.advanced.gui.client;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
 import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
-import io.github.scuba10steve.s3.advanced.network.AssignPatternPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -11,8 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.network.PacketDistributor;
-
 import java.util.List;
 
 public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMenu> {
@@ -166,8 +162,7 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
             for (int i = 0; i < crafters.size(); i++) {
                 int entryY = panelY + 12 + i * 12;
                 if (isInBounds(mouseX, mouseY, panelX + 2, entryY, panelW - 4, 11)) {
-                    PatternKey key = new PatternKey(menu.getRmbPos(), menu.getPatternIndex());
-                    PacketDistributor.sendToServer(new AssignPatternPacket(crafters.get(i), key));
+                    // TODO Task 5: send assign packet when AutoCrafterMenu is rewritten
                     pickerOpen = false;
                     return true;
                 }
