@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
 public class GameTestStructureProvider implements DataProvider {
@@ -21,7 +22,12 @@ public class GameTestStructureProvider implements DataProvider {
     private final String namespace;
     private final List<StructureDefinition> structures = new ArrayList<>();
 
-    public record BlockPlacement(String block, int x, int y, int z) {}
+    public record BlockPlacement(String block, int x, int y, int z, Map<String, String> properties) {
+        /** Convenience constructor for blocks with no state properties. */
+        public BlockPlacement(String block, int x, int y, int z) {
+            this(block, x, y, z, Map.of());
+        }
+    }
 
     public record EntityPlacement(String entity, double x, double y, double z) {}
 
@@ -78,13 +84,22 @@ public class GameTestStructureProvider implements DataProvider {
         size.add(IntTag.valueOf(def.sizeZ()));
         tag.put("size", size);
 
-        // Build palette and blocks from content
+        // Build palette and blocks from content.
+        // The palette key includes sorted properties so that the same block with different
+        // states maps to distinct palette entries (e.g. RMB facing=east vs facing=north).
         Map<String, Integer> paletteMap = new LinkedHashMap<>();
-        paletteMap.put("minecraft:air", 0);
+        // Map from palette key -> BlockPlacement (so we can write properties into the palette later)
+        Map<String, BlockPlacement> paletteKeyToPlacement = new LinkedHashMap<>();
+        String airKey = "minecraft:air";
+        paletteMap.put(airKey, 0);
+        paletteKeyToPlacement.put(airKey, new BlockPlacement("minecraft:air", 0, 0, 0));
 
         ListTag blocksList = new ListTag();
         for (BlockPlacement bp : def.content().blocks()) {
-            int stateIndex = paletteMap.computeIfAbsent(bp.block(), k -> paletteMap.size());
+            // Build a stable palette key: "block[prop1=val1,prop2=val2]"
+            String paletteKey = buildPaletteKey(bp);
+            int stateIndex = paletteMap.computeIfAbsent(paletteKey, k -> paletteMap.size());
+            paletteKeyToPlacement.putIfAbsent(paletteKey, bp);
 
             CompoundTag blockEntry = new CompoundTag();
             ListTag pos = new ListTag();
@@ -98,9 +113,16 @@ public class GameTestStructureProvider implements DataProvider {
         tag.put("blocks", blocksList);
 
         ListTag palette = new ListTag();
-        for (String blockName : paletteMap.keySet()) {
+        for (Map.Entry<String, BlockPlacement> kv : paletteKeyToPlacement.entrySet()) {
+            BlockPlacement bp = kv.getValue();
             CompoundTag entry = new CompoundTag();
-            entry.putString("Name", blockName);
+            entry.putString("Name", bp.block());
+            if (!bp.properties().isEmpty()) {
+                CompoundTag propsTag = new CompoundTag();
+                // Write properties in sorted order for determinism
+                new TreeMap<>(bp.properties()).forEach(propsTag::putString);
+                entry.put("Properties", propsTag);
+            }
             palette.add(entry);
         }
         tag.put("palette", palette);
@@ -130,6 +152,16 @@ public class GameTestStructureProvider implements DataProvider {
             return CompletableFuture.failedFuture(
                 new RuntimeException("Failed to write structure: " + id, e));
         }
+    }
+
+    private static String buildPaletteKey(BlockPlacement bp) {
+        if (bp.properties().isEmpty()) {
+            return bp.block();
+        }
+        StringBuilder sb = new StringBuilder(bp.block()).append('[');
+        new TreeMap<>(bp.properties()).forEach((k, v) -> sb.append(k).append('=').append(v).append(','));
+        sb.setCharAt(sb.length() - 1, ']');
+        return sb.toString();
     }
 
     private static CompoundTag createEntityTag(String entityId, double x, double y, double z, CompoundTag extraNbt) {
