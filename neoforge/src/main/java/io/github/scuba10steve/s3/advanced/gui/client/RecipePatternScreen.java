@@ -106,7 +106,4 @@ public class RecipePatternScreen extends AbstractContainerScreen<RecipePatternMe
         this.renderTooltip(graphics, mouseX, mouseY);
     }
 
-    private boolean isInBounds(double mouseX, double mouseY, int x, int y, int w, int h) {
-        return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
-    }
 }
