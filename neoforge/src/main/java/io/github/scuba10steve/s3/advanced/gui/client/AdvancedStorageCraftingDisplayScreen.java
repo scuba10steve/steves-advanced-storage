@@ -1,6 +1,6 @@
 package io.github.scuba10steve.s3.advanced.gui.client;
 
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
+import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCraftingDisplayMenu;
 import io.github.scuba10steve.s3.advanced.network.CraftableSyncPacket;
 import io.github.scuba10steve.s3.gui.client.StorageCoreCraftingScreen;
@@ -65,7 +65,7 @@ public class AdvancedStorageCraftingDisplayScreen extends StorageCoreCraftingScr
                 if (slotIdx < items.size()) {
                     ItemStack stack = items.get(slotIdx).getItemStack();
                     List<CraftableSyncPacket.Entry> entries = CraftableClientData.get(menu.getPos());
-                    Optional<PatternKey> key = CraftableGuiHelper.findPatternKey(stack, entries);
+                    Optional<CrafterSlot> key = CraftableGuiHelper.findCrafterSlot(stack, entries);
                     if (key.isPresent()) {
                         quantityOverlay = new CraftQuantityOverlay(
                             font, width, height, stack, key.get(), menu.getPos(),

@@ -1,6 +1,6 @@
 package io.github.scuba10steve.s3.advanced.gui.client;
 
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
+import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
 import io.github.scuba10steve.s3.advanced.network.CraftRequestPacket;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,7 +32,7 @@ public class CraftQuantityOverlay {
     private final int panelX;
     private final int panelY;
     private final ItemStack item;
-    private final PatternKey patternKey;
+    private final CrafterSlot crafterSlot;
     private final BlockPos corePos;
     private final Runnable onClose;
 
@@ -41,13 +41,13 @@ public class CraftQuantityOverlay {
     private final Button cancelButton;
 
     public CraftQuantityOverlay(Font font, int screenWidth, int screenHeight,
-                                 ItemStack item, PatternKey patternKey, BlockPos corePos,
+                                 ItemStack item, CrafterSlot crafterSlot, BlockPos corePos,
                                  Runnable onClose) {
         this.font = font;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.item = item.copy();
-        this.patternKey = patternKey;
+        this.crafterSlot = crafterSlot;
         this.corePos = corePos;
         this.onClose = onClose;
 
@@ -74,7 +74,7 @@ public class CraftQuantityOverlay {
 
     private void confirm() {
         int qty = parseQuantity();
-        PacketDistributor.sendToServer(new CraftRequestPacket(corePos, patternKey, qty));
+        PacketDistributor.sendToServer(new CraftRequestPacket(corePos, crafterSlot, qty));
         onClose.run();
     }
 

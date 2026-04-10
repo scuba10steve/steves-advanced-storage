@@ -1,11 +1,11 @@
 package io.github.scuba10steve.s3.advanced.gui.client;
 
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
 import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
-import io.github.scuba10steve.s3.advanced.network.UnassignPatternPacket;
+import io.github.scuba10steve.s3.advanced.network.RenameAutoCrafterPacket;
 import io.github.scuba10steve.s3.advanced.network.UpdatePatternConfigPacket;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -13,101 +13,106 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> {
 
-    /** Visible rows in the assignment list area. */
-    private static final int VISIBLE_ROWS = 4;
     private static final int ROW_HEIGHT = 22;
-    /** Y offset of the first row within the GUI background (below title). */
-    private static final int LIST_TOP = 18;
-    /** X of the list area within the GUI background. */
+    private static final int LIST_TOP = 28;
     private static final int LIST_LEFT = 8;
 
-    private int scrollOffset;
-
-    /** Snapshot of assignments, updated from menu and on optimistic client updates. */
-    private final List<Map.Entry<PatternKey, PerPatternConfig>> rows = new ArrayList<>();
+    private EditBox nameField;
 
     public AutoCrafterScreen(AutoCrafterMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 176;
-        this.imageHeight = 112;
+        this.imageHeight = 120;
     }
 
     @Override
     protected void init() {
         super.init();
-        refreshRows();
+        int x = (this.width - this.imageWidth) / 2;
+        int y = (this.height - this.imageHeight) / 2;
+
+        nameField = new EditBox(this.font, x + 8, y + 14, 160, 12,
+            Component.translatable("gui.s3_advanced.auto_crafter_name"));
+        nameField.setMaxLength(32);
+        nameField.setValue(menu.getCustomName());
+        addRenderableWidget(nameField);
     }
 
-    private void refreshRows() {
-        rows.clear();
-        rows.addAll(menu.getAssignments().entrySet());
-        scrollOffset = Math.max(0, Math.min(scrollOffset, Math.max(0, rows.size() - VISIBLE_ROWS)));
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // Send rename on Enter
+        if (keyCode == 257 /* Enter */ && nameField.isFocused()) {
+            PacketDistributor.sendToServer(
+                new RenameAutoCrafterPacket(menu.getBlockPos(), nameField.getValue()));
+            nameField.setFocused(false);
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public void removed() {
+        // Send rename when GUI closes
+        PacketDistributor.sendToServer(
+            new RenameAutoCrafterPacket(menu.getBlockPos(), nameField.getValue()));
+        super.removed();
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
-        renderRows(graphics, mouseX, mouseY);
+        renderSlots(graphics, mouseX, mouseY);
         this.renderTooltip(graphics, mouseX, mouseY);
     }
 
-    private void renderRows(GuiGraphics graphics, int mouseX, int mouseY) {
+    private void renderSlots(GuiGraphics graphics, int mouseX, int mouseY) {
         int guiX = (this.width - this.imageWidth) / 2;
         int guiY = (this.height - this.imageHeight) / 2;
+        ItemStack[] outputs = menu.getOutputItems();
 
-        for (int i = 0; i < VISIBLE_ROWS; i++) {
-            int dataIndex = i + scrollOffset;
-            if (dataIndex >= rows.size()) {
-                break;
-            }
+        boolean anyPaired = false;
+        for (ItemStack s : outputs) { if (!s.isEmpty()) { anyPaired = true; break; } }
 
-            Map.Entry<PatternKey, PerPatternConfig> entry = rows.get(dataIndex);
-            PerPatternConfig cfg = entry.getValue();
+        if (!anyPaired) {
+            graphics.drawString(this.font,
+                Component.translatable("gui.s3_advanced.no_paired_rmb"),
+                guiX + LIST_LEFT, guiY + LIST_TOP + 10, 0xFFAAAAAA, false);
+            return;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            PerPatternConfig cfg = menu.getConfigs()[i];
             int rowX = guiX + LIST_LEFT;
             int rowY = guiY + LIST_TOP + i * ROW_HEIGHT;
 
-            // Row background
             graphics.fill(rowX, rowY, rowX + 160, rowY + ROW_HEIGHT - 1, 0x22FFFFFF);
 
-            // Output item icon
-            ItemStack outputItem = menu.getOutputItems().getOrDefault(entry.getKey(), ItemStack.EMPTY);
-            if (!outputItem.isEmpty()) {
-                graphics.renderItem(outputItem, rowX + 2, rowY + 3);
+            // Output item
+            ItemStack output = outputs[i];
+            if (!output.isEmpty()) {
+                graphics.renderItem(output, rowX + 2, rowY + 3);
             } else {
                 graphics.fill(rowX + 2, rowY + 3, rowX + 18, rowY + 19, 0xFF555555);
             }
 
-            // Auto-buffer toggle
+            // Auto toggle
             String autoLabel = cfg.autoEnabled() ? "Auto: ON" : "Auto: OFF";
             int autoColor = cfg.autoEnabled() ? 0xFF00FF00 : 0xFFAAAAAA;
             graphics.drawString(this.font, autoLabel, rowX + 22, rowY + 3, autoColor, false);
 
-            // Min buffer: "Min: [-] N [+]"
+            // Min buffer: [-] N [+]
             graphics.drawString(this.font, "Min:", rowX + 22, rowY + 13, 0xFFAAAAAA, false);
-            boolean decHovered = isInBounds(mouseX, mouseY, rowX + 48, rowY + 11, 14, 10);
-            boolean incHovered = isInBounds(mouseX, mouseY, rowX + 92, rowY + 11, 14, 10);
-            graphics.drawString(this.font, "[-]", rowX + 48, rowY + 13, decHovered ? 0xFFFFFFFF : 0xFFFF8888, false);
-            graphics.drawString(this.font, String.valueOf(cfg.minimumBuffer()), rowX + 66, rowY + 13, 0xFFFFFFFF, false);
-            graphics.drawString(this.font, "[+]", rowX + 92, rowY + 13, incHovered ? 0xFFFFFFFF : 0xFF88FF88, false);
-
-            // Remove indicator
-            graphics.drawString(this.font, "[X]", rowX + 145, rowY + 7, 0xFFFF4444, false);
-        }
-
-        // Scroll indicator (if list overflows)
-        if (rows.size() > VISIBLE_ROWS) {
-            int total = rows.size();
-            int scrollbarHeight = (int) ((float) VISIBLE_ROWS / total * (VISIBLE_ROWS * ROW_HEIGHT));
-            int scrollbarY = guiY + LIST_TOP + (int) ((float) scrollOffset / (total - VISIBLE_ROWS) * (VISIBLE_ROWS * ROW_HEIGHT));
-            graphics.fill(guiX + 168, guiY + LIST_TOP, guiX + 170, guiY + LIST_TOP + VISIBLE_ROWS * ROW_HEIGHT, 0xFF444444);
-            graphics.fill(guiX + 168, scrollbarY, guiX + 170, scrollbarY + scrollbarHeight, 0xFFCCCCCC);
+            boolean decHov = isInBounds(mouseX, mouseY, rowX + 48, rowY + 11, 14, 10);
+            boolean incHov = isInBounds(mouseX, mouseY, rowX + 92, rowY + 11, 14, 10);
+            graphics.drawString(this.font, "[-]", rowX + 48, rowY + 13,
+                decHov ? 0xFFFFFFFF : 0xFFFF8888, false);
+            graphics.drawString(this.font, String.valueOf(cfg.minimumBuffer()),
+                rowX + 66, rowY + 13, 0xFFFFFFFF, false);
+            graphics.drawString(this.font, "[+]", rowX + 92, rowY + 13,
+                incHov ? 0xFFFFFFFF : 0xFF88FF88, false);
         }
     }
 
@@ -125,82 +130,55 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button != 0) {
-            return super.mouseClicked(mouseX, mouseY, button);
-        }
-
+        if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
         int guiX = (this.width - this.imageWidth) / 2;
         int guiY = (this.height - this.imageHeight) / 2;
 
-        for (int i = 0; i < VISIBLE_ROWS; i++) {
-            int dataIndex = i + scrollOffset;
-            if (dataIndex >= rows.size()) {
-                break;
-            }
-
-            Map.Entry<PatternKey, PerPatternConfig> entry = rows.get(dataIndex);
-            PatternKey key = entry.getKey();
-            PerPatternConfig cfg = entry.getValue();
+        for (int i = 0; i < 4; i++) {
+            PerPatternConfig cfg = menu.getConfigs()[i];
             int rowX = guiX + LIST_LEFT;
             int rowY = guiY + LIST_TOP + i * ROW_HEIGHT;
 
-            // Auto toggle — click anywhere on the auto label area
+            // Auto toggle
             if (isInBounds(mouseX, mouseY, rowX + 22, rowY + 3, 80, 10)) {
                 boolean newAuto = !cfg.autoEnabled();
-                // Optimistic update
-                rows.set(dataIndex, Map.entry(key, new PerPatternConfig(newAuto, cfg.minimumBuffer())));
+                PerPatternConfig newCfg = new PerPatternConfig(newAuto, cfg.minimumBuffer());
+                menu.setConfig(i, newCfg);
                 PacketDistributor.sendToServer(new UpdatePatternConfigPacket(
-                    menu.getBlockPos(), key, newAuto, cfg.minimumBuffer()));
+                    menu.getBlockPos(), i, newAuto, cfg.minimumBuffer()));
                 return true;
             }
 
-            // [-] decrement button
+            // Decrement
             if (isInBounds(mouseX, mouseY, rowX + 48, rowY + 11, 14, 10)) {
-                ItemStack outputItem = menu.getOutputItems().getOrDefault(key, ItemStack.EMPTY);
-                int amount = Screen.hasShiftDown() && !outputItem.isEmpty()
-                    ? outputItem.getMaxStackSize() : 1;
+                ItemStack output = menu.getOutputItems()[i];
+                int amount = Screen.hasShiftDown() && !output.isEmpty()
+                    ? output.getMaxStackSize() : 1;
                 int newMin = Math.max(0, cfg.minimumBuffer() - amount);
-                rows.set(dataIndex, Map.entry(key, new PerPatternConfig(cfg.autoEnabled(), newMin)));
+                PerPatternConfig newCfg = new PerPatternConfig(cfg.autoEnabled(), newMin);
+                menu.setConfig(i, newCfg);
                 PacketDistributor.sendToServer(new UpdatePatternConfigPacket(
-                    menu.getBlockPos(), key, cfg.autoEnabled(), newMin));
+                    menu.getBlockPos(), i, cfg.autoEnabled(), newMin));
                 return true;
             }
 
-            // [+] increment button
+            // Increment
             if (isInBounds(mouseX, mouseY, rowX + 92, rowY + 11, 14, 10)) {
-                ItemStack outputItem = menu.getOutputItems().getOrDefault(key, ItemStack.EMPTY);
-                int amount = Screen.hasShiftDown() && !outputItem.isEmpty()
-                    ? outputItem.getMaxStackSize() : 1;
+                ItemStack output = menu.getOutputItems()[i];
+                int amount = Screen.hasShiftDown() && !output.isEmpty()
+                    ? output.getMaxStackSize() : 1;
                 int newMin = Math.min(cfg.minimumBuffer() + amount, 9999);
-                rows.set(dataIndex, Map.entry(key, new PerPatternConfig(cfg.autoEnabled(), newMin)));
+                PerPatternConfig newCfg = new PerPatternConfig(cfg.autoEnabled(), newMin);
+                menu.setConfig(i, newCfg);
                 PacketDistributor.sendToServer(new UpdatePatternConfigPacket(
-                    menu.getBlockPos(), key, cfg.autoEnabled(), newMin));
-                return true;
-            }
-
-            // Remove button — [X] label area
-            if (isInBounds(mouseX, mouseY, rowX + 145, rowY + 3, 18, 16)) {
-                rows.remove(dataIndex);
-                scrollOffset = Math.max(0, Math.min(scrollOffset, Math.max(0, rows.size() - VISIBLE_ROWS)));
-                PacketDistributor.sendToServer(new UnassignPatternPacket(menu.getBlockPos(), key));
+                    menu.getBlockPos(), i, cfg.autoEnabled(), newMin));
                 return true;
             }
         }
-
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        int maxScroll = Math.max(0, rows.size() - VISIBLE_ROWS);
-        if (maxScroll > 0) {
-            scrollOffset = (int) Math.max(0, Math.min(maxScroll, scrollOffset - scrollY));
-            return true;
-        }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
-    }
-
-    private boolean isInBounds(double mouseX, double mouseY, int x, int y, int w, int h) {
-        return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
+    private boolean isInBounds(double mx, double my, int x, int y, int w, int h) {
+        return mx >= x && mx < x + w && my >= y && my < y + h;
     }
 }

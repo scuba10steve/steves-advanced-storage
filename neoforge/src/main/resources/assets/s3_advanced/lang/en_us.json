@@ -21,7 +21,8 @@
 
   "gui.s3_advanced.save": "Save",
   "gui.s3_advanced.clear": "Clear",
-  "gui.s3_advanced.assign": "Assign",
+  "gui.s3_advanced.auto_crafter_name": "Name (optional)",
+  "gui.s3_advanced.no_paired_rmb": "No paired Recipe Memory Box",
   "gui.s3_advanced.recipe_pattern": "Recipe Pattern",
   "tooltip.s3_advanced.craftable": "Craftable (Ctrl+click)",
   "gui.s3_advanced.craft_quantity": "Quantity:",

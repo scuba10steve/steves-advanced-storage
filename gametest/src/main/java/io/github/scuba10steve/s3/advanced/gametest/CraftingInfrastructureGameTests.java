@@ -1,8 +1,8 @@
 package io.github.scuba10steve.s3.advanced.gametest;
 
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
+import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingSource;
-import io.github.scuba10steve.s3.advanced.crafting.PatternKey;
 import io.github.scuba10steve.s3.storage.StorageInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -29,6 +29,7 @@ public class CraftingInfrastructureGameTests {
             }
 
             StorageInventory inv = core.getInventory();
+            inv.setMaxItems(1000L);
             inv.insertItem(new ItemStack(Items.OAK_PLANKS, 4));
 
             List<ItemStack> ingredients = List.of(new ItemStack(Items.OAK_PLANKS, 4));
@@ -61,6 +62,7 @@ public class CraftingInfrastructureGameTests {
             }
 
             StorageInventory inv = core.getInventory();
+            inv.setMaxItems(1000L);
             inv.insertItem(new ItemStack(Items.OAK_PLANKS, 2)); // need 4
 
             List<ItemStack> ingredients = List.of(new ItemStack(Items.OAK_PLANKS, 4));
@@ -89,6 +91,7 @@ public class CraftingInfrastructureGameTests {
             }
 
             StorageInventory inv = core.getInventory();
+            inv.setMaxItems(1000L);
             inv.insertItem(new ItemStack(Items.OAK_PLANKS, 4));
 
             List<ItemStack> ingredients = List.of(
@@ -119,10 +122,11 @@ public class CraftingInfrastructureGameTests {
                 return;
             }
 
-            PatternKey key = new PatternKey(new BlockPos(5, 5, 5), 0);
+            // Use a synthetic crafter position and slot index — no real crafter needed for deduplication test
+            CrafterSlot slot = new CrafterSlot(new BlockPos(5, 5, 5), 0);
 
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_BUFFER);
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_BUFFER); // duplicate
+            core.craftingCoordinator.enqueue(slot, 1, CraftingSource.AUTO_BUFFER);
+            core.craftingCoordinator.enqueue(slot, 1, CraftingSource.AUTO_BUFFER); // duplicate
 
             int size = core.craftingCoordinator.getQueueSize();
             if (size != 1) {
@@ -141,10 +145,10 @@ public class CraftingInfrastructureGameTests {
                 return;
             }
 
-            PatternKey key = new PatternKey(new BlockPos(5, 5, 5), 0);
+            CrafterSlot slot = new CrafterSlot(new BlockPos(5, 5, 5), 0);
 
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.AUTO_BUFFER);
-            core.craftingCoordinator.enqueue(key, 1, CraftingSource.GUI_REQUEST); // not deduplicated
+            core.craftingCoordinator.enqueue(slot, 1, CraftingSource.AUTO_BUFFER);
+            core.craftingCoordinator.enqueue(slot, 1, CraftingSource.GUI_REQUEST); // not deduplicated
 
             int size = core.craftingCoordinator.getQueueSize();
             if (size != 2) {
