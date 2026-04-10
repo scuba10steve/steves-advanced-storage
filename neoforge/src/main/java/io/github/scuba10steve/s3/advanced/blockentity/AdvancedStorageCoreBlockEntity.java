@@ -226,7 +226,6 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         rmbToMachineInterface.clear();
         Set<Object> claimed = new HashSet<>();
         for (RecipeMemoryBoxBlockEntity rmb : recipeMemoryBoxes) {
-            if (level == null) continue;
             Direction facing = rmb.getBlockState().getValue(
                 io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox.FACING);
             BlockPos facingPos = rmb.getBlockPos().relative(facing);
@@ -266,6 +265,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
             }
             for (MachineInterfaceBlockEntity mi : machineInterfaces) {
                 RecipeMemoryBoxBlockEntity pairedRmb = getRmbForMachineInterface(mi);
+                // MI uses slot 0 of its paired RMB — one pattern per MI pairing by design.
                 RecipePattern pattern = pairedRmb != null ? pairedRmb.getPattern(0) : null;
                 mi.tryTick(getInventory(), level,
                     (pattern != null && !pattern.isEmpty()) ? pattern : null);

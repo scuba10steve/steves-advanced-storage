@@ -7,7 +7,12 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 public class CraftingCoordinator {
 
@@ -91,7 +96,7 @@ public class CraftingCoordinator {
                 continue;
             }
 
-            List<ItemStack> ingredients = Arrays.asList(pattern.getGrid());
+            List<ItemStack> ingredients = List.of(pattern.getGrid());
             for (int i = 0; i < job.quantity(); i++) {
                 boolean success = craftingEngine.execute(ingredients, pattern.getOutput(), inventory);
                 LOGGER.debug("[Coordinator] execute iteration {}/{}: {}", i + 1, job.quantity(), success ? "OK" : "FAILED");
