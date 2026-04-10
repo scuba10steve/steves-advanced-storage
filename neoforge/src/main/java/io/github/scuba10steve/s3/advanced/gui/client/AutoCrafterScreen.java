@@ -37,7 +37,6 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
             Component.translatable("gui.s3_advanced.auto_crafter_name"));
         nameField.setMaxLength(32);
         nameField.setValue(menu.getCustomName());
-        nameField.setResponder(text -> { /* sent on blur/enter below */ });
         addRenderableWidget(nameField);
     }
 
