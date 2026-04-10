@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.block;
 
 import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
+import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,8 +37,12 @@ public class BlockMachineInterface extends StorageMultiblock implements EntityBl
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             if (level.getBlockEntity(pos) instanceof MachineInterfaceBlockEntity be) {
-                // Stub buf writer to match stub client constructor (Task 7 will expand this)
-                serverPlayer.openMenu(be, buf -> buf.writeBlockPos(pos));
+                serverPlayer.openMenu(be, buf -> {
+                    buf.writeBlockPos(be.getBlockPos());
+                    BlockPos rmbPos = MachineInterfaceMenu.resolvePairedRmbPos(be);
+                    buf.writeBoolean(rmbPos != null);
+                    if (rmbPos != null) buf.writeBlockPos(rmbPos);
+                });
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());

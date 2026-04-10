@@ -6,10 +6,10 @@ import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
 import io.github.scuba10steve.s3.advanced.network.UpdateMachineInterfaceTickPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MachineInterfaceScreen extends AbstractContainerScreen<MachineInterfaceMenu> {
@@ -47,12 +47,15 @@ public class MachineInterfaceScreen extends AbstractContainerScreen<MachineInter
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
-        // Output item icon at slot position (8, 17) in GUI coords
-        ItemStack output = menu.getOutputItem();
-        if (!output.isEmpty()) {
-            graphics.renderItem(output, x + 8, y + 17);
+        // Pairing status
+        BlockPos rmbPos = menu.getPairedRmbPos();
+        if (rmbPos != null) {
+            String label = "RMB: " + rmbPos.getX() + ", " + rmbPos.getY() + ", " + rmbPos.getZ();
+            graphics.drawString(this.font, label, x + 8, y + 17, 0xFF88FF88, false);
         } else {
-            graphics.fill(x + 8, y + 17, x + 24, y + 33, 0xFF555555);
+            graphics.drawString(this.font,
+                Component.translatable("gui.s3_advanced.no_paired_rmb"),
+                x + 8, y + 17, 0xFFFF8888, false);
         }
 
         // Status label
