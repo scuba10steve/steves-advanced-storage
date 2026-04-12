@@ -24,7 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 public class BlockRecipeMemoryBox extends StorageMultiblock implements EntityBlock {
 
     /** The face that points toward the paired Auto-Crafter or Machine Interface. */
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public BlockRecipeMemoryBox() {
         super(Properties.of().strength(2.0f));
@@ -37,12 +37,12 @@ public class BlockRecipeMemoryBox extends StorageMultiblock implements EntityBlo
     }
 
     /**
-     * On placement, the output face points in the direction the player is looking.
+     * On placement, the output face points in the horizontal direction the player is looking.
      * The player naturally looks toward the crafter they want to pair with.
      */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getNearestLookingDirection());
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
     }
 
     @Override

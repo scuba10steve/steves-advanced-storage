@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.block;
 
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
 import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
@@ -40,9 +41,11 @@ public class BlockAutoCrafter extends StorageMultiblock implements EntityBlock {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             if (level.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) {
                 serverPlayer.openMenu(be, buf -> {
+                    RecipeMemoryBoxBlockEntity rmb = AutoCrafterMenu.resolveRmb(be);
                     buf.writeBlockPos(be.getBlockPos());
                     buf.writeUtf(be.getCustomName(), 32);
-                    ItemStack[] outputs = AutoCrafterMenu.resolveOutputItems(be);
+                    buf.writeBoolean(rmb != null);
+                    ItemStack[] outputs = AutoCrafterMenu.resolveOutputItems(rmb);
                     PerPatternConfig[] configs = be.getConfigs();
                     for (int i = 0; i < AutoCrafterBlockEntity.SLOT_COUNT; i++) {
                         configs[i].encode(buf);

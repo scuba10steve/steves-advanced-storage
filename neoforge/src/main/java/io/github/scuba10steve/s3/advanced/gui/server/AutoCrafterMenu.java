@@ -20,12 +20,14 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
     private final PerPatternConfig[] configs;
     private final ItemStack[] outputItems;
     private final String customName;
+    private final boolean hasPairedRmb;
 
     // Client constructor — reads buf written by BlockAutoCrafter.useWithoutItem
     public AutoCrafterMenu(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         super(ModMenuTypes.AUTO_CRAFTER.get(), containerId);
         this.pos = buf.readBlockPos();
         this.customName = buf.readUtf(32);
+        this.hasPairedRmb = buf.readBoolean();
         this.configs = new PerPatternConfig[AutoCrafterBlockEntity.SLOT_COUNT];
         this.outputItems = new ItemStack[AutoCrafterBlockEntity.SLOT_COUNT];
         for (int i = 0; i < AutoCrafterBlockEntity.SLOT_COUNT; i++) {
@@ -40,21 +42,25 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
         this.pos = be.getBlockPos();
         this.customName = be.getCustomName();
         this.configs = be.getConfigs().clone();
-        this.outputItems = resolveOutputItems(be);
+        RecipeMemoryBoxBlockEntity rmb = resolveRmb(be);
+        this.hasPairedRmb = rmb != null;
+        this.outputItems = resolveOutputItems(rmb);
+    }
+
+    public static RecipeMemoryBoxBlockEntity resolveRmb(AutoCrafterBlockEntity be) {
+        if (be.getLevel() == null) return null;
+        AdvancedStorageCoreBlockEntity core =
+            AdvancedStorageCoreBlockEntity.findCore(be.getLevel(), be.getBlockPos());
+        return core != null ? core.getRmbForCrafter(be) : null;
     }
 
     /**
-     * Looks up the core via BFS, finds the RMB paired to this crafter, and returns
-     * the 4 output items (one per RMB pattern slot). Returns EMPTY arrays if unpaired.
+     * Returns the 4 output items (one per RMB pattern slot) for the given paired RMB,
+     * or an array of EMPTY stacks if rmb is null.
      */
-    public static ItemStack[] resolveOutputItems(AutoCrafterBlockEntity be) {
+    public static ItemStack[] resolveOutputItems(RecipeMemoryBoxBlockEntity rmb) {
         ItemStack[] items = new ItemStack[AutoCrafterBlockEntity.SLOT_COUNT];
         Arrays.fill(items, ItemStack.EMPTY);
-        if (be.getLevel() == null) return items;
-        AdvancedStorageCoreBlockEntity core =
-            AdvancedStorageCoreBlockEntity.findCore(be.getLevel(), be.getBlockPos());
-        if (core == null) return items;
-        RecipeMemoryBoxBlockEntity rmb = core.getRmbForCrafter(be);
         if (rmb == null) return items;
         for (int i = 0; i < AutoCrafterBlockEntity.SLOT_COUNT; i++) {
             var pattern = rmb.getPattern(i);
@@ -67,6 +73,7 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
     public PerPatternConfig[] getConfigs() { return configs; }
     public ItemStack[] getOutputItems() { return outputItems; }
     public String getCustomName() { return customName; }
+    public boolean hasPairedRmb() { return hasPairedRmb; }
 
     /** Called by the screen on optimistic config update so the UI stays responsive. */
     public void setConfig(int slot, PerPatternConfig config) {

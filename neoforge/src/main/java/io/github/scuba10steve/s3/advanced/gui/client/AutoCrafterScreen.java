@@ -73,10 +73,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
         int guiY = (this.height - this.imageHeight) / 2;
         ItemStack[] outputs = menu.getOutputItems();
 
-        boolean anyPaired = false;
-        for (ItemStack s : outputs) { if (!s.isEmpty()) { anyPaired = true; break; } }
-
-        if (!anyPaired) {
+        if (!menu.hasPairedRmb()) {
             graphics.drawString(this.font,
                 Component.translatable("gui.s3_advanced.no_paired_rmb"),
                 guiX + LIST_LEFT, guiY + LIST_TOP + 10, 0xFFAAAAAA, false);

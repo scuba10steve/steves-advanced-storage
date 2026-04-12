@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "s3_advanced:block/auto_crafter"
+    "end":  "s3_advanced:block/auto_crafter_end",
+    "side": "s3_advanced:block/auto_crafter"
   }
 }

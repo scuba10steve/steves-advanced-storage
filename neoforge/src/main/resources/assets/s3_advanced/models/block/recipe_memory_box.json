@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/orientable",
   "textures": {
-    "all": "s3_advanced:block/recipe_memory_box"
+    "top":   "s3_advanced:block/recipe_memory_box",
+    "side":  "s3_advanced:block/recipe_memory_box",
+    "front": "s3_advanced:block/recipe_memory_box_front"
   }
 }

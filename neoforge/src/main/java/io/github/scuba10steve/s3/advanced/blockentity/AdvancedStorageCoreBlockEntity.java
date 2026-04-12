@@ -225,15 +225,21 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         rmbToCrafter.clear();
         rmbToMachineInterface.clear();
         Set<Object> claimed = new HashSet<>();
+        LOGGER.info("[Core] Pairing scan: {} RMBs, {} crafters, {} MIs",
+            recipeMemoryBoxes.size(), autoCrafters.size(), machineInterfaces.size());
         for (RecipeMemoryBoxBlockEntity rmb : recipeMemoryBoxes) {
-            Direction facing = rmb.getBlockState().getValue(
+            Direction facing = level.getBlockState(rmb.getBlockPos()).getValue(
                 io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox.FACING);
             BlockPos facingPos = rmb.getBlockPos().relative(facing);
             net.minecraft.world.level.block.entity.BlockEntity facingBe = level.getBlockEntity(facingPos);
+            LOGGER.info("[Core] RMB at {} facing {} → facingPos {} → BE={}",
+                rmb.getBlockPos(), facing, facingPos,
+                facingBe == null ? "null" : facingBe.getClass().getSimpleName());
             if (facingBe instanceof AutoCrafterBlockEntity ac
                     && autoCrafters.contains(ac) && !claimed.contains(ac)) {
                 rmbToCrafter.put(rmb, ac);
                 claimed.add(ac);
+                LOGGER.info("[Core] Paired RMB at {} → AC at {}", rmb.getBlockPos(), ac.getBlockPos());
             } else if (facingBe instanceof MachineInterfaceBlockEntity mi
                     && machineInterfaces.contains(mi) && !claimed.contains(mi)) {
                 rmbToMachineInterface.put(rmb, mi);
