@@ -6,6 +6,7 @@ import io.github.scuba10steve.s3.advanced.network.CraftableSyncPacket;
 import io.github.scuba10steve.s3.gui.client.StorageCoreCraftingScreen;
 import io.github.scuba10steve.s3.storage.StoredItemStack;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -17,11 +18,23 @@ import java.util.Optional;
 public class AdvancedStorageCraftingDisplayScreen extends StorageCoreCraftingScreen {
 
     private CraftQuantityOverlay quantityOverlay;
+    private Button clearButton;
 
     public AdvancedStorageCraftingDisplayScreen(AdvancedStorageCraftingDisplayMenu menu,
                                                  Inventory playerInventory,
                                                  Component title) {
         super(menu, playerInventory, title);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        clearButton = this.renderables.stream()
+            .filter(r -> r instanceof Button b &&
+                         b.getMessage().equals(Component.translatable("gui.s3.clear")))
+            .map(r -> (Button) r)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
@@ -67,9 +80,13 @@ public class AdvancedStorageCraftingDisplayScreen extends StorageCoreCraftingScr
                     List<CraftableSyncPacket.Entry> entries = CraftableClientData.get(menu.getPos());
                     Optional<CrafterSlot> key = CraftableGuiHelper.findCrafterSlot(stack, entries);
                     if (key.isPresent()) {
+                        if (clearButton != null) clearButton.visible = false;
                         quantityOverlay = new CraftQuantityOverlay(
                             font, width, height, stack, key.get(), menu.getPos(),
-                            () -> quantityOverlay = null);
+                            () -> {
+                                quantityOverlay = null;
+                                if (clearButton != null) clearButton.visible = true;
+                            });
                         return true;
                     }
                 }

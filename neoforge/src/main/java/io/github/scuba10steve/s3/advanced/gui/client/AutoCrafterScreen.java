@@ -42,11 +42,20 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        // Send rename on Enter
-        if (keyCode == 257 /* Enter */ && nameField.isFocused()) {
-            PacketDistributor.sendToServer(
-                new RenameAutoCrafterPacket(menu.getBlockPos(), nameField.getValue()));
-            nameField.setFocused(false);
+        if (nameField.isFocused()) {
+            if (keyCode == 257 /* Enter */) {
+                PacketDistributor.sendToServer(
+                    new RenameAutoCrafterPacket(menu.getBlockPos(), nameField.getValue()));
+                nameField.setFocused(false);
+                return true;
+            }
+            if (keyCode == 256 /* Escape */) {
+                nameField.setFocused(false);
+                return true;
+            }
+            // Forward to the edit box and consume the event so keys like 'e' don't
+            // trigger the inventory keybinding on the parent container screen.
+            nameField.keyPressed(keyCode, scanCode, modifiers);
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -122,7 +131,11 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterMenu> 
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(this.font, this.title, 8, 6, 0xFFFFFFFF, false);
+        String value = nameField.getValue();
+        Component display = value.isEmpty()
+            ? Component.translatable("block.s3_advanced.auto_crafter")
+            : Component.literal(value);
+        graphics.drawString(this.font, display, 8, 6, 0xFFFFFFFF, false);
     }
 
     @Override
