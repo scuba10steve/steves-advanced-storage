@@ -31,6 +31,9 @@ public class ModBlocks {
     public static final Supplier<Block> MACHINE_INTERFACE =
         BLOCKS.register("machine_interface", BlockMachineInterface::new);
 
+    public static final Supplier<Block> ADVANCED_STATISTICS =
+        BLOCKS.register("advanced_statistics", BlockAdvancedStatistics::new);
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }

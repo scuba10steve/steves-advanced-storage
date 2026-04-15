@@ -2,9 +2,13 @@ package io.github.scuba10steve.s3.advanced.blockentity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.github.scuba10steve.s3.advanced.block.BlockAdvancedStatistics;
 import io.github.scuba10steve.s3.advanced.block.BlockAutoCrafter;
+import io.github.scuba10steve.s3.advanced.block.BlockCoalGenerator;
 import io.github.scuba10steve.s3.advanced.block.BlockMachineInterface;
 import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
+import io.github.scuba10steve.s3.advanced.block.BlockSolarGenerator;
+import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStatisticsBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
 import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
@@ -44,6 +48,8 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     private final List<RecipeMemoryBoxBlockEntity> recipeMemoryBoxes = new ArrayList<>();
     private final List<AutoCrafterBlockEntity> autoCrafters = new ArrayList<>();
     private final List<MachineInterfaceBlockEntity> machineInterfaces = new ArrayList<>();
+    private final List<SolarGeneratorBlockEntity> solarGenerators = new ArrayList<>();
+    private final List<CoalGeneratorBlockEntity> coalGenerators = new ArrayList<>();
     private final List<IEnergyStorage> energyProviders = new ArrayList<>();
     private final Map<RecipeMemoryBoxBlockEntity, AutoCrafterBlockEntity> rmbToCrafter = new LinkedHashMap<>();
     private final Map<RecipeMemoryBoxBlockEntity, MachineInterfaceBlockEntity> rmbToMachineInterface = new LinkedHashMap<>();
@@ -107,6 +113,25 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         return Collections.unmodifiableList(machineInterfaces);
     }
 
+    /** Returns the sum of current FE/t output from all solar and coal generators adjacent to the multiblock. */
+    public int getTotalGenerationRate() {
+        int rate = 0;
+        for (SolarGeneratorBlockEntity sg : solarGenerators) {
+            rate += sg.getCurrentRate();
+        }
+        for (CoalGeneratorBlockEntity cg : coalGenerators) {
+            if (cg.isLit()) {
+                rate += S3AdvancedConfig.COAL_GENERATION_RATE.get();
+            }
+        }
+        return rate;
+    }
+
+    /** Returns the total FE/t currently consumed by all active components in the multiblock. */
+    public int getTotalPowerDraw() {
+        return totalPowerDraw;
+    }
+
     /** Returns the RMB currently paired to the given crafter, or null. */
     public RecipeMemoryBoxBlockEntity getRmbForCrafter(AutoCrafterBlockEntity crafter) {
         return rmbToCrafter.entrySet().stream()
@@ -163,6 +188,8 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         recipeMemoryBoxes.clear();
         autoCrafters.clear();
         machineInterfaces.clear();
+        solarGenerators.clear();
+        coalGenerators.clear();
         energyProviders.clear();
         advancedHasCraftingBox = false;
         super.scanMultiblock();
@@ -198,6 +225,10 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                     machineInterfaces.add(mi);
                     totalPowerDraw += S3AdvancedConfig.MACHINE_INTERFACE_ENERGY_PER_TICK.get();
                 }
+            } else if (state.getBlock() instanceof BlockAdvancedStatistics) {
+                if (level.getBlockEntity(pos) instanceof AdvancedStatisticsBlockEntity) {
+                    totalPowerDraw += S3AdvancedConfig.ADVANCED_STATISTICS_ENERGY_PER_TICK.get();
+                }
             } else if (state.getBlock() instanceof BlockCraftingBox) {
                 advancedHasCraftingBox = true;
             }
@@ -210,7 +241,18 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                         visited.add(neighbor);
                         queue.add(neighbor);
                     } else {
-                        // Non-multiblock neighbor: collect as energy provider if it can be extracted from.
+                        BlockState neighborState = level.getBlockState(neighbor);
+                        // Collect generators by BE type
+                        if (neighborState.getBlock() instanceof BlockSolarGenerator) {
+                            if (level.getBlockEntity(neighbor) instanceof SolarGeneratorBlockEntity sg) {
+                                solarGenerators.add(sg);
+                            }
+                        } else if (neighborState.getBlock() instanceof BlockCoalGenerator) {
+                            if (level.getBlockEntity(neighbor) instanceof CoalGeneratorBlockEntity cg) {
+                                coalGenerators.add(cg);
+                            }
+                        }
+                        // Collect as energy provider if it can be extracted from
                         IEnergyStorage provider = level.getCapability(
                             Capabilities.EnergyStorage.BLOCK, neighbor, dir.getOpposite());
                         if (provider != null && provider.canExtract()) {
