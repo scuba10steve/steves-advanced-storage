@@ -40,6 +40,11 @@ public class ModBlockEntities {
             BlockEntityType.Builder.of(MachineInterfaceBlockEntity::new,
                 ModBlocks.MACHINE_INTERFACE.get()).build(null));
 
+    public static final Supplier<BlockEntityType<AdvancedStatisticsBlockEntity>> ADVANCED_STATISTICS =
+        BLOCK_ENTITIES.register("advanced_statistics", () ->
+            BlockEntityType.Builder.of(AdvancedStatisticsBlockEntity::new,
+                ModBlocks.ADVANCED_STATISTICS.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }
