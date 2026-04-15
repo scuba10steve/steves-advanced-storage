@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "s3_advanced:block/advanced_statistics"
+    }
+  }
+}

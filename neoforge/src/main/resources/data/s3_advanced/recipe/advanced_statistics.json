@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IGI",
+    "GCG",
+    "IGI"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "G": {"item": "minecraft:glass_pane"},
+    "C": {"item": "minecraft:comparator"}
+  },
+  "result": {
+    "id": "s3_advanced:advanced_statistics",
+    "count": 1
+  }
+}

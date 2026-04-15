@@ -27,5 +27,25 @@
   "tooltip.s3_advanced.craftable": "Craftable (Ctrl+click)",
   "gui.s3_advanced.craft_quantity": "Quantity:",
   "gui.s3_advanced.craft_confirm": "Craft",
-  "gui.s3_advanced.craft_cancel": "Cancel"
+  "gui.s3_advanced.craft_cancel": "Cancel",
+
+  "block.s3_advanced.advanced_statistics": "Advanced Statistics",
+  "container.s3_advanced.advanced_statistics": "Advanced Statistics",
+  "gui.s3_advanced.stats.tab.storage": "Storage",
+  "gui.s3_advanced.stats.tab.power": "Power",
+  "gui.s3_advanced.stats.tab.crafting": "Crafting",
+  "gui.s3_advanced.stats.items_stored": "Items Stored:",
+  "gui.s3_advanced.stats.unique_types": "Unique Types:",
+  "gui.s3_advanced.stats.free_space": "Free Space:",
+  "gui.s3_advanced.stats.block_count": "Blocks:",
+  "gui.s3_advanced.stats.components": "Components:",
+  "gui.s3_advanced.stats.generation": "Generation:",
+  "gui.s3_advanced.stats.consumption": "Consumption:",
+  "gui.s3_advanced.stats.net_balance": "Net Balance:",
+  "gui.s3_advanced.stats.energy_stored": "Energy Stored:",
+  "gui.s3_advanced.stats.rmb_count": "Recipe Memory Boxes:",
+  "gui.s3_advanced.stats.slots_used": "Slots Used:",
+  "gui.s3_advanced.stats.ac_count": "Auto-Crafters:",
+  "gui.s3_advanced.stats.paired": "Paired:",
+  "gui.s3_advanced.stats.mi_count": "Machine Interfaces:"
 }
