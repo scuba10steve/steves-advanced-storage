@@ -59,6 +59,11 @@ public class ModMenuTypes {
             IMenuTypeExtension.create((windowId, inv, data) ->
                 new AdvancedStorageCraftingDisplayMenu(windowId, inv, data)));
 
+    public static final Supplier<MenuType<AdvancedStatisticsMenu>> ADVANCED_STATISTICS =
+        MENU_TYPES.register("advanced_statistics", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new AdvancedStatisticsMenu(windowId, inv, data)));
+
     public static void register(IEventBus eventBus) {
         MENU_TYPES.register(eventBus);
     }
