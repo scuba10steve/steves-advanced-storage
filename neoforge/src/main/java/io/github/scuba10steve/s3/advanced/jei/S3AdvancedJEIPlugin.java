@@ -21,5 +21,9 @@ public class S3AdvancedJEIPlugin implements IModPlugin {
             new RecipePatternTransferHandler(registration.getTransferHelper()),
             RecipeTypes.CRAFTING
         );
+        registration.addRecipeTransferHandler(
+            new AdvancedStorageCraftingTransferHandler(registration.getTransferHelper()),
+            RecipeTypes.CRAFTING
+        );
     }
 }
