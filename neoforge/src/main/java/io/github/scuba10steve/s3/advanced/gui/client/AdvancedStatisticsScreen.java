@@ -178,8 +178,13 @@ public class AdvancedStatisticsScreen extends AbstractContainerScreen<AdvancedSt
         graphics.drawString(font, miStr, imageWidth - 6 - font.width(miStr), y, VALUE_COLOR, false);
         y += 10;
 
-        String activeStr = m.activeMiCount + " active / " + m.getIdleMiCount() + " idle";
-        graphics.drawString(font, activeStr, 10, y, LABEL_COLOR, false);
+        String activeVal = String.valueOf(m.activeMiCount);
+        graphics.drawString(font, Component.translatable("gui.s3_advanced.stats.mi_active"), 10, y, LABEL_COLOR, false);
+        graphics.drawString(font, activeVal, imageWidth - 6 - font.width(activeVal), y, VALUE_COLOR, false);
+        y += 9;
+        String idleVal = String.valueOf(m.getIdleMiCount());
+        graphics.drawString(font, Component.translatable("gui.s3_advanced.stats.mi_idle"), 10, y, LABEL_COLOR, false);
+        graphics.drawString(font, idleVal, imageWidth - 6 - font.width(idleVal), y, VALUE_COLOR, false);
     }
 
     @Override

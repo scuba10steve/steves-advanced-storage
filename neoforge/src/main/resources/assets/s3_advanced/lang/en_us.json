@@ -47,5 +47,7 @@
   "gui.s3_advanced.stats.slots_used": "Slots Used:",
   "gui.s3_advanced.stats.ac_count": "Auto-Crafters:",
   "gui.s3_advanced.stats.paired": "Paired:",
-  "gui.s3_advanced.stats.mi_count": "Machine Interfaces:"
+  "gui.s3_advanced.stats.mi_count": "Machine Interfaces:",
+  "gui.s3_advanced.stats.mi_active": "Active:",
+  "gui.s3_advanced.stats.mi_idle": "Idle:"
 }

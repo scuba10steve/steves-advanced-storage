@@ -47,5 +47,7 @@
   "gui.s3_advanced.stats.slots_used": "[TRANSLATE] Slots Used:",
   "gui.s3_advanced.stats.ac_count": "[TRANSLATE] Auto-Crafters:",
   "gui.s3_advanced.stats.paired": "[TRANSLATE] Paired:",
-  "gui.s3_advanced.stats.mi_count": "[TRANSLATE] Machine Interfaces:"
+  "gui.s3_advanced.stats.mi_count": "[TRANSLATE] Machine Interfaces:",
+  "gui.s3_advanced.stats.mi_active": "[TRANSLATE] Active:",
+  "gui.s3_advanced.stats.mi_idle": "[TRANSLATE] Idle:"
 }
