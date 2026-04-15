@@ -24,6 +24,7 @@ public class ClientEvents {
         event.register(ModMenuTypes.RECIPE_PATTERN.get(), RecipePatternScreen::new);
         event.register(ModMenuTypes.AUTO_CRAFTER.get(), AutoCrafterScreen::new);
         event.register(ModMenuTypes.MACHINE_INTERFACE.get(), MachineInterfaceScreen::new);
+        event.register(ModMenuTypes.ADVANCED_STATISTICS.get(), AdvancedStatisticsScreen::new);
         registerDisplayScreen(event);
         registerCraftingDisplayScreen(event);
     }
