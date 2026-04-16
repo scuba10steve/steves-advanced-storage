@@ -8,7 +8,7 @@
   "key": {
     "I": {"item": "minecraft:iron_ingot"},
     "G": {"item": "minecraft:glass_pane"},
-    "C": {"item": "minecraft:comparator"}
+    "C": {"item": "s3:statistics_box"}
   },
   "result": {
     "id": "s3_advanced:advanced_statistics",

@@ -65,6 +65,18 @@ All new blocks that participate in the multiblock extend `StorageMultiblock` (fr
 
 All component blocks draw a flat FE/t from the core's power budget. Config keys live in `S3AdvancedConfig` under the `advanced_storage_core` section. The core tracks total draw in `totalPowerDraw` (reset each `scanMultiblock()` call). `tick()` consumes `totalPowerDraw` per tick; `isPowered()` checks against `totalPowerDraw`.
 
+### New Block Checklist
+
+When adding a new block, ensure all of the following are registered:
+
+1. **ModBlocks** — add the block to `init/ModBlocks.java`
+2. **ModBlockEntities** — add the block entity to `init/ModBlockEntities.java` (if applicable)
+3. **ModItems** — add a `BlockItem` wrapper in `init/ModItems.java`
+4. **ModCreativeTabs** — add the item to the creative tab's `displayItems` in `init/ModCreativeTabs.java`
+5. **Texture** — add a block model JSON and texture in `assets/s3_advanced/textures/block/`
+6. **Lang keys** — add translation keys to both `en_us.json` and `es_es.json`
+7. **Recipe** — add a crafting recipe JSON in `data/s3_advanced/recipe/`
+
 ### GUI Pattern
 
 Menus use a three-constructor pattern:

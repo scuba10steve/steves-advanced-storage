@@ -35,6 +35,9 @@ public class ModItems {
     public static final Supplier<Item> MACHINE_INTERFACE = ITEMS.register("machine_interface",
         () -> new BlockItem(ModBlocks.MACHINE_INTERFACE.get(), new Item.Properties()));
 
+    public static final Supplier<Item> ADVANCED_STATISTICS = ITEMS.register("advanced_statistics",
+        () -> new BlockItem(ModBlocks.ADVANCED_STATISTICS.get(), new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

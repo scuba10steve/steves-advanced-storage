@@ -25,6 +25,10 @@ public class SolarGeneratorBlockEntity extends BaseBlockEntity implements MenuPr
 
     public final GeneratorEnergyStorage energyStorage;
 
+    public int getCurrentRate() {
+        return currentRate;
+    }
+
     // ContainerData slots: [0-1] energy, [2-3] capacity, [4] currentRate
     public final ContainerData containerData = new ContainerData() {
         @Override
