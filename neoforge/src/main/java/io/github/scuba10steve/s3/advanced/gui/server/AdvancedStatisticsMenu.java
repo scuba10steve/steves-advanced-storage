@@ -91,46 +91,15 @@ public class AdvancedStatisticsMenu extends AbstractContainerMenu {
     public AdvancedStatisticsMenu(int containerId, Inventory playerInventory, AdvancedStatisticsBlockEntity be) {
         super(ModMenuTypes.ADVANCED_STATISTICS.get(), containerId);
         this.pos = be.getBlockPos();
-        AdvancedStorageCoreBlockEntity core = be.getLevel() != null
-            ? AdvancedStorageCoreBlockEntity.findCore(be.getLevel(), be.getBlockPos())
-            : null;
-        if (core != null) {
-            this.totalItems  = core.getInventory().getTotalItemCount();
-            this.capacity    = core.getInventory().getMaxItems();
-            this.uniqueTypes = core.getInventory().getStoredItems().size();
-            this.blockCount  = core.getInventory().getTotalBlockCount();
-            this.tierBreakdown = new LinkedHashMap<>(core.getInventory().getTierBreakdown());
-            this.presentComponents = new ArrayList<>(core.getInventory().getPresentComponents());
-            this.generationRate  = core.getTotalGenerationRate();
-            this.consumptionRate = core.getTotalPowerDraw();
-            this.energyStored    = core.energyStorage.getEnergyStored();
-            this.energyCapacity  = core.energyStorage.getMaxEnergyStored();
-            List<RecipeMemoryBoxBlockEntity> rmbs = core.getRecipeMemoryBoxes();
-            this.rmbCount = rmbs.size();
-            this.totalPatternSlots = rmbs.size() * RecipeMemoryBoxBlockEntity.MAX_PATTERNS;
-            int used = 0;
-            for (RecipeMemoryBoxBlockEntity rmb : rmbs) {
-                for (RecipePattern p : rmb.getPatterns()) {
-                    if (!p.isEmpty()) used++;
-                }
-            }
-            this.usedPatternSlots   = used;
-            this.autoCrafterCount   = core.getAutoCrafters().size();
-            this.pairedCrafterCount = core.getRmbToCrafter().size();
-            List<MachineInterfaceBlockEntity> mis = core.getMachineInterfaces();
-            this.miCount = mis.size();
-            this.activeMiCount = (int) mis.stream()
-                .filter(m -> m.getStatus() != MachineInterfaceBlockEntity.Status.IDLE)
-                .count();
-        } else {
-            this.totalItems = 0; this.capacity = 0; this.uniqueTypes = 0; this.blockCount = 0;
-            this.tierBreakdown = new LinkedHashMap<>(); this.presentComponents = new ArrayList<>();
-            this.generationRate = 0; this.consumptionRate = 0;
-            this.energyStored = 0; this.energyCapacity = 0;
-            this.rmbCount = 0; this.totalPatternSlots = 0; this.usedPatternSlots = 0;
-            this.autoCrafterCount = 0; this.pairedCrafterCount = 0;
-            this.miCount = 0; this.activeMiCount = 0;
-        }
+        // Statistics fields are only used client-side; the client receives them via
+        // writeSnapshot() in BlockAdvancedStatistics.useWithoutItem(). Default to 0/empty here.
+        this.totalItems = 0; this.capacity = 0; this.uniqueTypes = 0; this.blockCount = 0;
+        this.tierBreakdown = new LinkedHashMap<>(); this.presentComponents = new ArrayList<>();
+        this.generationRate = 0; this.consumptionRate = 0;
+        this.energyStored = 0; this.energyCapacity = 0;
+        this.rmbCount = 0; this.totalPatternSlots = 0; this.usedPatternSlots = 0;
+        this.autoCrafterCount = 0; this.pairedCrafterCount = 0;
+        this.miCount = 0; this.activeMiCount = 0;
     }
 
     /**

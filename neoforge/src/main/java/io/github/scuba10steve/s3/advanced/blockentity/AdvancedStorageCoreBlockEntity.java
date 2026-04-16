@@ -236,9 +236,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
             for (Direction dir : Direction.values()) {
                 BlockPos neighbor = pos.relative(dir);
                 if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);  // mark visited regardless of multiblock membership
                     BlockRef ref = new BlockRef(level.getBlockState(neighbor).getBlock(), neighbor);
                     if (isPartOfMultiblock(ref)) {
-                        visited.add(neighbor);
                         queue.add(neighbor);
                     } else {
                         BlockState neighborState = level.getBlockState(neighbor);
