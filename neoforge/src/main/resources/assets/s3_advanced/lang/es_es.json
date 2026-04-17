@@ -31,6 +31,7 @@
 
   "block.s3_advanced.advanced_statistics": "[TRANSLATE] Advanced Statistics",
   "container.s3_advanced.advanced_statistics": "[TRANSLATE] Advanced Statistics",
+  "gui.s3_advanced.stats.tab.general": "[TRANSLATE] General",
   "gui.s3_advanced.stats.tab.storage": "[TRANSLATE] Storage",
   "gui.s3_advanced.stats.tab.power": "[TRANSLATE] Power",
   "gui.s3_advanced.stats.tab.crafting": "[TRANSLATE] Crafting",

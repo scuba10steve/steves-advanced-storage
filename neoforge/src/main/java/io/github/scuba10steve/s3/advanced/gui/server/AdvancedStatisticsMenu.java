@@ -110,8 +110,8 @@ public class AdvancedStatisticsMenu extends AbstractContainerMenu {
         buf.writeLong(core.getInventory().getTotalItemCount());
         buf.writeLong(core.getInventory().getMaxItems());
         buf.writeVarInt(core.getInventory().getStoredItems().size());
-        buf.writeVarInt(core.getInventory().getTotalBlockCount());
-        Map<String, Integer> tier = core.getInventory().getTierBreakdown();
+        buf.writeVarInt(core.getTotalBlockCount());
+        Map<String, Integer> tier = core.getTierBreakdown();
         buf.writeVarInt(tier.size());
         for (Map.Entry<String, Integer> e : tier.entrySet()) {
             buf.writeUtf(e.getKey());
