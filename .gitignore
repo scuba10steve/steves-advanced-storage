@@ -18,3 +18,7 @@ Thumbs.db
 docs/superpowers/
 
 logs/
+# VSCode Server (WSL2) device node stub
+.gitmodules
+.project
+.settings/
