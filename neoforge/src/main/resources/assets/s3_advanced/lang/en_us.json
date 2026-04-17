@@ -31,6 +31,7 @@
 
   "block.s3_advanced.advanced_statistics": "Advanced Statistics",
   "container.s3_advanced.advanced_statistics": "Advanced Statistics",
+  "gui.s3_advanced.stats.tab.general": "General",
   "gui.s3_advanced.stats.tab.storage": "Storage",
   "gui.s3_advanced.stats.tab.power": "Power",
   "gui.s3_advanced.stats.tab.crafting": "Crafting",

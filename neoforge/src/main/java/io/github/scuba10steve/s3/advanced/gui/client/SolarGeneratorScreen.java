@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class SolarGeneratorScreen extends AbstractContainerScreen<SolarGeneratorMenu> {
 
     private static final ResourceLocation TEXTURE =
-        ResourceLocation.fromNamespaceAndPath("s3_advanced", "textures/gui/stat_panel.png");
+        ResourceLocation.fromNamespaceAndPath("s3_advanced", "textures/gui/info_panel.png");
 
     public SolarGeneratorScreen(SolarGeneratorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

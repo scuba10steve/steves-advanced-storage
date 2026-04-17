@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class AdvancedStorageCoreScreen extends AbstractContainerScreen<AdvancedStorageCoreMenu> {
 
     private static final ResourceLocation TEXTURE =
-        ResourceLocation.fromNamespaceAndPath("s3_advanced", "textures/gui/stat_panel.png");
+        ResourceLocation.fromNamespaceAndPath("s3_advanced", "textures/gui/info_panel.png");
 
     public AdvancedStorageCoreScreen(AdvancedStorageCoreMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

@@ -20,8 +20,12 @@ import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageDisplayMenu;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.advanced.network.CraftableSyncPacket;
 import io.github.scuba10steve.s3.block.BlockCraftingBox;
+import io.github.scuba10steve.s3.block.BlockStorage;
+import io.github.scuba10steve.s3.block.BlockStorageCore;
 import io.github.scuba10steve.s3.blockentity.StorageCoreBlockEntity;
 import io.github.scuba10steve.s3.util.BlockRef;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -199,6 +203,11 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
             return;
         }
 
+        // The base scan stores only registry paths in presentComponents, losing namespace info.
+        // Clear and rebuild with full "namespace:path" strings during our BFS so the client
+        // screen can resolve icons for both s3 and s3_advanced components.
+        getInventory().getPresentComponents().clear();
+
         // BFS from the core position over all blocks confirmed as multiblock members,
         // collecting RecipeMemoryBox block entities and accumulating their FE/t.
         Set<BlockPos> visited = new HashSet<>();
@@ -231,6 +240,16 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 }
             } else if (state.getBlock() instanceof BlockCraftingBox) {
                 advancedHasCraftingBox = true;
+            }
+
+            // Collect full "namespace:path" for this block if it's a non-storage, non-core component.
+            // This replaces the base scan's path-only entries so the client can resolve item icons.
+            if (!(state.getBlock() instanceof BlockStorage)
+                    && !(state.getBlock() instanceof BlockStorageCore)) {
+                ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+                if (!blockId.getNamespace().equals("minecraft")) {
+                    getInventory().getPresentComponents().add(blockId.toString());
+                }
             }
 
             for (Direction dir : Direction.values()) {
