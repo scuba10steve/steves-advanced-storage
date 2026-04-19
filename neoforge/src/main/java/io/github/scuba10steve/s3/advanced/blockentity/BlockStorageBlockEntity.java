@@ -29,7 +29,8 @@ public class BlockStorageBlockEntity extends BaseBlockEntity implements MenuProv
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 return stack.getItem() instanceof BlockItem bi
-                    && bi.getBlock() instanceof BlockStorage;
+                    && bi.getBlock() instanceof BlockStorage
+                    && !(bi.getBlock() instanceof io.github.scuba10steve.s3.advanced.block.BlockStorage);
             }
 
             @Override
