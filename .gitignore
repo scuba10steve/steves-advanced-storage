@@ -14,6 +14,19 @@ run/
 .DS_Store
 Thumbs.db
 
+# Dotfiles
+.bash_profile
+.bashrc
+.zshrc
+.zprofile
+.profile
+.gitconfig
+.mcp.json
+.ripgreprc
+
+# Local config
+.claude/
+
 # Superpowers specs/plans (not for version control)
 docs/superpowers/
 
