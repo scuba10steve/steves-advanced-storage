@@ -216,7 +216,7 @@ public class AdvancedStorageGameTests {
     public static void advanced_blocks_registered(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             String[] expectedBlocks = {
-                "advanced_storage_core", "solar_generator", "coal_generator"
+                "advanced_storage_core", "solar_generator", "coal_generator", "block_storage_1"
             };
 
             java.util.List<String> missing = new java.util.ArrayList<>();
@@ -234,6 +234,41 @@ public class AdvancedStorageGameTests {
             }
 
             LOGGER.info("All {} s3_advanced blocks verified in block registry", expectedBlocks.length);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "core_with_storage_box", setupTicks = 5)
+    public static void advanced_core_container_data_has_7_slots(GameTestHelper helper) {
+        helper.runAfterDelay(5, () -> {
+            AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
+            if (core == null) return;
+            int count = core.containerData.getCount();
+            if (count != 7) {
+                helper.fail("Expected containerData.getCount() == 7, got " + count);
+                return;
+            }
+            LOGGER.info("advanced_core_container_data_has_7_slots: PASSED");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "core_with_storage_box", setupTicks = 5)
+    public static void advanced_core_total_power_draw_split_encoded_correctly(GameTestHelper helper) {
+        helper.runAfterDelay(5, () -> {
+            AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
+            if (core == null) return;
+            int low  = core.containerData.get(4);
+            int high = core.containerData.get(5);
+            int reconstructed = (high << 16) | (low & 0xFFFF);
+            int actual = core.getTotalPowerDraw();
+            if (reconstructed != actual) {
+                helper.fail("Split-encoded totalPowerDraw mismatch: slot4=" + low
+                    + " slot5=" + high + " → " + reconstructed
+                    + " but getTotalPowerDraw()=" + actual);
+                return;
+            }
+            LOGGER.info("advanced_core_total_power_draw_split_encoded_correctly: PASSED (totalPowerDraw={})", actual);
             helper.succeed();
         });
     }
