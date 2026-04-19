@@ -65,7 +65,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     public final CraftingEngine craftingEngine = new CraftingEngine();
     public final CraftingCoordinator craftingCoordinator = new CraftingCoordinator(craftingEngine);
 
-    // ContainerData slots: [0-1] energy, [2-3] capacity, [4] energyPerTick, [5] isPowered
+    // ContainerData slots: [0-1] energy stored, [2-3] max energy, [4-5] totalPowerDraw (split), [6] isPowered
     public final ContainerData containerData = new ContainerData() {
         @Override
         public int get(int index) {
@@ -74,8 +74,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 case 1 -> (energyStorage.getEnergyStored() >> 16) & 0xFFFF;
                 case 2 -> energyStorage.getMaxEnergyStored() & 0xFFFF;
                 case 3 -> (energyStorage.getMaxEnergyStored() >> 16) & 0xFFFF;
-                case 4 -> totalPowerDraw;
-                case 5 -> isPowered() ? 1 : 0;
+                case 4 -> totalPowerDraw & 0xFFFF;
+                case 5 -> (totalPowerDraw >> 16) & 0xFFFF;
+                case 6 -> isPowered() ? 1 : 0;
                 default -> 0;
             };
         }
@@ -85,7 +86,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
         @Override
         public int getCount() {
-            return 6;
+            return 7;
         }
     };
 
