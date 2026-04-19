@@ -24,23 +24,23 @@ public class BlockStorageGameTests {
     private static final BlockPos RACK_POS = new BlockPos(2, 1, 1);
     private static final ResourceLocation STORAGE_BOX_ID = ResourceLocation.fromNamespaceAndPath("s3", "storage_box");
 
-    private static AdvancedStorageCoreBlockEntity getCore(GameTestHelper helper) {
-        if (helper.getBlockEntity(CORE_POS) instanceof AdvancedStorageCoreBlockEntity core) return core;
-        helper.fail("AdvancedStorageCoreBlockEntity not found at " + CORE_POS);
+    private static AdvancedStorageCoreBlockEntity getCore(GameTestHelper helper, BlockPos pos) {
+        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) return be;
+        helper.fail("AdvancedStorageCoreBlockEntity not found at " + pos);
         return null;
     }
 
-    private static BlockStorageBlockEntity getRack(GameTestHelper helper) {
-        if (helper.getBlockEntity(RACK_POS) instanceof BlockStorageBlockEntity rack) return rack;
-        helper.fail("BlockStorageBlockEntity not found at " + RACK_POS);
+    private static BlockStorageBlockEntity getRack(GameTestHelper helper, BlockPos pos) {
+        if (helper.getBlockEntity(pos) instanceof BlockStorageBlockEntity be) return be;
+        helper.fail("BlockStorageBlockEntity not found at " + pos);
         return null;
     }
 
     @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
     public static void block_storage_1_capacity_increases_with_inserted_storage_box(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
-            AdvancedStorageCoreBlockEntity core = getCore(helper);
-            BlockStorageBlockEntity rack = getRack(helper);
+            AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
+            BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
             if (core == null || rack == null) return;
 
             long capacityBefore = core.getInventory().getMaxItems();
@@ -60,8 +60,8 @@ public class BlockStorageGameTests {
     @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
     public static void block_storage_1_power_draw_increases_per_occupied_slot(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
-            AdvancedStorageCoreBlockEntity core = getCore(helper);
-            BlockStorageBlockEntity rack = getRack(helper);
+            AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
+            BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
             if (core == null || rack == null) return;
 
             int powerBefore = core.containerData.get(4) | (core.containerData.get(5) << 16);
@@ -82,7 +82,7 @@ public class BlockStorageGameTests {
     @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
     public static void block_storage_1_is_item_valid_rejects_advanced_block_storage(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
-            BlockStorageBlockEntity rack = getRack(helper);
+            BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
             if (rack == null) return;
 
             ItemStack advancedRackItem = new ItemStack(ModItems.BLOCK_STORAGE_1.get());
@@ -97,7 +97,7 @@ public class BlockStorageGameTests {
     @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
     public static void block_storage_1_is_item_valid_accepts_base_storage_box(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
-            BlockStorageBlockEntity rack = getRack(helper);
+            BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
             if (rack == null) return;
 
             Item storageBoxItem = BuiltInRegistries.ITEM.getOptional(STORAGE_BOX_ID).orElseThrow();
@@ -112,7 +112,7 @@ public class BlockStorageGameTests {
     @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
     public static void block_storage_1_nbt_roundtrip(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
-            BlockStorageBlockEntity rack = getRack(helper);
+            BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
             if (rack == null) return;
 
             Item storageBoxItem = BuiltInRegistries.ITEM.getOptional(STORAGE_BOX_ID).orElseThrow();
@@ -138,8 +138,8 @@ public class BlockStorageGameTests {
     @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
     public static void block_storage_1_removed_from_multiblock_on_break(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
-            AdvancedStorageCoreBlockEntity core = getCore(helper);
-            BlockStorageBlockEntity rack = getRack(helper);
+            AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
+            BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
             if (core == null || rack == null) return;
 
             Item storageBoxItem = BuiltInRegistries.ITEM.getOptional(STORAGE_BOX_ID).orElseThrow();
