@@ -14,6 +14,7 @@ public class S3AdvancedConfig {
     public static final ModConfigSpec.IntValue MACHINE_INTERFACE_ENERGY_PER_TICK;
     public static final ModConfigSpec.IntValue MACHINE_INTERFACE_TICK_INTERVAL;
     public static final ModConfigSpec.IntValue ADVANCED_STATISTICS_ENERGY_PER_TICK;
+    public static final ModConfigSpec.IntValue BLOCK_STORAGE_1_SLOT_ENERGY_PER_TICK;
 
     // Solar Generator
     public static final ModConfigSpec.IntValue SOLAR_CAPACITY;
@@ -51,6 +52,9 @@ public class S3AdvancedConfig {
         ADVANCED_STATISTICS_ENERGY_PER_TICK = builder
             .comment("FE consumed per tick per Advanced Statistics Block in the multiblock")
             .defineInRange("advanced_statistics_energy_per_tick", 5, 0, Integer.MAX_VALUE);
+        BLOCK_STORAGE_1_SLOT_ENERGY_PER_TICK = builder
+            .comment("FE consumed per tick per occupied Block Storage I slot in the multiblock")
+            .defineInRange("block_storage_1_slot_energy_per_tick", 10, 0, Integer.MAX_VALUE);
         builder.pop();
 
         builder.comment("Solar Generator").push("solar_generator");

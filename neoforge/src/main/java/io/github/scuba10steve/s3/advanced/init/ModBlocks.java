@@ -2,6 +2,7 @@ package io.github.scuba10steve.s3.advanced.init;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.block.*;
+import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
@@ -33,6 +34,10 @@ public class ModBlocks {
 
     public static final Supplier<Block> ADVANCED_STATISTICS =
         BLOCKS.register("advanced_statistics", BlockAdvancedStatistics::new);
+
+    public static final Supplier<Block> BLOCK_STORAGE_1 =
+        BLOCKS.register("block_storage_1",
+            () -> new BlockStorage(8, () -> S3AdvancedConfig.BLOCK_STORAGE_1_SLOT_ENERGY_PER_TICK.get()));
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
