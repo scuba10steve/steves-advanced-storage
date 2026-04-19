@@ -9,6 +9,7 @@ import io.github.scuba10steve.s3.advanced.block.BlockMachineInterface;
 import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
 import io.github.scuba10steve.s3.advanced.block.BlockSolarGenerator;
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStatisticsBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.BlockStorageBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
 import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
@@ -65,7 +66,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     public final CraftingEngine craftingEngine = new CraftingEngine();
     public final CraftingCoordinator craftingCoordinator = new CraftingCoordinator(craftingEngine);
 
-    // ContainerData slots: [0-1] energy, [2-3] capacity, [4] energyPerTick, [5] isPowered
+    // ContainerData slots: [0-1] energy stored, [2-3] max energy, [4-5] totalPowerDraw (split), [6] isPowered
     public final ContainerData containerData = new ContainerData() {
         @Override
         public int get(int index) {
@@ -74,8 +75,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 case 1 -> (energyStorage.getEnergyStored() >> 16) & 0xFFFF;
                 case 2 -> energyStorage.getMaxEnergyStored() & 0xFFFF;
                 case 3 -> (energyStorage.getMaxEnergyStored() >> 16) & 0xFFFF;
-                case 4 -> totalPowerDraw;
-                case 5 -> isPowered() ? 1 : 0;
+                case 4 -> totalPowerDraw & 0xFFFF;
+                case 5 -> (totalPowerDraw >> 16) & 0xFFFF;
+                case 6 -> isPowered() ? 1 : 0;
                 default -> 0;
             };
         }
@@ -85,7 +87,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
         @Override
         public int getCount() {
-            return 6;
+            return 7;
         }
     };
 
@@ -207,6 +209,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         // Clear and rebuild with full "namespace:path" strings during our BFS so the client
         // screen can resolve icons for both s3 and s3_advanced components.
         getInventory().getPresentComponents().clear();
+        long additionalCapacity = 0;
 
         // BFS from the core position over all blocks confirmed as multiblock members,
         // collecting RecipeMemoryBox block entities and accumulating their FE/t.
@@ -240,6 +243,20 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 }
             } else if (state.getBlock() instanceof BlockCraftingBox) {
                 advancedHasCraftingBox = true;
+            } else if (state.getBlock() instanceof io.github.scuba10steve.s3.advanced.block.BlockStorage advRack) {
+                if (level.getBlockEntity(pos) instanceof BlockStorageBlockEntity rack) {
+                    int occupied = 0;
+                    for (int slot = 0; slot < rack.getSlotCount(); slot++) {
+                        net.minecraft.world.item.ItemStack stack = rack.handler.getStackInSlot(slot);
+                        if (!stack.isEmpty()
+                                && stack.getItem() instanceof net.minecraft.world.item.BlockItem bi
+                                && bi.getBlock() instanceof BlockStorage storageBlock) {
+                            additionalCapacity += storageBlock.getCapacity();
+                            occupied++;
+                        }
+                    }
+                    totalPowerDraw += occupied * advRack.getEnergyPerSlot();
+                }
             }
 
             // Collect full "namespace:path" for this block if it's a non-storage, non-core component.
@@ -280,6 +297,11 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                     }
                 }
             }
+        }
+
+        if (additionalCapacity > 0) {
+            getInventory().setMaxItems(getInventory().getMaxItems() + additionalCapacity);
+            forceSyncToClients();
         }
 
         // Resolve RMB → crafter pairs based on RMB facing direction

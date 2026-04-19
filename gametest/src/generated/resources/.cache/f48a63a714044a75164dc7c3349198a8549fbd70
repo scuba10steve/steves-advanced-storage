@@ -1,9 +1,11 @@
-// 1.21.1	2026-03-29T17:32:13.08272298	S3 Advanced Game Test Structures
+// 1.21.1	2026-04-19T10:50:26.763326432	S3 Advanced Game Test Structures
 8478b47c8392feb88c89d54b0f0b6ef5131fba9c data/s3_advanced/structure/core_with_auto_crafter.nbt
+272f5761279ecc4b5a3b5a909342fbfa250fd63a data/s3_advanced/structure/core_with_block_storage_1.nbt
 fd297b2c7518ad2f17c7c7a0f688924da1470bce data/s3_advanced/structure/core_with_compressed_storage_box.nbt
 96a8424bfcb83420f2fa105068d6ae49d8750107 data/s3_advanced/structure/core_with_condensed_storage_box.nbt
 3913c244acc5149daa35507b7b99f64f26fa73a5 data/s3_advanced/structure/core_with_hyper_storage_box.nbt
 72c79d12ca9d793f47fd8b57129ca8a9da194445 data/s3_advanced/structure/core_with_machine_interface.nbt
+713269e7fdf4c3eb1a2067349ed0d6b1c4120712 data/s3_advanced/structure/core_with_rmb_and_crafter.nbt
 d1f3e04267e5df3c49f011a219f17da94230dd86 data/s3_advanced/structure/core_with_storage_box.nbt
 ce06b2c42da3e5a3abaeb14e568ecd7d6c940ae8 data/s3_advanced/structure/core_with_super_storage_box.nbt
 4780b59b27bf3d67b6903d79a9a615694f93d1ba data/s3_advanced/structure/core_with_ultimate_storage_box.nbt

@@ -27,6 +27,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.AUTO_CRAFTER.get());
                 output.accept(ModItems.MACHINE_INTERFACE.get());
                 output.accept(ModItems.ADVANCED_STATISTICS.get());
+                output.accept(ModItems.BLOCK_STORAGE_1.get());
             })
             .build()
     );

@@ -64,6 +64,11 @@ public class ModMenuTypes {
             IMenuTypeExtension.create((windowId, inv, data) ->
                 new AdvancedStatisticsMenu(windowId, inv, data)));
 
+    public static final Supplier<MenuType<BlockStorageMenu>> BLOCK_STORAGE =
+        MENU_TYPES.register("block_storage", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new BlockStorageMenu(windowId, inv, data)));
+
     public static void register(IEventBus eventBus) {
         MENU_TYPES.register(eventBus);
     }

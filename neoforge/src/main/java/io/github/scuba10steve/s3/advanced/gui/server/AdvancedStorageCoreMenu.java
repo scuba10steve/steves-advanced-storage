@@ -18,7 +18,7 @@ public class AdvancedStorageCoreMenu extends AbstractContainerMenu {
 
     // Client constructor
     public AdvancedStorageCoreMenu(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
-        this(containerId, buf.readBlockPos(), new SimpleContainerData(6));
+        this(containerId, buf.readBlockPos(), new SimpleContainerData(7));
     }
 
     // Server constructor
@@ -42,11 +42,11 @@ public class AdvancedStorageCoreMenu extends AbstractContainerMenu {
     }
 
     public int getEnergyPerTick() {
-        return containerData.get(4);
+        return (containerData.get(5) << 16) | (containerData.get(4) & 0xFFFF);
     }
 
     public boolean isPowered() {
-        return containerData.get(5) != 0;
+        return containerData.get(6) != 0;
     }
 
     public int getEnergyPercent() {

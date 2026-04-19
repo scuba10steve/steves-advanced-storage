@@ -1,24 +1,18 @@
 {
   "itemGroup.s3_advanced.tab": "Steve's Advanced Storage",
-
   "block.s3_advanced.advanced_storage_core": "Advanced Storage Core",
   "block.s3_advanced.solar_generator": "Solar Generator",
   "block.s3_advanced.coal_generator": "Coal Generator",
-
   "item.s3_advanced.advanced_storage_core_upgrade": "Advanced Storage Core Upgrade",
-
   "block.s3_advanced.recipe_memory_box": "Recipe Memory Box",
-
   "block.s3_advanced.auto_crafter": "Auto-Crafter",
   "container.s3_advanced.auto_crafter": "Auto-Crafter",
-
   "block.s3_advanced.machine_interface": "Machine Interface",
   "container.s3_advanced.machine_interface": "Machine Interface",
   "gui.s3_advanced.status.idle": "Idle",
   "gui.s3_advanced.status.pushing": "Pushing",
   "gui.s3_advanced.status.waiting": "Waiting",
   "gui.s3_advanced.tick_interval": "Every:",
-
   "gui.s3_advanced.save": "Save",
   "gui.s3_advanced.clear": "Clear",
   "gui.s3_advanced.auto_crafter_name": "Name (optional)",
@@ -28,7 +22,6 @@
   "gui.s3_advanced.craft_quantity": "Quantity:",
   "gui.s3_advanced.craft_confirm": "Craft",
   "gui.s3_advanced.craft_cancel": "Cancel",
-
   "block.s3_advanced.advanced_statistics": "Advanced Statistics",
   "container.s3_advanced.advanced_statistics": "Advanced Statistics",
   "gui.s3_advanced.stats.tab.general": "General",
@@ -50,5 +43,6 @@
   "gui.s3_advanced.stats.paired": "Paired:",
   "gui.s3_advanced.stats.mi_count": "Machine Interfaces:",
   "gui.s3_advanced.stats.mi_active": "Active:",
-  "gui.s3_advanced.stats.mi_idle": "Idle:"
+  "gui.s3_advanced.stats.mi_idle": "Idle:",
+  "block.s3_advanced.block_storage_1": "Block Storage I"
 }

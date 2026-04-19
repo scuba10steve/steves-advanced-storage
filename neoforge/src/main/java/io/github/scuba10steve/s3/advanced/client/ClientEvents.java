@@ -25,6 +25,7 @@ public class ClientEvents {
         event.register(ModMenuTypes.AUTO_CRAFTER.get(), AutoCrafterScreen::new);
         event.register(ModMenuTypes.MACHINE_INTERFACE.get(), MachineInterfaceScreen::new);
         event.register(ModMenuTypes.ADVANCED_STATISTICS.get(), AdvancedStatisticsScreen::new);
+        event.register(ModMenuTypes.BLOCK_STORAGE.get(), BlockStorageScreen::new);
         registerDisplayScreen(event);
         registerCraftingDisplayScreen(event);
     }

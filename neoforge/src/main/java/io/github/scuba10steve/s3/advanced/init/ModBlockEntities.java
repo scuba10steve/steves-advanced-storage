@@ -45,6 +45,14 @@ public class ModBlockEntities {
             BlockEntityType.Builder.of(AdvancedStatisticsBlockEntity::new,
                 ModBlocks.ADVANCED_STATISTICS.get()).build(null));
 
+    public static final Supplier<BlockEntityType<BlockStorageBlockEntity>> BLOCK_STORAGE =
+        BLOCK_ENTITIES.register("block_storage", () ->
+            BlockEntityType.Builder.of(
+                (pos, state) -> new BlockStorageBlockEntity(pos, state,
+                    ((io.github.scuba10steve.s3.advanced.block.BlockStorage) state.getBlock()).getSlotCount()),
+                ModBlocks.BLOCK_STORAGE_1.get()
+            ).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

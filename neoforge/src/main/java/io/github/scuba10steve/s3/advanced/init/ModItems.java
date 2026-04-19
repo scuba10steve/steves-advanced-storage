@@ -38,6 +38,9 @@ public class ModItems {
     public static final Supplier<Item> ADVANCED_STATISTICS = ITEMS.register("advanced_statistics",
         () -> new BlockItem(ModBlocks.ADVANCED_STATISTICS.get(), new Item.Properties()));
 
+    public static final Supplier<Item> BLOCK_STORAGE_1 = ITEMS.register("block_storage_1",
+        () -> new BlockItem(ModBlocks.BLOCK_STORAGE_1.get(), new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }
