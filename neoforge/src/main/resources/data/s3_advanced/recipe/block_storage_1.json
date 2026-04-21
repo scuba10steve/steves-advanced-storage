@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BIB",
+    "ICI",
+    "BIB"
+  ],
+  "key": {
+    "B": {"item": "s3:blank_box"},
+    "I": {"item": "minecraft:iron_ingot"},
+    "C": {"item": "minecraft:chest"}
+  },
+  "result": {
+    "id": "s3_advanced:block_storage_1",
+    "count": 1
+  }
+}
