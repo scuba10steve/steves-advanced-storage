@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IDI",
+    "WBW",
+    "IRI"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "D": {"item": "minecraft:diamond"},
+    "W": {"item": "minecraft:crafting_table"},
+    "B": {"item": "s3:blank_box"},
+    "R": {"item": "minecraft:repeater"}
+  },
+  "result": {
+    "id": "s3_advanced:recipe_memory_box",
+    "count": 1
+  }
+}
