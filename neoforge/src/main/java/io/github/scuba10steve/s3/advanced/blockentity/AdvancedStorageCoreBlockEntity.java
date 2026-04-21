@@ -61,6 +61,9 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     private boolean advancedHasCraftingBox = false;
     // Field initializer avoids a zero-value window before the constructor body runs.
     private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
+    private int advancedBlockCount = 0;
+    private final Map<String, Integer> nestedTierBreakdown = new LinkedHashMap<>();
+    private final List<BlockStorageBlockEntity> advancedStorageBlocks = new ArrayList<>();
 
     public final InternalEnergyStorage energyStorage;
     public final CraftingEngine craftingEngine = new CraftingEngine();
@@ -138,6 +141,28 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         return totalPowerDraw;
     }
 
+/** Returns the total block count (basic storage boxes + advanced storage blocks). */
+    @Override
+    public int getTotalBlockCount() {
+        // Parent class counts base storage boxes; we add advanced racks and their contents
+        return super.getTotalBlockCount() + advancedBlockCount;
+    }
+
+    /** Returns tier breakdown including nested storage boxes inside racks. */
+    @Override
+    public Map<String, Integer> getTierBreakdown() {
+        Map<String, Integer> base = super.getTierBreakdown();
+        if (base == null) {
+            base = new LinkedHashMap<>();
+        }
+        if (nestedTierBreakdown.isEmpty()) {
+            return base;
+        }
+        Map<String, Integer> merged = new LinkedHashMap<>(base);
+        nestedTierBreakdown.forEach((tier, count) -> merged.merge(tier, count, Integer::sum));
+        return merged;
+    }
+
     /** Returns the RMB currently paired to the given crafter, or null. */
     public RecipeMemoryBoxBlockEntity getRmbForCrafter(AutoCrafterBlockEntity crafter) {
         return rmbToCrafter.entrySet().stream()
@@ -198,6 +223,8 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         coalGenerators.clear();
         energyProviders.clear();
         advancedHasCraftingBox = false;
+        advancedBlockCount = 0;
+        nestedTierBreakdown.clear();
         super.scanMultiblock();
         totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
@@ -253,6 +280,8 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                                 && bi.getBlock() instanceof BlockStorage storageBlock) {
                             additionalCapacity += storageBlock.getCapacity();
                             occupied++;
+                            advancedBlockCount++;
+                            nestedTierBreakdown.merge(storageBlock.getTierKey(), 1, Integer::sum);
                         }
                     }
                     totalPowerDraw += occupied * advRack.getEnergyPerSlot();
@@ -261,7 +290,8 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
             // Collect full "namespace:path" for this block if it's a non-storage, non-core component.
             // This replaces the base scan's path-only entries so the client can resolve item icons.
-            if (!(state.getBlock() instanceof BlockStorage)
+            // Only filter out s3 library BlockStorage (not our s3_advanced BlockStorage to fix rack icon missing).
+            if (!(state.getBlock() instanceof io.github.scuba10steve.s3.block.BlockStorage)
                     && !(state.getBlock() instanceof BlockStorageCore)) {
                 ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
                 if (!blockId.getNamespace().equals("minecraft")) {
