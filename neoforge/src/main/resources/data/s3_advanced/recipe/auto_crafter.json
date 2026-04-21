@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IPI",
+    "WBW",
+    "IRI"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "P": {"item": "minecraft:piston"},
+    "W": {"item": "minecraft:crafting_table"},
+    "B": {"item": "s3:blank_box"},
+    "R": {"item": "minecraft:repeater"}
+  },
+  "result": {
+    "id": "s3_advanced:auto_crafter",
+    "count": 1
+  }
+}
