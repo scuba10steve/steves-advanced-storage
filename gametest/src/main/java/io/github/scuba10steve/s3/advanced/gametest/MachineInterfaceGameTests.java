@@ -22,7 +22,9 @@ public class MachineInterfaceGameTests {
     public static void machine_interface_discovered_in_multiblock(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
             if (core.getMachineInterfaces().isEmpty()) {
                 helper.fail("Expected Machine Interface to be discovered in multiblock scan");
                 return;
@@ -35,7 +37,9 @@ public class MachineInterfaceGameTests {
     public static void machine_interface_contributes_power_draw(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
             int draw = core.containerData.get(4);
             if (draw <= 0) {
                 helper.fail("totalPowerDraw not updated after machine interface joined multiblock");
@@ -49,7 +53,9 @@ public class MachineInterfaceGameTests {
     public static void machine_interface_tick_interval_persists_nbt(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             MachineInterfaceBlockEntity mi = getMI(helper, MI_POS);
-            if (mi == null) return;
+            if (mi == null) {
+                return;
+            }
 
             mi.setTickInterval(42);
             net.minecraft.nbt.CompoundTag tag = mi.getUpdateTag(helper.getLevel().registryAccess());
@@ -72,7 +78,9 @@ public class MachineInterfaceGameTests {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             MachineInterfaceBlockEntity mi = getMI(helper, MI_POS);
-            if (core == null || mi == null) return;
+            if (core == null || mi == null) {
+                return;
+            }
 
             core.getInventory().setMaxItems(1000L);
             core.getInventory().insertItem(new ItemStack(Items.RAW_IRON, 1));
@@ -97,7 +105,9 @@ public class MachineInterfaceGameTests {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             MachineInterfaceBlockEntity mi = getMI(helper, MI_POS);
-            if (core == null || mi == null) return;
+            if (core == null || mi == null) {
+                return;
+            }
 
             core.getInventory().setMaxItems(1000L);
 
@@ -124,13 +134,17 @@ public class MachineInterfaceGameTests {
     }
 
     private static AdvancedStorageCoreBlockEntity getCore(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) {
+            return be;
+        }
         helper.fail("AdvancedStorageCoreBlockEntity not found at " + pos);
         return null;
     }
 
     private static MachineInterfaceBlockEntity getMI(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof MachineInterfaceBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof MachineInterfaceBlockEntity be) {
+            return be;
+        }
         helper.fail("MachineInterfaceBlockEntity not found at " + pos);
         return null;
     }

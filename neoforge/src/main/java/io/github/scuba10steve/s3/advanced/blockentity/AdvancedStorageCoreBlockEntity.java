@@ -1,16 +1,9 @@
 package io.github.scuba10steve.s3.advanced.blockentity;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import io.github.scuba10steve.s3.advanced.block.BlockAdvancedStatistics;
-import io.github.scuba10steve.s3.advanced.block.BlockAutoCrafter;
-import io.github.scuba10steve.s3.advanced.block.BlockCoalGenerator;
-import io.github.scuba10steve.s3.advanced.block.BlockMachineInterface;
-import io.github.scuba10steve.s3.advanced.block.BlockRecipeMemoryBox;
-import io.github.scuba10steve.s3.advanced.block.BlockSolarGenerator;
+import io.github.scuba10steve.s3.advanced.block.*;
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStatisticsBlockEntity;
-import io.github.scuba10steve.s3.advanced.blockentity.BlockStorageBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.AutoCrafterBlockEntity;
+import io.github.scuba10steve.s3.advanced.blockentity.BlockStorageBlockEntity;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
 import io.github.scuba10steve.s3.advanced.crafting.CrafterSlot;
 import io.github.scuba10steve.s3.advanced.crafting.CraftingCoordinator;
@@ -25,13 +18,13 @@ import io.github.scuba10steve.s3.block.BlockStorage;
 import io.github.scuba10steve.s3.block.BlockStorageCore;
 import io.github.scuba10steve.s3.blockentity.StorageCoreBlockEntity;
 import io.github.scuba10steve.s3.util.BlockRef;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +36,8 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -58,10 +53,10 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     private final List<IEnergyStorage> energyProviders = new ArrayList<>();
     private final Map<RecipeMemoryBoxBlockEntity, AutoCrafterBlockEntity> rmbToCrafter = new LinkedHashMap<>();
     private final Map<RecipeMemoryBoxBlockEntity, MachineInterfaceBlockEntity> rmbToMachineInterface = new LinkedHashMap<>();
-    private boolean advancedHasCraftingBox = false;
+    private boolean advancedHasCraftingBox;
     // Field initializer avoids a zero-value window before the constructor body runs.
     private int totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
-    private int advancedBlockCount = 0;
+    private int advancedBlockCount;
     private final Map<String, Integer> nestedTierBreakdown = new LinkedHashMap<>();
     private final List<BlockStorageBlockEntity> advancedStorageBlocks = new ArrayList<>();
 
@@ -373,9 +368,13 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         }
         for (IEnergyStorage provider : energyProviders) {
             int space = energyStorage.receiveEnergy(Integer.MAX_VALUE, true);
-            if (space <= 0) break;
+            if (space <= 0) {
+                break;
+            }
             int extracted = provider.extractEnergy(space, false);
-            if (extracted > 0) energyStorage.receiveEnergy(extracted, false);
+            if (extracted > 0) {
+                energyStorage.receiveEnergy(extracted, false);
+            }
         }
         if (energyStorage.consume(totalPowerDraw)) {
             setChanged();
@@ -387,7 +386,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 // MI uses slot 0 of its paired RMB — one pattern per MI pairing by design.
                 RecipePattern pattern = pairedRmb != null ? pairedRmb.getPattern(0) : null;
                 mi.tryTick(getInventory(), level,
-                    (pattern != null && !pattern.isEmpty()) ? pattern : null);
+                    pattern != null && !pattern.isEmpty() ? pattern : null);
             }
         } else if (craftingCoordinator.getQueueSize() > 0) {
             LOGGER.debug("[Core] Energy check failed: stored={} needed={} queueSize={}",

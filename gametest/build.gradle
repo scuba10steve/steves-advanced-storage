@@ -43,11 +43,11 @@ configurations {
 }
 
 dependencies {
-    implementation project(':neoforge')
     compileOnly "maven.modrinth:steves-simple-storage:${s3_version}"
+    implementation project(':neoforge')
     s3ModRuntime "maven.modrinth:steves-simple-storage:${s3_version}"
 
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.14.3"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.14.4"
 }
 
 // Copy the s3 upstream mod JAR into run/mods/ so NeoForge FML discovers it as a mod.

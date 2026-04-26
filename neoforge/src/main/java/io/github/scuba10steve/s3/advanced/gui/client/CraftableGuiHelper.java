@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Stateless helper for craftable-item GUI logic shared by both storage display screens.
  */
-public class CraftableGuiHelper {
+public final class CraftableGuiHelper {
 
     private CraftableGuiHelper() {}
 

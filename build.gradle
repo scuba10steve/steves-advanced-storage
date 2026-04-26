@@ -17,6 +17,6 @@ repositories {
 
 dependencies {
     rewrite platform('org.openrewrite.recipe:rewrite-recipe-bom:latest.release')
-    rewrite("org.openrewrite.recipe:rewrite-testing-frameworks")
     rewrite("org.openrewrite.recipe:rewrite-static-analysis")
+    rewrite("org.openrewrite.recipe:rewrite-testing-frameworks")
 }

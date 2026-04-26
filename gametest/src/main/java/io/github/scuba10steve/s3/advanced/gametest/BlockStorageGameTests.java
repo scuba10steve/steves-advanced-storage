@@ -25,13 +25,17 @@ public class BlockStorageGameTests {
     private static final ResourceLocation STORAGE_BOX_ID = ResourceLocation.fromNamespaceAndPath("s3", "storage_box");
 
     private static AdvancedStorageCoreBlockEntity getCore(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) {
+            return be;
+        }
         helper.fail("AdvancedStorageCoreBlockEntity not found at " + pos);
         return null;
     }
 
     private static BlockStorageBlockEntity getRack(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof BlockStorageBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof BlockStorageBlockEntity be) {
+            return be;
+        }
         helper.fail("BlockStorageBlockEntity not found at " + pos);
         return null;
     }
@@ -41,7 +45,9 @@ public class BlockStorageGameTests {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
-            if (core == null || rack == null) return;
+            if (core == null || rack == null) {
+                return;
+            }
 
             long capacityBefore = core.getInventory().getMaxItems();
 
@@ -62,7 +68,9 @@ public class BlockStorageGameTests {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
-            if (core == null || rack == null) return;
+            if (core == null || rack == null) {
+                return;
+            }
 
             int powerBefore = core.containerData.get(4) | (core.containerData.get(5) << 16);
             int expectedPerSlot = S3AdvancedConfig.BLOCK_STORAGE_1_SLOT_ENERGY_PER_TICK.get();
@@ -83,7 +91,9 @@ public class BlockStorageGameTests {
     public static void block_storage_1_is_item_valid_rejects_advanced_block_storage(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
-            if (rack == null) return;
+            if (rack == null) {
+                return;
+            }
 
             ItemStack advancedRackItem = new ItemStack(ModItems.BLOCK_STORAGE_1.get());
             if (rack.handler.isItemValid(0, advancedRackItem)) {
@@ -98,7 +108,9 @@ public class BlockStorageGameTests {
     public static void block_storage_1_is_item_valid_accepts_base_storage_box(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
-            if (rack == null) return;
+            if (rack == null) {
+                return;
+            }
 
             Item storageBoxItem = BuiltInRegistries.ITEM.getOptional(STORAGE_BOX_ID).orElseThrow();
             if (!rack.handler.isItemValid(0, new ItemStack(storageBoxItem))) {
@@ -113,7 +125,9 @@ public class BlockStorageGameTests {
     public static void block_storage_1_nbt_roundtrip(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
-            if (rack == null) return;
+            if (rack == null) {
+                return;
+            }
 
             Item storageBoxItem = BuiltInRegistries.ITEM.getOptional(STORAGE_BOX_ID).orElseThrow();
             ItemStack original = new ItemStack(storageBoxItem);
@@ -140,7 +154,9 @@ public class BlockStorageGameTests {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             BlockStorageBlockEntity rack = getRack(helper, RACK_POS);
-            if (core == null || rack == null) return;
+            if (core == null || rack == null) {
+                return;
+            }
 
             Item storageBoxItem = BuiltInRegistries.ITEM.getOptional(STORAGE_BOX_ID).orElseThrow();
             rack.handler.insertItem(0, new ItemStack(storageBoxItem), false);

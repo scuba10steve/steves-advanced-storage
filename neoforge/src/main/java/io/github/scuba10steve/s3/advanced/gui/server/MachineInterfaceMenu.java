@@ -42,10 +42,14 @@ public class MachineInterfaceMenu extends AbstractContainerMenu {
 
     @Nullable
     public static BlockPos resolvePairedRmbPos(MachineInterfaceBlockEntity be) {
-        if (be.getLevel() == null) return null;
+        if (be.getLevel() == null) {
+            return null;
+        }
         AdvancedStorageCoreBlockEntity core =
             AdvancedStorageCoreBlockEntity.findCore(be.getLevel(), be.getBlockPos());
-        if (core == null) return null;
+        if (core == null) {
+            return null;
+        }
         RecipeMemoryBoxBlockEntity rmb = core.getRmbForMachineInterface(be);
         return rmb != null ? rmb.getBlockPos() : null;
     }

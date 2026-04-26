@@ -76,13 +76,17 @@ public class StorageGuiCraftingGameTests {
     }
 
     private static RecipeMemoryBoxBlockEntity getRmb(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof RecipeMemoryBoxBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof RecipeMemoryBoxBlockEntity be) {
+            return be;
+        }
         helper.fail("RecipeMemoryBoxBlockEntity not found at " + pos);
         return null;
     }
 
     private static AutoCrafterBlockEntity getCrafter(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) {
+            return be;
+        }
         helper.fail("AutoCrafterBlockEntity not found at " + pos);
         return null;
     }

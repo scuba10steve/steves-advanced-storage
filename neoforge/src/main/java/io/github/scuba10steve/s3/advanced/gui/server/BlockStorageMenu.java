@@ -63,7 +63,9 @@ public class BlockStorageMenu extends AbstractContainerMenu {
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = slots.get(index);
-        if (slot == null || !slot.hasItem()) return result;
+        if (slot == null || !slot.hasItem()) {
+            return result;
+        }
 
         ItemStack slotStack = slot.getItem();
         result = slotStack.copy();
@@ -80,8 +82,11 @@ public class BlockStorageMenu extends AbstractContainerMenu {
             }
         }
 
-        if (slotStack.isEmpty()) slot.set(ItemStack.EMPTY);
-        else slot.setChanged();
+        if (slotStack.isEmpty()) {
+            slot.set(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
         return result;
     }
 

@@ -38,7 +38,8 @@ public class RecipeMemoryBoxMenu extends AbstractContainerMenu {
         this.blockEntity = be;
 
         for (int i = 0; i < PATTERN_SLOT_COUNT; i++) {
-            int row = i / 2, col = i % 2;
+            int row = i / 2;
+            int col = i % 2;
             addSlot(new Slot(displayContainer, i, 26 + col * 18, 17 + row * 18) {
                 @Override public boolean mayPickup(Player player) { return false; }
                 @Override public boolean mayPlace(ItemStack stack) { return false; }

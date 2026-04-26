@@ -82,7 +82,9 @@ public class MachineInterfaceScreen extends AbstractContainerScreen<MachineInter
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
+        if (button != 0) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
 
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
