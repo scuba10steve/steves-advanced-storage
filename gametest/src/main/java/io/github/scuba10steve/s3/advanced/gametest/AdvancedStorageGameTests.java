@@ -242,7 +242,9 @@ public class AdvancedStorageGameTests {
     public static void advanced_core_container_data_has_7_slots(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
             int count = core.containerData.getCount();
             if (count != 7) {
                 helper.fail("Expected containerData.getCount() == 7, got " + count);
@@ -257,7 +259,9 @@ public class AdvancedStorageGameTests {
     public static void advanced_core_total_power_draw_split_encoded_correctly(GameTestHelper helper) {
         helper.runAfterDelay(5, () -> {
             AdvancedStorageCoreBlockEntity core = getAdvancedCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
             int low  = core.containerData.get(4);
             int high = core.containerData.get(5);
             int reconstructed = (high << 16) | (low & 0xFFFF);

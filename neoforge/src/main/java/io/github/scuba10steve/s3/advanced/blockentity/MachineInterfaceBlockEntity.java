@@ -34,7 +34,7 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
     public enum Status { IDLE, PUSHING, WAITING }
 
     private int tickInterval;
-    private int ticksElapsed = 0;
+    private int ticksElapsed;
     private Status status = Status.IDLE;
 
     public final ContainerData containerData = new ContainerData() {
@@ -46,7 +46,9 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
             };
         }
         @Override public void set(int index, int value) {
-            if (index == 0) tickInterval = Math.max(1, value);
+            if (index == 0) {
+                tickInterval = Math.max(1, value);
+            }
         }
         @Override public int getCount() { return 2; }
     };
@@ -72,14 +74,18 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
      */
     public void tryTick(StorageInventory inventory, Level level, @Nullable RecipePattern pattern) {
         ticksElapsed++;
-        if (ticksElapsed < tickInterval) return;
+        if (ticksElapsed < tickInterval) {
+            return;
+        }
         ticksElapsed = 0;
 
         // Pull completed outputs from adjacent machines back into storage
         for (Direction dir : Direction.values()) {
             IItemHandler handler = level.getCapability(
                 Capabilities.ItemHandler.BLOCK, worldPosition.relative(dir), dir.getOpposite());
-            if (handler != null) pullFrom(handler, inventory);
+            if (handler != null) {
+                pullFrom(handler, inventory);
+            }
         }
 
         if (pattern == null || pattern.isEmpty()) {
@@ -102,20 +108,30 @@ public class MachineInterfaceBlockEntity extends BaseBlockEntity implements Menu
     private void pullFrom(IItemHandler handler, StorageInventory inventory) {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack inSlot = handler.getStackInSlot(i);
-            if (inSlot.isEmpty()) continue;
+            if (inSlot.isEmpty()) {
+                continue;
+            }
             ItemStack extracted = handler.extractItem(i, inSlot.getCount(), false);
-            if (!extracted.isEmpty()) inventory.insertItem(extracted);
+            if (!extracted.isEmpty()) {
+                inventory.insertItem(extracted);
+            }
         }
     }
 
     private boolean pushTo(IItemHandler handler, StorageInventory inventory, RecipePattern pattern) {
         List<ItemStack> extracted = new ArrayList<>();
         for (ItemStack ingredient : pattern.getGrid()) {
-            if (ingredient.isEmpty()) continue;
+            if (ingredient.isEmpty()) {
+                continue;
+            }
             ItemStack got = inventory.extractItem(ingredient, ingredient.getCount());
             if (got.getCount() < ingredient.getCount()) {
-                if (!got.isEmpty()) inventory.insertItem(got);
-                for (ItemStack e : extracted) inventory.insertItem(e);
+                if (!got.isEmpty()) {
+                    inventory.insertItem(got);
+                }
+                for (ItemStack e : extracted) {
+                    inventory.insertItem(e);
+                }
                 return false;
             }
             extracted.add(got);

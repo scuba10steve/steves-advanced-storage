@@ -5,11 +5,11 @@ import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity
 import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
 import io.github.scuba10steve.s3.block.StorageMultiblock;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;

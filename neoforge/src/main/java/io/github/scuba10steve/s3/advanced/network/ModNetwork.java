@@ -7,11 +7,7 @@ import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntit
 import io.github.scuba10steve.s3.advanced.crafting.CraftingSource;
 import io.github.scuba10steve.s3.advanced.crafting.PerPatternConfig;
 import io.github.scuba10steve.s3.advanced.gui.client.CraftableClientData;
-import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCraftingDisplayMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageDisplayMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.AutoCrafterMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.MachineInterfaceMenu;
-import io.github.scuba10steve.s3.advanced.gui.server.RecipePatternMenu;
+import io.github.scuba10steve.s3.advanced.gui.server.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;

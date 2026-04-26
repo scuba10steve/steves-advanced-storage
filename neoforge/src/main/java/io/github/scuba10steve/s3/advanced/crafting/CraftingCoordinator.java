@@ -7,12 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class CraftingCoordinator {
 
@@ -33,7 +28,9 @@ public class CraftingCoordinator {
      */
     public void enqueue(CrafterSlot slot, int quantity, CraftingSource source) {
         if (source == CraftingSource.AUTO_BUFFER) {
-            if (pendingAutoBuffer.contains(slot)) return;
+            if (pendingAutoBuffer.contains(slot)) {
+                return;
+            }
             pendingAutoBuffer.add(slot);
         }
         queue.add(new CraftingJob(slot, quantity, source));
@@ -60,9 +57,13 @@ public class CraftingCoordinator {
             for (int i = 0; i < AutoCrafterBlockEntity.SLOT_COUNT; i++) {
                 CrafterSlot slot = new CrafterSlot(crafter.getBlockPos(), i);
                 PerPatternConfig config = crafter.getConfigs()[i];
-                if (!config.autoEnabled() || pendingAutoBuffer.contains(slot)) continue;
+                if (!config.autoEnabled() || pendingAutoBuffer.contains(slot)) {
+                    continue;
+                }
                 RecipePattern pattern = rmb.getPattern(i);
-                if (pattern == null || pattern.isEmpty()) continue;
+                if (pattern == null || pattern.isEmpty()) {
+                    continue;
+                }
                 int current = countItem(inventory, pattern.getOutput());
                 if (current < config.minimumBuffer()) {
                     enqueue(slot, 1, CraftingSource.AUTO_BUFFER);
@@ -100,15 +101,20 @@ public class CraftingCoordinator {
             for (int i = 0; i < job.quantity(); i++) {
                 boolean success = craftingEngine.execute(ingredients, pattern.getOutput(), inventory);
                 LOGGER.debug("[Coordinator] execute iteration {}/{}: {}", i + 1, job.quantity(), success ? "OK" : "FAILED");
-                if (success) crafted = true;
-                else break;
+                if (success) {
+                    crafted = true;
+                } else {
+                    break;
+                }
             }
         }
         return crafted;
     }
 
     private int countItem(StorageInventory inventory, ItemStack template) {
-        if (template.isEmpty()) return 0;
+        if (template.isEmpty()) {
+            return 0;
+        }
         long total = 0;
         for (var stored : inventory.getStoredItems()) {
             if (ItemStack.isSameItemSameComponents(stored.getItemStack(), template)) {

@@ -80,12 +80,16 @@ public class AdvancedStorageCraftingDisplayScreen extends StorageCoreCraftingScr
                     List<CraftableSyncPacket.Entry> entries = CraftableClientData.get(menu.getPos());
                     Optional<CrafterSlot> key = CraftableGuiHelper.findCrafterSlot(stack, entries);
                     if (key.isPresent()) {
-                        if (clearButton != null) clearButton.visible = false;
+                        if (clearButton != null) {
+                            clearButton.visible = false;
+                        }
                         quantityOverlay = new CraftQuantityOverlay(
                             font, width, height, stack, key.get(), menu.getPos(),
                             () -> {
                                 quantityOverlay = null;
-                                if (clearButton != null) clearButton.visible = true;
+                                if (clearButton != null) {
+                                    clearButton.visible = true;
+                                }
                             });
                         return true;
                     }

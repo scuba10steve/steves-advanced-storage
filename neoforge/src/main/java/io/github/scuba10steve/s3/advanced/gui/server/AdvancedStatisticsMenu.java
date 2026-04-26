@@ -119,7 +119,9 @@ public class AdvancedStatisticsMenu extends AbstractContainerMenu {
         }
         List<String> comps = core.getInventory().getPresentComponents();
         buf.writeVarInt(comps.size());
-        for (String c : comps) buf.writeUtf(c);
+        for (String c : comps) {
+            buf.writeUtf(c);
+        }
         buf.writeVarInt(core.getTotalGenerationRate());
         buf.writeVarInt(core.getTotalPowerDraw());
         buf.writeVarInt(core.energyStorage.getEnergyStored());
@@ -129,7 +131,9 @@ public class AdvancedStatisticsMenu extends AbstractContainerMenu {
         int usedSlots = 0;
         for (RecipeMemoryBoxBlockEntity rmb : rmbs) {
             for (RecipePattern p : rmb.getPatterns()) {
-                if (!p.isEmpty()) usedSlots++;
+                if (!p.isEmpty()) {
+                    usedSlots++;
+                }
             }
         }
         buf.writeVarInt(rmbs.size());

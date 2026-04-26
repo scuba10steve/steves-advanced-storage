@@ -33,10 +33,14 @@ public class PairingGameTests {
     public static void rmb_paired_to_crafter_via_facing(GameTestHelper helper) {
         helper.runAfterDelay(10, () -> {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
-            if (core == null) return;
+            if (core == null) {
+                return;
+            }
 
             AutoCrafterBlockEntity crafter = getCrafter(helper, CRAFTER_POS);
-            if (crafter == null) return;
+            if (crafter == null) {
+                return;
+            }
 
             RecipeMemoryBoxBlockEntity pairedRmb = core.getRmbForCrafter(crafter);
             if (pairedRmb == null) {
@@ -59,7 +63,9 @@ public class PairingGameTests {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             RecipeMemoryBoxBlockEntity rmb = getRmb(helper, RMB_POS);
             AutoCrafterBlockEntity crafter = getCrafter(helper, CRAFTER_POS);
-            if (core == null || rmb == null || crafter == null) return;
+            if (core == null || rmb == null || crafter == null) {
+                return;
+            }
 
             // Ensure inventory has capacity
             core.getInventory().setMaxItems(TEST_CAPACITY);
@@ -97,7 +103,9 @@ public class PairingGameTests {
             AdvancedStorageCoreBlockEntity core = getCore(helper, CORE_POS);
             RecipeMemoryBoxBlockEntity rmb = getRmb(helper, RMB_POS);
             AutoCrafterBlockEntity crafter = getCrafter(helper, CRAFTER_POS);
-            if (core == null || rmb == null || crafter == null) return;
+            if (core == null || rmb == null || crafter == null) {
+                return;
+            }
 
             // Ensure inventory has capacity
             core.getInventory().setMaxItems(TEST_CAPACITY);
@@ -131,19 +139,25 @@ public class PairingGameTests {
     // Helpers
     // -----------------------------------------------------------------------
     private static AdvancedStorageCoreBlockEntity getCore(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof AdvancedStorageCoreBlockEntity be) {
+            return be;
+        }
         helper.fail("AdvancedStorageCoreBlockEntity not found at " + pos);
         return null;
     }
 
     private static RecipeMemoryBoxBlockEntity getRmb(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof RecipeMemoryBoxBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof RecipeMemoryBoxBlockEntity be) {
+            return be;
+        }
         helper.fail("RecipeMemoryBoxBlockEntity not found at " + pos);
         return null;
     }
 
     private static AutoCrafterBlockEntity getCrafter(GameTestHelper helper, BlockPos pos) {
-        if (helper.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) return be;
+        if (helper.getBlockEntity(pos) instanceof AutoCrafterBlockEntity be) {
+            return be;
+        }
         helper.fail("AutoCrafterBlockEntity not found at " + pos);
         return null;
     }

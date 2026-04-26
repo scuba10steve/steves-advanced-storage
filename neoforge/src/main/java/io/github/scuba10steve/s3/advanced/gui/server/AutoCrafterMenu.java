@@ -48,7 +48,9 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
     }
 
     public static RecipeMemoryBoxBlockEntity resolveRmb(AutoCrafterBlockEntity be) {
-        if (be.getLevel() == null) return null;
+        if (be.getLevel() == null) {
+            return null;
+        }
         AdvancedStorageCoreBlockEntity core =
             AdvancedStorageCoreBlockEntity.findCore(be.getLevel(), be.getBlockPos());
         return core != null ? core.getRmbForCrafter(be) : null;
@@ -61,10 +63,12 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
     public static ItemStack[] resolveOutputItems(RecipeMemoryBoxBlockEntity rmb) {
         ItemStack[] items = new ItemStack[AutoCrafterBlockEntity.SLOT_COUNT];
         Arrays.fill(items, ItemStack.EMPTY);
-        if (rmb == null) return items;
+        if (rmb == null) {
+            return items;
+        }
         for (int i = 0; i < AutoCrafterBlockEntity.SLOT_COUNT; i++) {
             var pattern = rmb.getPattern(i);
-            items[i] = (pattern != null && !pattern.isEmpty()) ? pattern.getOutput().copy() : ItemStack.EMPTY;
+            items[i] = pattern != null && !pattern.isEmpty() ? pattern.getOutput().copy() : ItemStack.EMPTY;
         }
         return items;
     }

@@ -108,9 +108,15 @@ public class CraftQuantityOverlay {
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (quantityBox.mouseClicked(mouseX, mouseY, button)) return true;
-        if (confirmButton.mouseClicked(mouseX, mouseY, button)) return true;
-        if (cancelButton.mouseClicked(mouseX, mouseY, button)) return true;
+        if (quantityBox.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+        if (confirmButton.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+        if (cancelButton.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
         // Click outside panel dismisses
         if (mouseX < panelX || mouseX > panelX + PANEL_W || mouseY < panelY || mouseY > panelY + PANEL_H) {
             onClose.run();

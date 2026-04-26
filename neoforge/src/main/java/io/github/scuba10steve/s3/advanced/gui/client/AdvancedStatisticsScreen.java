@@ -94,7 +94,9 @@ public class AdvancedStatisticsScreen extends AbstractContainerScreen<AdvancedSt
         y += 11;
 
         for (Map.Entry<String, Integer> entry : m.tierBreakdown.entrySet()) {
-            if (y >= bottom) break;
+            if (y >= bottom) {
+                break;
+            }
             String line = capitalize(entry.getKey()) + ": " + entry.getValue();
             graphics.drawString(font, line, 16, y, VALUE_COLOR, false);
             y += 10;
@@ -110,7 +112,9 @@ public class AdvancedStatisticsScreen extends AbstractContainerScreen<AdvancedSt
         if (!m.presentComponents.isEmpty() && y + 16 <= bottom) {
             int iconX = 10;
             for (String comp : m.presentComponents) {
-                if (iconX + 16 > imageWidth - 6) break;
+                if (iconX + 16 > imageWidth - 6) {
+                    break;
+                }
                 ItemStack icon = getItemForComponent(comp);
                 if (!icon.isEmpty()) {
                     graphics.renderItem(icon, iconX, y);
@@ -143,7 +147,9 @@ public class AdvancedStatisticsScreen extends AbstractContainerScreen<AdvancedSt
         int barW = imageWidth - 12;
         graphics.fill(6, y, 6 + barW, y + 6, 0xFF555555);
         int filled = (int)(barW * Math.min(ratio, 1f));
-        if (filled > 0) graphics.fill(6, y, 6 + filled, y + 6, barColor);
+        if (filled > 0) {
+            graphics.fill(6, y, 6 + filled, y + 6, barColor);
+        }
         String pctStr = pct + "%";
         graphics.drawString(font, pctStr, 6 + barW - font.width(pctStr), y + 7, VALUE_COLOR, false);
         y += 18;
@@ -197,7 +203,9 @@ public class AdvancedStatisticsScreen extends AbstractContainerScreen<AdvancedSt
             int barW = imageWidth - 12;
             graphics.fill(6, y, 6 + barW, y + 6, 0xFF555555);
             int filled = (int)(barW * Math.min(ratio, 1f));
-            if (filled > 0) graphics.fill(6, y, 6 + filled, y + 6, BLUE);
+            if (filled > 0) {
+                graphics.fill(6, y, 6 + filled, y + 6, BLUE);
+            }
             y += 9;
             if (y < bottom) {
                 String energyStr = formatVal(stored, exact) + " / " + formatVal(maxCap, exact) + " FE";
@@ -307,12 +315,16 @@ public class AdvancedStatisticsScreen extends AbstractContainerScreen<AdvancedSt
             ? ResourceLocation.parse(registryPath)
             : ResourceLocation.fromNamespaceAndPath("s3", registryPath);
         Item item = BuiltInRegistries.ITEM.get(itemId);
-        if (item == null) return ItemStack.EMPTY;
+        if (item == null) {
+            return ItemStack.EMPTY;
+        }
         return new ItemStack(item);
     }
 
     private static String capitalize(String s) {
-        if (s == null || s.isEmpty()) return s;
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 

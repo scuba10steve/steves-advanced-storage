@@ -41,7 +41,9 @@ public class BlockMachineInterface extends StorageMultiblock implements EntityBl
                     buf.writeBlockPos(be.getBlockPos());
                     BlockPos rmbPos = MachineInterfaceMenu.resolvePairedRmbPos(be);
                     buf.writeBoolean(rmbPos != null);
-                    if (rmbPos != null) buf.writeBlockPos(rmbPos);
+                    if (rmbPos != null) {
+                        buf.writeBlockPos(rmbPos);
+                    }
                 });
             }
         }

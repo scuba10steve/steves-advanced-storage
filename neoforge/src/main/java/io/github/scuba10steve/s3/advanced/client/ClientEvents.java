@@ -5,12 +5,12 @@ import io.github.scuba10steve.s3.advanced.gui.client.*;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCraftingDisplayMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageDisplayMenu;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.minecraft.client.gui.screens.MenuScreens;
 
 @EventBusSubscriber(modid = StevesAdvancedStorage.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ClientEvents {
