@@ -35,7 +35,8 @@ public class BlockStorageMenu extends AbstractContainerMenu {
         int startY = 29;
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                addSlot(new SlotItemHandler(be.handler, row * cols + col,
+                int slot = row * cols + col;
+                addSlot(new SlotItemHandler(be.handler, slot,
                     startX + col * 18, startY + row * 18));
             }
         }
@@ -90,4 +91,5 @@ public class BlockStorageMenu extends AbstractContainerMenu {
             ContainerLevelAccess.create(player.level(), pos),
             player, ModBlocks.BLOCK_STORAGE_1.get());
     }
+
 }

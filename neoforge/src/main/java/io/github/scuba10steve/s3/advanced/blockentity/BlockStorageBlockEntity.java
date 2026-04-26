@@ -27,6 +27,11 @@ public class BlockStorageBlockEntity extends BaseBlockEntity implements MenuProv
         this.slotCount = slotCount;
         this.handler = new ItemStackHandler(slotCount) {
             @Override
+            public int getSlotLimit(int slot) {
+                return 1;
+            }
+
+            @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 return stack.getItem() instanceof BlockItem bi
                     && bi.getBlock() instanceof BlockStorage
