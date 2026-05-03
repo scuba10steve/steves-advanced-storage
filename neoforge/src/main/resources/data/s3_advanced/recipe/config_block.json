@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ICI",
+    "RBR",
+    "IPI"
+  ],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "C": {"item": "minecraft:chest"},
+    "R": {"item": "minecraft:comparator"},
+    "B": {"item": "s3:blank_box"},
+    "P": {"item": "minecraft:repeater"}
+  },
+  "result": {
+    "id": "s3_advanced:config_block",
+    "count": 1
+  }
+}
