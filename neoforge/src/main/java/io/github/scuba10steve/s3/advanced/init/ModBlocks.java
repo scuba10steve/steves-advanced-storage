@@ -39,6 +39,9 @@ public class ModBlocks {
         BLOCKS.register("block_storage_1",
             () -> new BlockStorage(8, () -> S3AdvancedConfig.BLOCK_STORAGE_1_SLOT_ENERGY_PER_TICK.get()));
 
+    public static final Supplier<Block> BLOCK_CONFIG_BLOCK =
+        BLOCKS.register("config_block", BlockConfigBlock::new);
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }
