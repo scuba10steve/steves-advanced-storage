@@ -15,7 +15,7 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class ConfigBlockMenu extends AbstractContainerMenu {
 
-    private static final int SLOT_COUNT = 5;
+    private static final int SLOT_COUNT = 3;
     private final BlockPos pos;
 
     // Client constructor
@@ -28,9 +28,9 @@ public class ConfigBlockMenu extends AbstractContainerMenu {
         super(ModMenuTypes.CONFIG_BLOCK.get(), containerId);
         this.pos = be.getBlockPos();
 
-        // 5 config slots in 1 row, centered: startX = (176 - 5*18) / 2 = 43
+        // 3 config slots in 1 row, centered: startX = (176 - 3*18) / 2 = 61
         for (int col = 0; col < SLOT_COUNT; col++) {
-            addSlot(new SlotItemHandler(be.handler, col, 43 + col * 18, 17));
+            addSlot(new SlotItemHandler(be.handler, col, 61 + col * 18, 17));
         }
 
         // Player inventory (3 rows x 9 cols)

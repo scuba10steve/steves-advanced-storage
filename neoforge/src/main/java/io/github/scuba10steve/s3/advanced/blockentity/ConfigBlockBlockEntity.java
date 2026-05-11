@@ -4,9 +4,7 @@ import io.github.scuba10steve.s3.advanced.gui.server.ConfigBlockMenu;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.block.BlockCraftingBox;
 import io.github.scuba10steve.s3.block.BlockSearchBox;
-import io.github.scuba10steve.s3.block.BlockSecurityBox;
 import io.github.scuba10steve.s3.block.BlockSortBox;
-import io.github.scuba10steve.s3.block.BlockStatisticsBox;
 import io.github.scuba10steve.s3.blockentity.BaseBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -27,15 +25,13 @@ public class ConfigBlockBlockEntity extends BaseBlockEntity implements MenuProvi
 
     public ConfigBlockBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CONFIG_BLOCK.get(), pos, state);
-        this.handler = new ItemStackHandler(5) {
+        this.handler = new ItemStackHandler(3) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 return stack.getItem() instanceof BlockItem bi && (
-                    bi.getBlock() instanceof BlockCraftingBox   ||
-                    bi.getBlock() instanceof BlockSearchBox     ||
-                    bi.getBlock() instanceof BlockSortBox       ||
-                    bi.getBlock() instanceof BlockSecurityBox   ||
-                    bi.getBlock() instanceof BlockStatisticsBox
+                    bi.getBlock() instanceof BlockCraftingBox ||
+                    bi.getBlock() instanceof BlockSearchBox   ||
+                    bi.getBlock() instanceof BlockSortBox
                 );
             }
 
