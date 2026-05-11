@@ -265,6 +265,21 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                 }
             } else if (state.getBlock() instanceof BlockCraftingBox) {
                 advancedHasCraftingBox = true;
+            } else if (state.getBlock() instanceof BlockConfigBlock) {
+                if (level.getBlockEntity(pos) instanceof ConfigBlockBlockEntity configBe) {
+                    for (int slot = 0; slot < configBe.handler.getSlots(); slot++) {
+                        net.minecraft.world.item.ItemStack item = configBe.handler.getStackInSlot(slot);
+                        if (!item.isEmpty() && item.getItem() instanceof net.minecraft.world.item.BlockItem bi) {
+                            if (bi.getBlock() instanceof BlockCraftingBox) {
+                                advancedHasCraftingBox = true;
+                            } else if (bi.getBlock() instanceof io.github.scuba10steve.s3.block.BlockSearchBox) {
+                                setHasSearchBox(true);
+                            } else if (bi.getBlock() instanceof io.github.scuba10steve.s3.block.BlockSortBox) {
+                                setHasSortBox(true);
+                            }
+                        }
+                    }
+                }
             } else if (state.getBlock() instanceof io.github.scuba10steve.s3.advanced.block.BlockStorage advRack) {
                 if (level.getBlockEntity(pos) instanceof BlockStorageBlockEntity rack) {
                     int occupied = 0;
