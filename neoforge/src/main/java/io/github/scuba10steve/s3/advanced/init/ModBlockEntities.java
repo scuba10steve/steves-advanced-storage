@@ -53,6 +53,11 @@ public class ModBlockEntities {
                 ModBlocks.BLOCK_STORAGE_1.get()
             ).build(null));
 
+    public static final Supplier<BlockEntityType<ConfigBlockBlockEntity>> CONFIG_BLOCK =
+        BLOCK_ENTITIES.register("config_block", () ->
+            BlockEntityType.Builder.of(ConfigBlockBlockEntity::new,
+                ModBlocks.BLOCK_CONFIG_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

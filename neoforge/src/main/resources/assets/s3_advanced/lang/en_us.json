@@ -44,5 +44,7 @@
   "gui.s3_advanced.stats.mi_count": "Machine Interfaces:",
   "gui.s3_advanced.stats.mi_active": "Active:",
   "gui.s3_advanced.stats.mi_idle": "Idle:",
-  "block.s3_advanced.block_storage_1": "Block Storage I"
+  "block.s3_advanced.block_storage_1": "Block Storage I",
+  "block.s3_advanced.config_block": "Config Block",
+  "container.s3_advanced.config_block": "Config Block"
 }

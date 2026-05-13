@@ -41,6 +41,9 @@ public class ModItems {
     public static final Supplier<Item> BLOCK_STORAGE_1 = ITEMS.register("block_storage_1",
         () -> new BlockItem(ModBlocks.BLOCK_STORAGE_1.get(), new Item.Properties()));
 
+    public static final Supplier<Item> BLOCK_CONFIG_BLOCK = ITEMS.register("config_block",
+        () -> new BlockItem(ModBlocks.BLOCK_CONFIG_BLOCK.get(), new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }
