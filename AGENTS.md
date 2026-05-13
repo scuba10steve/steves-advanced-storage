@@ -110,6 +110,21 @@ Do not modify the `s3` library to add missing accessors — work around private 
 
 See `gradle.properties` — `mod_version` and `s3_version` (dependency on Steve's Simple Storage).
 
+### Version & Release Management
+
+Never edit `gradle.properties` manually to bump the version. Use the GitHub Actions workflows:
+
+```bash
+# Bump version (patch | minor | major)
+gh workflow run bump-version.yml --field part=minor
+
+# Wait for the workflow to complete, then pull the remote commit
+git pull
+
+# Trigger a release (beta | release)
+gh workflow run release.yml --field release_type=release
+```
+
 ---
 
 ## Design Docs
