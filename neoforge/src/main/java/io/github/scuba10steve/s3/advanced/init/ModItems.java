@@ -8,6 +8,9 @@ import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import net.minecraft.world.item.DyeColor;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ModItems {
@@ -43,6 +46,16 @@ public class ModItems {
 
     public static final Supplier<Item> BLOCK_CONFIG_BLOCK = ITEMS.register("config_block",
         () -> new BlockItem(ModBlocks.BLOCK_CONFIG_BLOCK.get(), new Item.Properties()));
+
+    public static final Map<DyeColor, Supplier<Item>> STORAGE_CABLE_ITEMS = new EnumMap<>(DyeColor.class);
+
+    static {
+        for (DyeColor color : DyeColor.values()) {
+            String name = color.getName() + "_storage_cable";
+            STORAGE_CABLE_ITEMS.put(color, ITEMS.register(name,
+                () -> new BlockItem(ModBlocks.STORAGE_CABLES.get(color).get(), new Item.Properties())));
+        }
+    }
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

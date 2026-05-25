@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "BBB",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:black_stained_glass"
+    },
+    "B": {
+      "item": "s3:blank_box"
+    }
+  },
+  "result": {
+    "id": "s3_advanced:black_storage_cable",
+    "count": 3
+  }
+}
