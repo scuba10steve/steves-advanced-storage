@@ -18,6 +18,7 @@ for color in colors:
 for color in colors:
     path = os.path.join(base, 'models/block', f'{color}_storage_cable.json')
     model = {
+        "render_type": "minecraft:cutout",
         "parent": "minecraft:block/block",
         "ambientocclusion": False,
         "elements": [
