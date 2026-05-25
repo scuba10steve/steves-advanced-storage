@@ -1,10 +1,9 @@
 package io.github.scuba10steve.s3.advanced.block;
 
-import io.github.scuba10steve.s3.block.BlockBlankBox;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import io.github.scuba10steve.s3.block.StorageMultiblock;
 
-public class BlockStorageCable extends BlockBlankBox {
+public class BlockStorageCable extends StorageMultiblock {
     public BlockStorageCable() {
-        super(BlockBehaviour.Properties.of().strength(1.0f));
+        super(Properties.of().strength(1.0f));
     }
 }

@@ -29,6 +29,9 @@ public class ModCreativeTabs {
                 output.accept(ModItems.ADVANCED_STATISTICS.get());
                 output.accept(ModItems.BLOCK_STORAGE_1.get());
                 output.accept(ModItems.BLOCK_CONFIG_BLOCK.get());
+                for (var entry : ModItems.STORAGE_CABLE_ITEMS.entrySet()) {
+                    output.accept(entry.getValue().get());
+                }
             })
             .build()
     );

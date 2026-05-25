@@ -8,6 +8,10 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import io.github.scuba10steve.s3.advanced.block.BlockStorageCable;
+import net.minecraft.world.item.DyeColor;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ModBlocks {
@@ -41,6 +45,15 @@ public class ModBlocks {
 
     public static final Supplier<Block> BLOCK_CONFIG_BLOCK =
         BLOCKS.register("config_block", BlockConfigBlock::new);
+
+    public static final Map<DyeColor, Supplier<Block>> STORAGE_CABLES = new EnumMap<>(DyeColor.class);
+
+    static {
+        for (DyeColor color : DyeColor.values()) {
+            String name = color.getName() + "_storage_cable";
+            STORAGE_CABLES.put(color, BLOCKS.register(name, BlockStorageCable::new));
+        }
+    }
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
