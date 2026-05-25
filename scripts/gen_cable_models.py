@@ -23,38 +23,49 @@ def face(uv):
     return {"uv": uv, "texture": "#0"}
 
 
-# Core: 4×4×4 cube at the center of the block
+# The cable texture is a cross/plus shape (16x16 RGBA):
+#   Opaque:      center column x=5-10 (all y) and center band y=5-10 (all x)
+#   Transparent: four corners (x<5 or x>10 AND y<5 or y>10)
+#
+# All UVs below sample the opaque cross region:
+#   4x4 face  -> UV [6, 6, 10, 10]   (center of cross, fully opaque)
+#   4x6 face  -> UV [6, 5, 10, 11]   (4 wide x 6 tall, center column)
+#   6x4 face  -> UV [5, 6, 11, 10]   (6 wide x 4 tall, center band)
+
+# Core: 4x4x4 cube at the center of the block
 CORE_ELEMENT = {
     "from": [6, 6, 6], "to": [10, 10, 10],
-    "faces": {d: face([0, 0, 4, 4]) for d in ("north", "south", "east", "west", "up", "down")}
+    "faces": {d: face([6, 6, 10, 10]) for d in ("north", "south", "east", "west", "up", "down")}
 }
 
-# Horizontal arm pointing NORTH: [6,6,0]–[10,10,6] (4×4 cross-section, 6 deep)
-# EW side faces span 6 (z-depth) × 4 (y-height) texture pixels
-# UD faces span 4 (x-width) × 6 (z-depth) texture pixels
+# Horizontal arm pointing NORTH: [6,6,0] to [10,10,6] (4x4 cross-section, 6 deep)
+# EW side faces: 6 (z-depth) x 4 (y-height) -> UV [5, 6, 11, 10]
+# UD faces: 4 (x-width) x 6 (z-depth) -> UV [6, 5, 10, 11]
+# NS end-cap faces: 4x4 -> UV [6, 6, 10, 10]
 ARM_SIDE_ELEMENT = {
     "from": [6, 6, 0], "to": [10, 10, 6],
     "faces": {
-        "north": face([0, 0, 4, 4]),
-        "south": face([0, 0, 4, 4]),
-        "east":  face([0, 0, 6, 4]),
-        "west":  face([0, 0, 6, 4]),
-        "up":    face([0, 0, 4, 6]),
-        "down":  face([0, 0, 4, 6]),
+        "north": face([6, 6, 10, 10]),
+        "south": face([6, 6, 10, 10]),
+        "east":  face([5, 6, 11, 10]),
+        "west":  face([5, 6, 11, 10]),
+        "up":    face([6, 5, 10, 11]),
+        "down":  face([6, 5, 10, 11]),
     }
 }
 
-# Vertical arm pointing UP: [6,10,6]–[10,16,10] (4×4 cross-section, 6 tall)
-# NS/EW side faces span 4 (x or z width) × 6 (y-height) texture pixels
+# Vertical arm pointing UP: [6,10,6] to [10,16,10] (4x4 cross-section, 6 tall)
+# NS/EW side faces: 4 (x or z width) x 6 (y-height) -> UV [6, 5, 10, 11]
+# Up end-cap and down inner faces: 4x4 -> UV [6, 6, 10, 10]
 ARM_VERT_ELEMENT = {
     "from": [6, 10, 6], "to": [10, 16, 10],
     "faces": {
-        "north": face([0, 0, 4, 6]),
-        "south": face([0, 0, 4, 6]),
-        "east":  face([0, 0, 4, 6]),
-        "west":  face([0, 0, 4, 6]),
-        "up":    face([0, 0, 4, 4]),
-        "down":  face([0, 0, 4, 4]),
+        "north": face([6, 5, 10, 11]),
+        "south": face([6, 5, 10, 11]),
+        "east":  face([6, 5, 10, 11]),
+        "west":  face([6, 5, 10, 11]),
+        "up":    face([6, 6, 10, 10]),
+        "down":  face([6, 6, 10, 10]),
     }
 }
 
@@ -62,12 +73,12 @@ ARM_VERT_ELEMENT = {
 PILLAR_ELEMENT = {
     "from": [6, 0, 6], "to": [10, 16, 10],
     "faces": {
-        "north": {"uv": [0, 0, 4, 16], "texture": "#0"},
-        "east":  {"uv": [0, 0, 4, 16], "texture": "#0"},
-        "south": {"uv": [0, 0, 4, 16], "texture": "#0"},
-        "west":  {"uv": [0, 0, 4, 16], "texture": "#0"},
-        "up":    {"uv": [0, 0, 4,  4], "texture": "#0"},
-        "down":  {"uv": [0, 0, 4,  4], "texture": "#0"},
+        "north": {"uv": [6, 0, 10, 16], "texture": "#0"},
+        "east":  {"uv": [6, 0, 10, 16], "texture": "#0"},
+        "south": {"uv": [6, 0, 10, 16], "texture": "#0"},
+        "west":  {"uv": [6, 0, 10, 16], "texture": "#0"},
+        "up":    {"uv": [6, 6, 10, 10], "texture": "#0"},
+        "down":  {"uv": [6, 6, 10, 10], "texture": "#0"},
     }
 }
 
@@ -75,7 +86,7 @@ PILLAR_ELEMENT = {
 for color in colors:
     tex = f"s3_advanced:block/storage_cable_{color}"
 
-    # Blockstate: multipart — core always visible, arms conditional per direction.
+    # Blockstate: multipart -- core always visible, arms conditional per direction.
     # Horizontal arm uses y-rotation (NORTH=0, EAST=90, SOUTH=180, WEST=270).
     # Vertical arm uses x=180 to flip UP arm into DOWN arm.
     blockstate = {
@@ -94,9 +105,9 @@ for color in colors:
 
     # Block models
     for name, element in [
-        (f'{color}_storage_cable',             PILLAR_ELEMENT),
-        (f'{color}_storage_cable_core',        CORE_ELEMENT),
-        (f'{color}_storage_cable_arm_side',    ARM_SIDE_ELEMENT),
+        (f'{color}_storage_cable',              PILLAR_ELEMENT),
+        (f'{color}_storage_cable_core',         CORE_ELEMENT),
+        (f'{color}_storage_cable_arm_side',     ARM_SIDE_ELEMENT),
         (f'{color}_storage_cable_arm_vertical', ARM_VERT_ELEMENT),
     ]:
         with open(os.path.join(base, 'models/block', f'{name}.json'), 'w') as f:
