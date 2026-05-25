@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "BBB",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:cyan_stained_glass"
+    },
+    "B": {
+      "item": "s3:blank_box"
+    }
+  },
+  "result": {
+    "id": "s3_advanced:cyan_storage_cable",
+    "count": 3
+  }
+}
