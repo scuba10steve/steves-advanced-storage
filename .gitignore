@@ -33,6 +33,9 @@ Thumbs.db
 # Superpowers specs/plans (not for version control)
 docs/superpowers/
 
+# Session handoff notes
+docs/handoffs/
+
 logs/
 # VSCode Server (WSL2) device node stub
 .gitmodules

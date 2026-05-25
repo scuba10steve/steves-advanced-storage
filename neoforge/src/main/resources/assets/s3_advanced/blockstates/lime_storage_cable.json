@@ -1,7 +1,61 @@
 {
-  "variants": {
-    "": {
-      "model": "s3_advanced:block/lime_storage_cable"
+  "multipart": [
+    {
+      "apply": {
+        "model": "s3_advanced:block/lime_storage_cable_core"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "s3_advanced:block/lime_storage_cable_arm_side"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "s3_advanced:block/lime_storage_cable_arm_side",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "s3_advanced:block/lime_storage_cable_arm_side",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "s3_advanced:block/lime_storage_cable_arm_side",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "s3_advanced:block/lime_storage_cable_arm_vertical"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "s3_advanced:block/lime_storage_cable_arm_vertical",
+        "x": 180
+      }
     }
-  }
+  ]
 }
