@@ -46,5 +46,21 @@
   "gui.s3_advanced.stats.mi_idle": "Idle:",
   "block.s3_advanced.block_storage_1": "Block Storage I",
   "block.s3_advanced.config_block": "Config Block",
-  "container.s3_advanced.config_block": "Config Block"
+  "container.s3_advanced.config_block": "Config Block",
+  "block.s3_advanced.white_storage_cable": "White Storage Cable",
+  "block.s3_advanced.orange_storage_cable": "Orange Storage Cable",
+  "block.s3_advanced.magenta_storage_cable": "Magenta Storage Cable",
+  "block.s3_advanced.light_blue_storage_cable": "Light Blue Storage Cable",
+  "block.s3_advanced.yellow_storage_cable": "Yellow Storage Cable",
+  "block.s3_advanced.lime_storage_cable": "Lime Storage Cable",
+  "block.s3_advanced.pink_storage_cable": "Pink Storage Cable",
+  "block.s3_advanced.gray_storage_cable": "Gray Storage Cable",
+  "block.s3_advanced.light_gray_storage_cable": "Light Gray Storage Cable",
+  "block.s3_advanced.cyan_storage_cable": "Cyan Storage Cable",
+  "block.s3_advanced.purple_storage_cable": "Purple Storage Cable",
+  "block.s3_advanced.blue_storage_cable": "Blue Storage Cable",
+  "block.s3_advanced.brown_storage_cable": "Brown Storage Cable",
+  "block.s3_advanced.green_storage_cable": "Green Storage Cable",
+  "block.s3_advanced.red_storage_cable": "Red Storage Cable",
+  "block.s3_advanced.black_storage_cable": "Black Storage Cable"
 }
