@@ -17,6 +17,7 @@ This document tracks:
 - JEI dependencies are declared in `neoforge/build.gradle` (`compileOnly` API + `runtimeOnly` NeoForge runtime for dev).
 - `S3AdvancedJEIPlugin` is registered via `@JeiPlugin`.
 - `RecipePatternTransferHandler` supports ghost-filling `RecipePatternMenu` from JEI crafting recipes via `GhostSlotFillPacket`.
+- **Note:** `RecipePatternMenu` and `RecipePatternTransferHandler` will be deleted as part of the RMB face-pairing redesign. Update this section and the JEI plugin when that work ships.
 
 ### Capability-based compatibility surfaces
 

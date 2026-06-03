@@ -21,7 +21,7 @@ Pairing for a typical 3-RMB / 3-crafter layout:
 [AC  ][AC  ][AC  ]
 ```
 
-Cables (future) will extend the connection along the facing direction without changing this model.
+Cables (shipped in PR #35) extend the connection along the facing direction. The pairing scan must follow the cable chain in the facing direction — i.e., when resolving the paired crafter, walk from the RMB's output face along contiguous `StorageCable` blocks until reaching a non-cable block, then check if that block is an Auto-Crafter or Machine Interface in the same multiblock.
 
 ## Key Deletions
 

@@ -66,6 +66,10 @@ Named after AWS Config, which tracks and stores configuration items for resource
 
 ---
 
+## Known Implementation Bug
+
+`CONFIG_BLOCK_SLOT_ENERGY_PER_TICK` is registered in `S3AdvancedConfig` but is never read or applied during `scanMultiblock()` in the shipped v0.5.0 code. As a result, the Config Block contributes zero FE/t to `totalPowerDraw` regardless of how many slots are occupied. The design above describes the intended behavior — the bug is in the implementation, not the spec.
+
 ## Out of Scope
 
 - Per-feature-type power costs (flat per-slot cost only)

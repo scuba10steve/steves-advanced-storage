@@ -14,8 +14,8 @@ The **Advanced Storage Core** is a new multiblock component that upgrades a basi
 ## New Blocks / Components
 
 - **Smelting Box tiers** — tiered versions of the smelting box, similar to storage box tiers ([#1](https://github.com/scuba10steve/steves-advanced-storage/issues/1))
-- **Memory Box** — stores crafting recipes and enables auto-crafting from the storage system ([#2](https://github.com/scuba10steve/steves-advanced-storage/issues/2))
-- **Colored cables** — cosmetic or functional cable variants for multiblock connections ([#3](https://github.com/scuba10steve/steves-advanced-storage/issues/3))
+- **Recipe Memory Box (RMB) / Auto-Crafter** — the base `RecipeMemoryBox` and `AutoCrafter` blocks are implemented; tiered versions remain open as [#17](https://github.com/scuba10steve/steves-advanced-storage/issues/17) (Tiered Recipe Memory Box) and [#18](https://github.com/scuba10steve/steves-advanced-storage/issues/18) (Tiered Auto-Crafter). See `docs/advanced/rmb-autocrafter-1to1-pairing.md` for the approved pairing redesign.
+- **Colored cables** — ✅ shipped in v0.5.0 (PR #35); 16 color variants with directional connection logic
 - **Tank Block** — liquid/fluid storage integrated with the storage system ([#5](https://github.com/scuba10steve/steves-advanced-storage/issues/5))
 - **Power Cell** — Forge Energy (FE/RF) storage integrated with the storage system, compatible with other redstone-flux mods
 

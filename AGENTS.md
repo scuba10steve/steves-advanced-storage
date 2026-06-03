@@ -19,6 +19,8 @@ neoforge/          Main mod sources (Java 21, NeoForge 21.1.x, MC 1.21.1)
       client/      Screen classes (AbstractContainerScreen subclasses)
     init/          DeferredRegister holders (ModBlocks, ModBlockEntities, ModMenuTypes, ModItems)
     item/          Item classes
+    network/       WirelessProtocol, WirelessSignalPacket, and related networking classes
+    power/         PowerMatrix and related power routing classes (planned)
   src/main/resources/
     assets/s3_advanced/lang/   en_us.json and es_es.json (both must stay in sync)
 gametest/          In-game integration tests (NeoForge GameTest framework)
@@ -79,10 +81,9 @@ When adding a new block, ensure all of the following are registered:
 
 ### GUI Pattern
 
-Menus use a three-constructor pattern:
+Menus use a two-constructor pattern:
 - Public client constructor `(int containerId, Inventory, FriendlyByteBuf)` — reads block pos (and any extra data) from buf
 - Public server constructor `(int containerId, Inventory, BlockEntity)` — called from `BlockEntity.createMenu()`
-- Private canonical constructor shared by both
 
 Register in `ModMenuTypes` using `IMenuTypeExtension.create(...)`. Register the screen in `ClientEvents.registerScreens(...)`.
 
@@ -129,4 +130,6 @@ gh workflow run release.yml --field release_type=release
 
 ## Design Docs
 
-Active design documents are in `docs/superpowers/specs/`. Read the relevant spec before implementing a feature. Implementation plans go in `docs/superpowers/plans/` (gitignored).
+- `docs/advanced/` — feature design documents for planned and in-progress features. Read the relevant doc before implementing a feature.
+- `docs/superpowers/specs/` — AI-assisted brainstorming specs (supplementary detail).
+- `docs/superpowers/plans/` — implementation plans (gitignored — do not commit).

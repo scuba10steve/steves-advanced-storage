@@ -3,43 +3,41 @@
 ## Overview
 
 **Name:** Steve's Advanced Storage
-**Mod ID:** `s3-advanced`
+**Mod ID:** `s3_advanced`
 **Relationship:** Add-on mod requiring Steve's Simple Storage (S3)
 **Description:** Advanced features for Steve's Simple Storage
-**Output:** Separate JAR (`s3-advanced-<version>.jar`)
+**Output:** Separate JAR (`s3_advanced-<version>.jar`)
 
 ## Project Structure
 
+This mod lives in its own repository (`steves-advanced-storage`), separate from Steve's Simple Storage.
+
 ```
-steves-storage-system/
-├── buildSrc/
-│   ├── build.gradle
-│   └── src/main/groovy/
-│       └── s3.neoforge-mod.gradle         # convention plugin
-├── core/                                   # platform-agnostic code (unchanged)
-│   ├── build.gradle
-│   └── src/
-├── neoforge/
-│   ├── s3/                                # S3 mod (current neoforge source)
-│   │   ├── build.gradle
-│   │   └── src/
-│   └── advanced/                          # Steve's Advanced Storage
-│       ├── build.gradle
-│       └── src/main/
-│           ├── java/io/github/scuba10steve/s3/advanced/
-│           │   └── StevesAdvancedStorage.java
-│           └── resources/
-│               └── META-INF/neoforge.mods.toml
-├── gametest/
-│   ├── s3/                                # game tests for S3
-│   │   ├── build.gradle
-│   │   └── src/
-│   └── advanced/                          # game tests for Advanced (skeleton)
-│       ├── build.gradle
-│       └── src/
-├── settings.gradle
+steves-advanced-storage/
+├── neoforge/          Main mod sources (Java 21, NeoForge 21.1.x, MC 1.21.1)
+│   └── src/main/java/io/github/scuba10steve/s3/advanced/
+│       ├── block/         Block classes (extend StorageMultiblock or BaseBlock)
+│       ├── blockentity/   Block entity classes
+│       ├── client/        Client-only event subscribers and screen registrations
+│       ├── config/        S3AdvancedConfig
+│       ├── crafting/      CraftingEngine, Coordinator, Patterns, etc.
+│       ├── gui/
+│       │   ├── server/    Menu classes (AbstractContainerMenu subclasses)
+│       │   └── client/    Screen classes (AbstractContainerScreen subclasses)
+│       ├── init/          DeferredRegister holders
+│       ├── item/          Item classes
+│       ├── network/       WirelessProtocol, WirelessSignalPacket (planned)
+│       └── power/         PowerMatrix (planned)
+├── gametest/          In-game integration tests (NeoForge GameTest framework)
+├── docs/
+│   ├── advanced/      Feature design documents
+│   └── superpowers/
+│       ├── specs/     AI-assisted brainstorming specs
+│       └── plans/     Implementation plans (gitignored)
+├── scripts/
+│   └── copy.sh        Copies built jar to local modpack for testing
 ├── gradle.properties
-└── docker-compose.yml
+└── AGENTS.md          Authoritative project conventions reference
 ```
 
 ## Convention Plugin (buildSrc)
@@ -78,22 +76,15 @@ core  <──  neoforge/s3  <──  neoforge/advanced
 ## JAR Outputs
 
 - `neoforge/s3/build/libs/s3-<version>.jar` — includes core classes
-- `neoforge/advanced/build/libs/s3-advanced-<version>.jar` — its own classes only
+- `neoforge/advanced/build/libs/s3_advanced-<version>.jar` — its own classes only
 
 ## Mod Identity
 
-- **Mod ID:** `s3-advanced`
+- **Mod ID:** `s3_advanced`
 - **Package:** `io.github.scuba10steve.s3.advanced`
-- **Entry point:** `StevesAdvancedStorage` with `@Mod("s3-advanced")`
-- **Assets:** `assets/s3-advanced/`, `data/s3-advanced/`
-- **Lang:** `assets/s3-advanced/lang/en_us.json`
-
-### gradle.properties additions
-
-```properties
-advanced_mod_id=s3-advanced
-advanced_mod_name=Steve's Advanced Storage
-```
+- **Entry point:** `StevesAdvancedStorage` with `@Mod("s3_advanced")`
+- **Assets:** `assets/s3_advanced/`, `data/s3_advanced/`
+- **Lang:** `assets/s3_advanced/lang/en_us.json`
 
 ## Docker / Local Server
 
@@ -119,6 +110,6 @@ The **Advanced Storage Core** is the core block of the companion mod. When place
 
 See [planned-features.md](planned-features.md) for the full feature roadmap.
 
-## Initial Scope
+## Current Status
 
-Skeleton only — no features. Just the module structure, build config, entry point, and mod metadata.
+The mod is past the skeleton phase. Shipped features as of v0.5.0 include: Advanced Storage Core, Block Storage I, Config Block, Solar Generator, Coal Generator, Auto-Crafter, Recipe Memory Box, Machine Interface, and 16-color Storage Cables. See `docs/advanced/planned-features.md` for the full feature roadmap.
