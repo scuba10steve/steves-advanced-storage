@@ -1,0 +1,6 @@
+{
+  "name": "Storage Blocks",
+  "description": "Cores, boxes, and the cables that connect them.",
+  "icon": "s3_advanced:block_storage_1",
+  "sortnum": 1
+}

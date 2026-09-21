@@ -1,5 +1,5 @@
 plugins {
-    id 'org.openrewrite.rewrite' version 'latest.release'
+    id 'org.openrewrite.rewrite' version '7.39.0'
 }
 
 rewrite {

@@ -1,0 +1,17 @@
+{
+  "name": "Machine Interface",
+  "category": "s3_advanced:automation",
+  "icon": "s3_advanced:machine_interface",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:machine_interface",
+      "text": "The $(bold)Machine Interface$() links your storage network to a crafting-capable machine block. It pushes the ingredients a pattern needs toward the adjacent machine and pulls completed results back into your network automatically."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Place it directly beside the machine you want to automate and pair it with a recipe. On each tick interval it compares what the machine needs against your storage and moves items accordingly."
+    }
+  ]
+}

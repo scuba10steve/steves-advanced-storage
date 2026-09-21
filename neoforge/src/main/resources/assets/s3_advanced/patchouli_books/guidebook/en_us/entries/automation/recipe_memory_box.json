@@ -1,0 +1,17 @@
+{
+  "name": "Recipe Memory Box",
+  "category": "s3_advanced:automation",
+  "icon": "s3_advanced:recipe_memory_box",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:recipe_memory_box",
+      "text": "The $(bold)Recipe Memory Box$() stores craft patterns so your machines can reuse them without retyping. Teach it a pattern once — then reference it later from your $(l:s3_advanced:automation/auto_crafter)Auto-Crafter$() and related automation."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "It keeps a small set of pattern slots. When paired with the rest of your network, remembered patterns let you trigger the same craft repeatedly — a core part of any automated storage setup."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Generators",
+  "description": "Produce the power your network needs to run.",
+  "icon": "s3_advanced:solar_generator",
+  "sortnum": 2
+}

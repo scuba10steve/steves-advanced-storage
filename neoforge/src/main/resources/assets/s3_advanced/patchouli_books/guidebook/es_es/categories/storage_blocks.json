@@ -1,0 +1,6 @@
+{
+  "name": "Bloques de Almacenamiento",
+  "description": "Núcleos, cajas y cables que forman tu red de almacenamiento.",
+  "icon": "s3_advanced:block_storage_1",
+  "sortnum": 1
+}

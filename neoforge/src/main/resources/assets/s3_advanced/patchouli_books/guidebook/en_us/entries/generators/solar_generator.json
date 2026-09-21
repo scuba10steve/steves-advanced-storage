@@ -1,0 +1,17 @@
+{
+  "name": "Solar Generator",
+  "category": "s3_advanced:generators",
+  "icon": "s3_advanced:solar_generator",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:solar_generator",
+      "text": "The $(bold)Solar Generator$() produces energy for your advanced storage network from daylight. Place it where it has a clear view of the sky above the block — sky light above the generator is what drives generation, not just any light level."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "It generates a steady rate during clear day, less while it rains, and does not generate at night or below overhangs. Energy is stored in an internal buffer and pushed to adjacent blocks that can receive it."
+    }
+  ]
+}

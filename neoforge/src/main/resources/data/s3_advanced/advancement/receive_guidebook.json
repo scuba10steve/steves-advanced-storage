@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "id": "patchouli:guide_book",
+      "components": {
+        "patchouli:book": "s3_advanced:guidebook"
+      }
+    },
+    "title": {
+      "text": "Advanced Guide Unlocked"
+    },
+    "description": {
+      "text": "Craft the Steve's Advanced Storage guidebook using a Book and an Advanced Storage Core."
+    }
+  },
+  "parent": "s3_advanced:root",
+  "criteria": {
+    "has_guidebook": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "patchouli:guide_book"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "experience": 0
+  }
+}

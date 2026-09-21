@@ -1,0 +1,16 @@
+{
+  "name": "Introduction",
+  "category": "s3_advanced:getting_started",
+  "icon": "s3_advanced:advanced_storage_core",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Steve's Advanced Storage$() extends $(bold)Steve's Simple Storage$() with bigger, smarter storage and automation. Everything in your simple-storage network still works — you simply add $(bold)Advanced Storage Cores$() for more capacity and power."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "This guide is organized into $(bold)Storage Blocks$(), $(bold)Generators$() and $(bold)Automation$(). If you are new, start with the $(l:storage_blocks)Storage Blocks$() category."
+    }
+  ]
+}

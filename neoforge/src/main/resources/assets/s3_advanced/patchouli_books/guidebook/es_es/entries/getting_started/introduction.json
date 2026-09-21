@@ -1,0 +1,16 @@
+{
+  "name": "Introducción",
+  "category": "s3_advanced:getting_started",
+  "icon": "s3_advanced:advanced_storage_core",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Steve's Advanced Storage$() te permite ampliar $(bold)Steve's Simple Storage$() con almacenamiento más grande y potente, además de automatización. Todo lo que ya funciona en tu red de almacenamiento simple sigue funcionando: solo añade $(bold)Núcleos de Almacenamiento Avanzado$() para más capacidad y energía."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Esta guía se organiza en $(bold)Bloques de Almacenamiento$(), $(bold)Generadores$() y $(bold)Automatización$(). Si eres nuevo, empieza por la categoría $(l:storage_blocks)Bloques de Almacenamiento$()."
+    }
+  ]
+}

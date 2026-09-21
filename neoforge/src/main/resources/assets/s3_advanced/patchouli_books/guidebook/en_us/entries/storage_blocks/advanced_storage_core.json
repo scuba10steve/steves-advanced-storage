@@ -1,0 +1,17 @@
+{
+  "name": "Advanced Storage Core",
+  "category": "s3_advanced:storage_blocks",
+  "icon": "s3_advanced:advanced_storage_core",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:advanced_storage_core",
+      "text": "The $(bold)Advanced Storage Core$() is the heart of any advanced storage system. It holds far more than a simple Storage Core and connects to Storage Cables to form one unified network."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "To build your first system: place the $(bold)Core$(), attach Storage Cables to expand capacity, and connect it to power."
+    }
+  ]
+}
