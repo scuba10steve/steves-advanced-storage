@@ -1,0 +1,8 @@
+{
+  "name": "Steve's Advanced Storage Guide",
+  "landing_text": "Welcome to Steve's Advanced Storage! Use this guide to learn how to build, power, and automate your advanced storage system.",
+  "version": 1,
+  "creative_tab": "s3_advanced:tab",
+  "use_resource_pack": true,
+  "model": "patchouli:book_blue"
+}

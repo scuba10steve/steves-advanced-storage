@@ -5,6 +5,7 @@ plugins {
 dependencies {
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.27.0.340"
     runtimeOnly "mezz.jei:jei-1.21.1-neoforge:19.27.0.340"
+    compileOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE:api"
 }
 
 version = mod_version

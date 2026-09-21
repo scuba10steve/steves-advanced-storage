@@ -1,0 +1,17 @@
+{
+  "name": "Coal Generator",
+  "category": "s3_advanced:generators",
+  "icon": "s3_advanced:coal_generator",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:coal_generator",
+      "text": "The $(bold)Coal Generator$() burns solid fuel — coal, charcoal, and coal blocks — to produce energy for your network. It works at any time of day or night, making it a reliable complement to the $(l:s3_advanced:generators/solar_generator)Solar Generator$()."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "A single fuel slot feeds the generator. Place fuel in the slot and the generator burns it, storing the energy in an internal buffer and pushing it out to adjacent blocks that can receive it."
+    }
+  ]
+}

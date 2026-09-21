@@ -1,0 +1,17 @@
+{
+  "name": "Advanced Statistics",
+  "category": "s3_advanced:automation",
+  "icon": "s3_advanced:advanced_statistics",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:advanced_statistics",
+      "text": "The $(bold)Advanced Statistics$() block gives you a live overview of your storage network: how much energy is stored and generated, what is being consumed, and how many items and machines are connected."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Open it to see tabs for general stats, storage usage, power, and crafting. It is the quickest way to confirm your network is balanced and powered before you expand it further."
+    }
+  ]
+}

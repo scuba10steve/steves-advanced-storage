@@ -1,0 +1,17 @@
+{
+  "name": "Auto-Crafter",
+  "category": "s3_advanced:automation",
+  "icon": "s3_advanced:auto_crafter",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:auto_crafter",
+      "text": "The $(bold)Auto-Crafter$() turns the patterns you teach it into automated crafting. It holds several craft patterns and works with the rest of your network to pull ingredients and push completed results where they belong."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Team it up with a $(l:s3_advanced:automation/recipe_memory_box)Recipe Memory Box$() to store and recall patterns. Each pattern can be configured individually, and the crafter sends its work through the network's energy budget."
+    }
+  ]
+}
