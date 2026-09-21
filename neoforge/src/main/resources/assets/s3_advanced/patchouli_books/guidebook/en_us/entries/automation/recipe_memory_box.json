@@ -7,7 +7,7 @@
     {
       "type": "patchouli:spotlight",
       "item": "s3_advanced:recipe_memory_box",
-      "text": "The $(bold)Recipe Memory Box$() stores craft patterns so your machines can reuse them without retyping. Teach it a pattern once)Skip; later you can reference it from your $(l:s3_advanced:automation/auto_crafter)Auto-Crafter$() and related automation."
+      "text": "The $(bold)Recipe Memory Box$() stores craft patterns so your machines can reuse them without retyping. Teach it a pattern once — then reference it later from your $(l:s3_advanced:automation/auto_crafter)Auto-Crafter$() and related automation."
     },
     {
       "type": "patchouli:text",

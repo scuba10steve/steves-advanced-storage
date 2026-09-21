@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "id": "s3_advanced:advanced_storage_core",
+      "count": 1
+    },
+    "title": {
+      "text": "Steve's Advanced Storage"
+    },
+    "description": {
+      "text": "Expand Steve's Simple Storage with bigger capacity and automation."
+    },
+    "background": "s3_advanced:textures/gui/advancements/backgrounds/root.png",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_advanced_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "s3_advanced:advanced_storage_core"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_advanced_core"
+    ]
+  ],
+  "rewards": {
+    "experience": 0
+  }
+}
