@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.init;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
+import io.github.scuba10steve.s3.advanced.block.TankTier;
 import io.github.scuba10steve.s3.advanced.item.ItemAdvancedStorageCoreUpgrade;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
@@ -54,6 +55,15 @@ public class ModItems {
             String name = color.getName() + "_storage_cable";
             STORAGE_CABLE_ITEMS.put(color, ITEMS.register(name,
                 () -> new BlockItem(ModBlocks.STORAGE_CABLES.get(color).get(), new Item.Properties())));
+        }
+    }
+
+    public static final Map<TankTier, Supplier<Item>> TANK_ITEMS = new EnumMap<>(TankTier.class);
+
+    static {
+        for (TankTier tier : TankTier.values()) {
+            TANK_ITEMS.put(tier, ITEMS.register(tier.getSerializedName() + "_tank",
+                () -> new BlockItem(ModBlocks.TANKS.get(tier).get(), new Item.Properties())));
         }
     }
 

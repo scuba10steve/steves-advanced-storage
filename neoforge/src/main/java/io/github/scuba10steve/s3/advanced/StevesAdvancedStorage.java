@@ -45,5 +45,10 @@ public class StevesAdvancedStorage {
             Capabilities.ItemHandler.BLOCK,
             ModBlockEntities.COAL_GENERATOR.get(),
             (be, side) -> be.fuelHandler);
+
+        event.registerBlockEntity(
+            Capabilities.FluidHandler.BLOCK,
+            ModBlockEntities.TANK.get(),
+            (be, side) -> be.getTank());
     }
 }

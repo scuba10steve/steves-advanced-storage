@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.init;
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.blockentity.*;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -57,6 +58,11 @@ public class ModBlockEntities {
         BLOCK_ENTITIES.register("config_block", () ->
             BlockEntityType.Builder.of(ConfigBlockBlockEntity::new,
                 ModBlocks.BLOCK_CONFIG_BLOCK.get()).build(null));
+
+    public static final Supplier<BlockEntityType<TankBlockEntity>> TANK =
+        BLOCK_ENTITIES.register("tank", () ->
+            BlockEntityType.Builder.of(TankBlockEntity::new,
+                ModBlocks.TANKS.values().stream().map(Supplier::get).toArray(Block[]::new)).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
