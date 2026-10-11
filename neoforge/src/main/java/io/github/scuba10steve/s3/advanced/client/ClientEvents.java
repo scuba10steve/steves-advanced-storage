@@ -4,12 +4,14 @@ import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.gui.client.*;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageCraftingDisplayMenu;
 import io.github.scuba10steve.s3.advanced.gui.server.AdvancedStorageDisplayMenu;
+import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @EventBusSubscriber(modid = StevesAdvancedStorage.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
@@ -44,5 +46,10 @@ public class ClientEvents {
         event.register(ModMenuTypes.ADVANCED_STORAGE_CRAFTING_DISPLAY.get(),
             (MenuScreens.ScreenConstructor) (m, inv, title) ->
                 new AdvancedStorageCraftingDisplayScreen((AdvancedStorageCraftingDisplayMenu) m, inv, title));
+    }
+
+    @SubscribeEvent
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankBlockEntityRenderer::new);
     }
 }
