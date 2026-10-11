@@ -11,6 +11,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import net.minecraft.world.item.DyeColor;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -59,13 +60,15 @@ public class ModItems {
         }
     }
 
-    public static final Map<TankTier, Supplier<Item>> TANK_ITEMS = new EnumMap<>(TankTier.class);
+    public static final Map<TankTier, Supplier<Item>> TANK_ITEMS = registerTankItems();
 
-    static {
+    private static Map<TankTier, Supplier<Item>> registerTankItems() {
+        Map<TankTier, Supplier<Item>> items = new EnumMap<>(TankTier.class);
         for (TankTier tier : TankTier.values()) {
-            TANK_ITEMS.put(tier, ITEMS.register(tier.getSerializedName() + "_tank",
+            items.put(tier, ITEMS.register(tier.getSerializedName() + "_tank",
                 () -> new TankBlockItem(ModBlocks.TANKS.get(tier).get(), new Item.Properties())));
         }
+        return Collections.unmodifiableMap(items);
     }
 
     public static void register(IEventBus eventBus) {

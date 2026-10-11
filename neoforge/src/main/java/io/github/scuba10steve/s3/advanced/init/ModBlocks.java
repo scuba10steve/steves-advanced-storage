@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import io.github.scuba10steve.s3.advanced.block.BlockStorageCable;
 import net.minecraft.world.item.DyeColor;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -56,12 +57,14 @@ public class ModBlocks {
         }
     }
 
-    public static final Map<TankTier, Supplier<Block>> TANKS = new EnumMap<>(TankTier.class);
+    public static final Map<TankTier, Supplier<Block>> TANKS = registerTanks();
 
-    static {
+    private static Map<TankTier, Supplier<Block>> registerTanks() {
+        Map<TankTier, Supplier<Block>> tanks = new EnumMap<>(TankTier.class);
         for (TankTier tier : TankTier.values()) {
-            TANKS.put(tier, BLOCKS.register(tier.getSerializedName() + "_tank", () -> new BlockTank(tier)));
+            tanks.put(tier, BLOCKS.register(tier.getSerializedName() + "_tank", () -> new BlockTank(tier)));
         }
+        return Collections.unmodifiableMap(tanks);
     }
 
     public static void register(IEventBus eventBus) {
