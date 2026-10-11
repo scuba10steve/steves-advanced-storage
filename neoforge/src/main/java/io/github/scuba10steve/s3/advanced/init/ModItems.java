@@ -50,14 +50,16 @@ public class ModItems {
     public static final Supplier<Item> BLOCK_CONFIG_BLOCK = ITEMS.register("config_block",
         () -> new BlockItem(ModBlocks.BLOCK_CONFIG_BLOCK.get(), new Item.Properties()));
 
-    public static final Map<DyeColor, Supplier<Item>> STORAGE_CABLE_ITEMS = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, Supplier<Item>> STORAGE_CABLE_ITEMS = registerStorageCableItems();
 
-    static {
+    private static Map<DyeColor, Supplier<Item>> registerStorageCableItems() {
+        Map<DyeColor, Supplier<Item>> items = new EnumMap<>(DyeColor.class);
         for (DyeColor color : DyeColor.values()) {
             String name = color.getName() + "_storage_cable";
-            STORAGE_CABLE_ITEMS.put(color, ITEMS.register(name,
+            items.put(color, ITEMS.register(name,
                 () -> new BlockItem(ModBlocks.STORAGE_CABLES.get(color).get(), new Item.Properties())));
         }
+        return Collections.unmodifiableMap(items);
     }
 
     public static final Map<TankTier, Supplier<Item>> TANK_ITEMS = registerTankItems();

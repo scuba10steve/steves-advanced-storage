@@ -48,13 +48,15 @@ public class ModBlocks {
     public static final Supplier<Block> BLOCK_CONFIG_BLOCK =
         BLOCKS.register("config_block", BlockConfigBlock::new);
 
-    public static final Map<DyeColor, Supplier<Block>> STORAGE_CABLES = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, Supplier<Block>> STORAGE_CABLES = registerStorageCables();
 
-    static {
+    private static Map<DyeColor, Supplier<Block>> registerStorageCables() {
+        Map<DyeColor, Supplier<Block>> cables = new EnumMap<>(DyeColor.class);
         for (DyeColor color : DyeColor.values()) {
             String name = color.getName() + "_storage_cable";
-            STORAGE_CABLES.put(color, BLOCKS.register(name, BlockStorageCable::new));
+            cables.put(color, BLOCKS.register(name, BlockStorageCable::new));
         }
+        return Collections.unmodifiableMap(cables);
     }
 
     public static final Map<TankTier, Supplier<Block>> TANKS = registerTanks();
