@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 
@@ -30,7 +31,7 @@ public class TankBlockItem extends BlockItem {
                 fluid.getHoverName(), fluid.getAmount()).withStyle(ChatFormatting.GRAY));
         }
         Holder<Fluid> locked = stack.get(ModDataComponents.LOCKED_FLUID.get());
-        if (locked != null) {
+        if (locked != null && locked.value() != Fluids.EMPTY) {
             tooltip.add(Component.translatable("gui.s3_advanced.tank.locked",
                 locked.value().getFluidType().getDescription()).withStyle(ChatFormatting.GRAY));
         }

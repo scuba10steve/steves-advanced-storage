@@ -69,6 +69,7 @@
   "block.s3_advanced.hyper_tank": "[TRANSLATE] Hyper Tank",
   "tooltip.s3_advanced.tank.contents": "[TRANSLATE] %s: %s mB",
   "gui.s3_advanced.tank.locked": "[TRANSLATE] Locked: %s",
+  "gui.s3_advanced.tank.locked_flag": "[TRANSLATE] Locked",
   "gui.s3_advanced.tank.empty": "[TRANSLATE] Empty",
   "gui.s3_advanced.tank.lock": "[TRANSLATE] Lock",
   "gui.s3_advanced.tank.unlock": "[TRANSLATE] Unlock",

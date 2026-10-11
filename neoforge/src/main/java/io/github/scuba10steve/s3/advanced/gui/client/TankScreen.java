@@ -110,7 +110,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         g.drawString(font, name, 104, 22, color, false);
         if (locked != null) {
-            g.drawString(font, Component.translatable("gui.s3_advanced.tank.locked", ""), 104, 34, 0x888888, false);
+            g.drawString(font, Component.translatable("gui.s3_advanced.tank.locked_flag"), 104, 34, 0x888888, false);
         }
     }
 

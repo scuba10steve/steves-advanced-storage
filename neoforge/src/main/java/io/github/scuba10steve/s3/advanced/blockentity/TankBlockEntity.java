@@ -322,6 +322,7 @@ public class TankBlockEntity extends BaseBlockEntity implements MenuProvider {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void removeComponentsFromTag(CompoundTag tag) {
         super.removeComponentsFromTag(tag);
         tag.remove("Tank");

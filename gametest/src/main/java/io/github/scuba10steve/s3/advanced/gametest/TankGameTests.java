@@ -36,7 +36,6 @@ public class TankGameTests {
     static final BlockPos CORE_POS = new BlockPos(1, 1, 1);
     static final BlockPos ADJACENT_POS = new BlockPos(0, 1, 1);   // touches the core
     static final BlockPos LOOSE_POS = new BlockPos(0, 1, 0);      // touches nothing in the multiblock
-    static final BlockPos LOOSE_POS_2 = new BlockPos(1, 1, 2);    // touches the core; use only when joining is irrelevant
 
     static TankBlockEntity placeTank(GameTestHelper h, BlockPos pos, TankTier tier) {
         h.setBlock(pos, ModBlocks.TANKS.get(tier).get());
