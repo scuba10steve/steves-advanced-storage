@@ -1,6 +1,7 @@
 package io.github.scuba10steve.s3.advanced.gametest;
 
 import io.github.scuba10steve.s3.advanced.block.TankTier;
+import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.TankBlockEntity;
 import io.github.scuba10steve.s3.advanced.init.ModBlocks;
 import io.github.scuba10steve.s3.advanced.init.ModDataComponents;
@@ -12,6 +13,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -146,6 +148,47 @@ public class TankGameTests {
         h.assertTrue(fh.fill(water(1000), FluidAction.EXECUTE) == 0, "Over-capacity tank accepted more fluid");
         h.assertTrue(fh.drain(1000, FluidAction.EXECUTE).getAmount() == 1000, "Over-capacity tank refused drain");
         h.succeed();
+    }
+
+    static AdvancedStorageCoreBlockEntity core(GameTestHelper h) {
+        if (h.getBlockEntity(CORE_POS) instanceof AdvancedStorageCoreBlockEntity be) {
+            return be;
+        }
+        h.fail("No AdvancedStorageCoreBlockEntity at " + CORE_POS);
+        return null;
+    }
+
+    static int powerDraw(AdvancedStorageCoreBlockEntity core) {
+        return (core.containerData.get(5) << 16) | (core.containerData.get(4) & 0xFFFF);
+    }
+
+    @GameTest(template = "core_with_storage_box", setupTicks = 5)
+    public static void tank_discovered_and_adds_power(GameTestHelper h) {
+        AdvancedStorageCoreBlockEntity core = core(h);
+        int before = powerDraw(core);
+        TankBlockEntity tank = placeTank(h, ADJACENT_POS, TankTier.SUPER);
+        h.runAfterDelay(2, () -> {
+            h.assertTrue(core.getTanks().contains(tank), "Core did not discover adjacent tank");
+            int delta = powerDraw(core) - before;
+            h.assertTrue(delta == TankTier.SUPER.energyPerTick(),
+                "Power draw rose by " + delta + ", expected " + TankTier.SUPER.energyPerTick());
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "core_with_storage_box", setupTicks = 5)
+    public static void tank_removed_from_multiblock_drops_power(GameTestHelper h) {
+        AdvancedStorageCoreBlockEntity core = core(h);
+        int before = powerDraw(core);
+        placeTank(h, ADJACENT_POS, TankTier.BASIC);
+        h.runAfterDelay(2, () -> {
+            h.setBlock(ADJACENT_POS, Blocks.AIR);
+            h.runAfterDelay(2, () -> {
+                h.assertTrue(core.getTanks().isEmpty(), "Removed tank still listed");
+                h.assertTrue(powerDraw(core) == before, "Power draw not restored after tank removal");
+                h.succeed();
+            });
+        });
     }
 
     static ItemStack dropOf(GameTestHelper h, BlockPos pos) {

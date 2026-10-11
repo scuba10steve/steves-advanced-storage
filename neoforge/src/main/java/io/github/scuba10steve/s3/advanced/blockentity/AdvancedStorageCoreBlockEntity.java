@@ -59,6 +59,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
     private int advancedBlockCount;
     private final Map<String, Integer> nestedTierBreakdown = new LinkedHashMap<>();
     private final List<BlockStorageBlockEntity> advancedStorageBlocks = new ArrayList<>();
+    private final List<TankBlockEntity> tanks = new ArrayList<>();
 
     public final InternalEnergyStorage energyStorage;
     public final CraftingEngine craftingEngine = new CraftingEngine();
@@ -107,6 +108,10 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
 
     public List<RecipeMemoryBoxBlockEntity> getRecipeMemoryBoxes() {
         return Collections.unmodifiableList(recipeMemoryBoxes);
+    }
+
+    public List<TankBlockEntity> getTanks() {
+        return Collections.unmodifiableList(tanks);
     }
 
     public List<AutoCrafterBlockEntity> getAutoCrafters() {
@@ -220,6 +225,7 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
         advancedHasCraftingBox = false;
         advancedBlockCount = 0;
         nestedTierBreakdown.clear();
+        tanks.clear();
         super.scanMultiblock();
         totalPowerDraw = S3AdvancedConfig.CORE_ENERGY_PER_TICK.get();
 
@@ -279,6 +285,11 @@ public class AdvancedStorageCoreBlockEntity extends StorageCoreBlockEntity {
                             }
                         }
                     }
+                }
+            } else if (state.getBlock() instanceof BlockTank tankBlock) {
+                if (level.getBlockEntity(pos) instanceof TankBlockEntity tank) {
+                    tanks.add(tank);
+                    totalPowerDraw += tankBlock.getTier().energyPerTick();
                 }
             } else if (state.getBlock() instanceof io.github.scuba10steve.s3.advanced.block.BlockStorage advRack) {
                 if (level.getBlockEntity(pos) instanceof BlockStorageBlockEntity rack) {
