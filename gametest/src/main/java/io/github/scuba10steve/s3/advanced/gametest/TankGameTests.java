@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -343,6 +344,40 @@ public class TankGameTests {
         int hotbarSlot0 = TankMenu.PLAYER_HOTBAR_START;
         menu.quickMoveStack(player, hotbarSlot0);
         h.assertTrue(be.getTank().getFluidAmount() == 1000, "Shift-clicked water bucket should empty into tank");
+        h.succeed();
+    }
+
+    static Player playerHolding(GameTestHelper h, GameType mode, ItemStack stack) {
+        Player player = h.makeMockPlayer(mode);
+        player.getAbilities().instabuild = mode.isCreative();
+        player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        return player;
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void right_click_empty_bucket_drains_tank_survival(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        handler(h, LOOSE_POS).fill(water(3000), FluidAction.EXECUTE);
+        Player player = playerHolding(h, GameType.SURVIVAL, new ItemStack(Items.BUCKET));
+        h.useBlock(LOOSE_POS, player);
+        h.assertTrue(player.getMainHandItem().is(Items.WATER_BUCKET),
+            "Survival: expected a water bucket in hand, got " + player.getMainHandItem());
+        h.assertTrue(be.getTank().getFluidAmount() == 2000,
+            "Survival: expected 2000 mB left, got " + be.getTank().getFluidAmount());
+        h.succeed();
+    }
+
+    // Pins NeoForge's FluidUtil creative behaviour: the tank is drained but the held item is unchanged.
+    @GameTest(template = "core_with_storage_box")
+    public static void right_click_empty_bucket_drains_tank_creative(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        handler(h, LOOSE_POS).fill(water(3000), FluidAction.EXECUTE);
+        Player player = playerHolding(h, GameType.CREATIVE, new ItemStack(Items.BUCKET));
+        h.useBlock(LOOSE_POS, player);
+        h.assertTrue(player.getMainHandItem().is(Items.BUCKET),
+            "Creative: expected the empty bucket to stay in hand, got " + player.getMainHandItem());
+        h.assertTrue(be.getTank().getFluidAmount() == 2000,
+            "Creative: expected 2000 mB left, got " + be.getTank().getFluidAmount());
         h.succeed();
     }
 }
