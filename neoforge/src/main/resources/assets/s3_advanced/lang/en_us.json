@@ -68,5 +68,9 @@
   "block.s3_advanced.super_tank": "Super Tank",
   "block.s3_advanced.hyper_tank": "Hyper Tank",
   "tooltip.s3_advanced.tank.contents": "%s: %s mB",
-  "gui.s3_advanced.tank.locked": "Locked: %s"
+  "gui.s3_advanced.tank.locked": "Locked: %s",
+  "gui.s3_advanced.tank.empty": "Empty",
+  "gui.s3_advanced.tank.lock": "Lock",
+  "gui.s3_advanced.tank.unlock": "Unlock",
+  "gui.s3_advanced.tank.amount": "%s / %s mB"
 }

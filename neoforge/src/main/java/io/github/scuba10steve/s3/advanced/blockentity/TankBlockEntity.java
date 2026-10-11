@@ -2,6 +2,7 @@ package io.github.scuba10steve.s3.advanced.blockentity;
 
 import io.github.scuba10steve.s3.advanced.block.BlockTank;
 import io.github.scuba10steve.s3.advanced.block.TankTier;
+import io.github.scuba10steve.s3.advanced.gui.server.TankMenu;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
 import io.github.scuba10steve.s3.advanced.init.ModDataComponents;
 import io.github.scuba10steve.s3.blockentity.BaseBlockEntity;
@@ -13,12 +14,18 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,7 +40,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.Nullable;
 
-public class TankBlockEntity extends BaseBlockEntity {
+public class TankBlockEntity extends BaseBlockEntity implements MenuProvider {
 
     public static final int RENDER_STEPS = 64;
     public static final int SLOT_INPUT = 0;
@@ -49,6 +56,29 @@ public class TankBlockEntity extends BaseBlockEntity {
 
     public final SimpleContainer bucketSlots = new SimpleContainer(2);
     private boolean processing;
+
+    // ContainerData: [0-1] amount (low/high 16 bits), [2-3] capacity (low/high 16 bits)
+    public final ContainerData containerData = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0 -> tank.getFluidAmount() & 0xFFFF;
+                case 1 -> (tank.getFluidAmount() >>> 16) & 0xFFFF;
+                case 2 -> tank.getCapacity() & 0xFFFF;
+                case 3 -> (tank.getCapacity() >>> 16) & 0xFFFF;
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
+    };
 
     public TankBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.TANK.get(), pos, state);
@@ -105,6 +135,16 @@ public class TankBlockEntity extends BaseBlockEntity {
         }
         setChanged();
         syncToClient(true);
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("block.s3_advanced." + tier.getSerializedName() + "_tank");
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new TankMenu(id, inventory, this);
     }
 
     protected void onTankChanged() {

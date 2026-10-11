@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.gametest;
 import io.github.scuba10steve.s3.advanced.block.TankTier;
 import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.TankBlockEntity;
+import io.github.scuba10steve.s3.advanced.gui.server.TankMenu;
 import io.github.scuba10steve.s3.advanced.init.ModBlocks;
 import io.github.scuba10steve.s3.advanced.init.ModDataComponents;
 import io.github.scuba10steve.s3.advanced.init.ModItems;
@@ -10,8 +11,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -305,6 +308,42 @@ public class TankGameTests {
         be.bucketSlots.setItem(TankBlockEntity.SLOT_OUTPUT, new ItemStack(Items.DIRT, 3));
         h.destroyBlock(LOOSE_POS);
         h.assertItemEntityPresent(Items.DIRT, LOOSE_POS, 2.0);
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void tank_menu_reports_split_amount_and_capacity(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.HYPER);
+        handler(h, LOOSE_POS).fill(water(1_000_000), FluidAction.EXECUTE);
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
+        TankMenu menu = new TankMenu(0, player.getInventory(), be);
+        h.assertTrue(menu.getAmount() == 1_000_000, "Amount decoded as " + menu.getAmount());
+        h.assertTrue(menu.getCapacity() == TankTier.HYPER.capacityMb(), "Capacity decoded as " + menu.getCapacity());
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void tank_menu_lock_button_toggles_lock(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        handler(h, LOOSE_POS).fill(lava(1000), FluidAction.EXECUTE);
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
+        TankMenu menu = new TankMenu(0, player.getInventory(), be);
+        h.assertTrue(menu.clickMenuButton(player, TankMenu.BUTTON_TOGGLE_LOCK), "Button id 0 not handled");
+        h.assertTrue(be.getLockedFluid() == Fluids.LAVA, "Lock button did not lock to lava");
+        menu.clickMenuButton(player, TankMenu.BUTTON_TOGGLE_LOCK);
+        h.assertTrue(be.getLockedFluid() == null, "Lock button did not unlock");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void tank_menu_quick_move_bucket_into_input(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
+        player.getInventory().setItem(0, new ItemStack(Items.WATER_BUCKET));
+        TankMenu menu = new TankMenu(0, player.getInventory(), be);
+        int hotbarSlot0 = TankMenu.PLAYER_HOTBAR_START;
+        menu.quickMoveStack(player, hotbarSlot0);
+        h.assertTrue(be.getTank().getFluidAmount() == 1000, "Shift-clicked water bucket should empty into tank");
         h.succeed();
     }
 }
