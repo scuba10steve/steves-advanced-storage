@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -191,6 +192,76 @@ public class TankGameTests {
         h.assertTrue(TankBlockEntity.renderStep(1_024_000, 1_024_000) == 64, "hyper full -> 64");
         h.assertTrue(TankBlockEntity.renderStep(20000, 16000) == 64, "over capacity clamps to 64");
         h.assertTrue(TankBlockEntity.renderStep(5, 0) == 0, "zero capacity -> 0");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void bucket_slots_empty_water_bucket_into_tank(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_INPUT, new ItemStack(Items.WATER_BUCKET));
+        h.assertTrue(be.getTank().getFluidAmount() == 1000, "Tank should hold 1000 mB");
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_INPUT).isEmpty(), "Input should be consumed");
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_OUTPUT).is(Items.BUCKET), "Output should be an empty bucket");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void bucket_slots_blocked_output_leaves_tank_unchanged(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        handler(h, LOOSE_POS).fill(water(5000), FluidAction.EXECUTE);
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_OUTPUT, new ItemStack(Items.DIRT));
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_INPUT, new ItemStack(Items.BUCKET));
+        h.assertTrue(be.getTank().getFluidAmount() == 5000, "Blocked transfer must not drain the tank");
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_INPUT).is(Items.BUCKET), "Input bucket must remain");
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_OUTPUT, ItemStack.EMPTY);
+        h.assertTrue(be.getTank().getFluidAmount() == 4000, "Clearing output should retry and drain 1000 mB");
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_OUTPUT).is(Items.WATER_BUCKET), "Output should hold a water bucket");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void bucket_slots_stacked_input_one_at_a_time(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        handler(h, LOOSE_POS).fill(water(16000), FluidAction.EXECUTE);
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_INPUT, new ItemStack(Items.BUCKET, 16));
+        h.assertTrue(be.getTank().getFluidAmount() == 15000, "Exactly one bucket should fill (water buckets don't stack)");
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_INPUT).getCount() == 15, "15 empty buckets should remain");
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_OUTPUT, ItemStack.EMPTY);
+        h.assertTrue(be.getTank().getFluidAmount() == 14000, "Taking the output should process the next bucket");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void bucket_slots_rejected_fluid_untouched(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        handler(h, LOOSE_POS).fill(water(1000), FluidAction.EXECUTE);
+        be.toggleLock();
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_INPUT, new ItemStack(Items.LAVA_BUCKET));
+        h.assertTrue(be.getTank().getFluidAmount() == 1000 && be.getTank().getFluid().is(Fluids.WATER),
+            "Locked tank contents changed");
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_INPUT).is(Items.LAVA_BUCKET), "Lava bucket must stay in input");
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_OUTPUT).isEmpty(), "Nothing should reach output");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void bucket_slots_retry_after_pipe_fill(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_INPUT, new ItemStack(Items.BUCKET));
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_INPUT).is(Items.BUCKET), "Empty tank can't fill a bucket");
+        handler(h, LOOSE_POS).fill(water(1000), FluidAction.EXECUTE);
+        h.assertTrue(be.bucketSlots.getItem(TankBlockEntity.SLOT_OUTPUT).is(Items.WATER_BUCKET),
+            "Tank change should retry the waiting bucket");
+        h.assertTrue(be.getTank().isEmpty(), "Tank should be drained into the bucket");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void bucket_slots_drop_when_tank_broken(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.BASIC);
+        be.bucketSlots.setItem(TankBlockEntity.SLOT_OUTPUT, new ItemStack(Items.DIRT, 3));
+        h.destroyBlock(LOOSE_POS);
+        h.assertItemEntityPresent(Items.DIRT, LOOSE_POS, 2.0);
         h.succeed();
     }
 }
