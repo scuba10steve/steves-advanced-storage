@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["NDN", "DTD", "NDN"],
+  "key": {
+    "N": {"item": "minecraft:netherite_ingot"},
+    "D": {"item": "minecraft:diamond"},
+    "T": {"item": "s3_advanced:super_tank"}
+  },
+  "result": {"id": "s3_advanced:hyper_tank", "count": 1}
+}

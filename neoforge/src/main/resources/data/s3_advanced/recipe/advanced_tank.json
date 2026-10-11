@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["GGG", "GTG", "GGG"],
+  "key": {
+    "G": {"item": "minecraft:gold_ingot"},
+    "T": {"item": "s3_advanced:basic_tank"}
+  },
+  "result": {"id": "s3_advanced:advanced_tank", "count": 1}
+}

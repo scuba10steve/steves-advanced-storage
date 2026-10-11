@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["DDD", "DTD", "DDD"],
+  "key": {
+    "D": {"item": "minecraft:diamond"},
+    "T": {"item": "s3_advanced:advanced_tank"}
+  },
+  "result": {"id": "s3_advanced:super_tank", "count": 1}
+}
