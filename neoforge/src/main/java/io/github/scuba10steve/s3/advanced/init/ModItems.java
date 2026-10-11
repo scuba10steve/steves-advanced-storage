@@ -3,6 +3,7 @@ package io.github.scuba10steve.s3.advanced.init;
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.block.TankTier;
 import io.github.scuba10steve.s3.advanced.item.ItemAdvancedStorageCoreUpgrade;
+import io.github.scuba10steve.s3.advanced.item.TankBlockItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -63,7 +64,7 @@ public class ModItems {
     static {
         for (TankTier tier : TankTier.values()) {
             TANK_ITEMS.put(tier, ITEMS.register(tier.getSerializedName() + "_tank",
-                () -> new BlockItem(ModBlocks.TANKS.get(tier).get(), new Item.Properties())));
+                () -> new TankBlockItem(ModBlocks.TANKS.get(tier).get(), new Item.Properties())));
         }
     }
 

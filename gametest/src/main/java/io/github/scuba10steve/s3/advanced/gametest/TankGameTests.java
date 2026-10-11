@@ -3,10 +3,15 @@ package io.github.scuba10steve.s3.advanced.gametest;
 import io.github.scuba10steve.s3.advanced.block.TankTier;
 import io.github.scuba10steve.s3.advanced.blockentity.TankBlockEntity;
 import io.github.scuba10steve.s3.advanced.init.ModBlocks;
+import io.github.scuba10steve.s3.advanced.init.ModDataComponents;
+import io.github.scuba10steve.s3.advanced.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -14,6 +19,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.List;
 
 @GameTestHolder("s3_advanced")
 @PrefixGameTestTemplate(false)
@@ -137,6 +144,42 @@ public class TankGameTests {
         h.assertTrue(be.getTank().getFluidAmount() == 20000, "Over-capacity contents were truncated");
         h.assertTrue(fh.fill(water(1000), FluidAction.EXECUTE) == 0, "Over-capacity tank accepted more fluid");
         h.assertTrue(fh.drain(1000, FluidAction.EXECUTE).getAmount() == 1000, "Over-capacity tank refused drain");
+        h.succeed();
+    }
+
+    static ItemStack dropOf(GameTestHelper h, BlockPos pos) {
+        BlockState state = h.getBlockState(pos);
+        List<ItemStack> drops = Block.getDrops(state, h.getLevel(), h.absolutePos(pos), h.getBlockEntity(pos));
+        h.assertTrue(drops.size() == 1, "Expected exactly one drop, got " + drops.size());
+        return drops.get(0);
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void tank_drop_carries_fluid_and_lock(GameTestHelper h) {
+        TankBlockEntity be = placeTank(h, LOOSE_POS, TankTier.ADVANCED);
+        handler(h, LOOSE_POS).fill(water(7000), FluidAction.EXECUTE);
+        be.toggleLock();
+        ItemStack drop = dropOf(h, LOOSE_POS);
+        var content = drop.get(ModDataComponents.TANK_FLUID.get());
+        h.assertTrue(content != null && content.copy().getAmount() == 7000 && content.copy().is(Fluids.WATER),
+            "Drop missing tank_fluid water x7000");
+        var locked = drop.get(ModDataComponents.LOCKED_FLUID.get());
+        h.assertTrue(locked != null && locked.value() == Fluids.WATER, "Drop missing locked_fluid water");
+
+        TankBlockEntity placed = placeTank(h, new BlockPos(2, 1, 2), TankTier.ADVANCED);
+        placed.applyComponentsFromItemStack(drop);
+        h.assertTrue(placed.getTank().getFluidAmount() == 7000, "Placed tank did not restore amount");
+        h.assertTrue(placed.getLockedFluid() == Fluids.WATER, "Placed tank did not restore lock");
+        h.succeed();
+    }
+
+    @GameTest(template = "core_with_storage_box")
+    public static void empty_tank_drop_has_no_components(GameTestHelper h) {
+        placeTank(h, LOOSE_POS, TankTier.BASIC);
+        ItemStack drop = dropOf(h, LOOSE_POS);
+        ItemStack fresh = new ItemStack(ModItems.TANK_ITEMS.get(TankTier.BASIC).get());
+        h.assertTrue(ItemStack.isSameItemSameComponents(drop, fresh),
+            "Empty unlocked tank drop must stack with a fresh tank item");
         h.succeed();
     }
 

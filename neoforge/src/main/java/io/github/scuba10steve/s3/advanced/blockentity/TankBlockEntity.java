@@ -3,9 +3,12 @@ package io.github.scuba10steve.s3.advanced.blockentity;
 import io.github.scuba10steve.s3.advanced.block.BlockTank;
 import io.github.scuba10steve.s3.advanced.block.TankTier;
 import io.github.scuba10steve.s3.advanced.init.ModBlockEntities;
+import io.github.scuba10steve.s3.advanced.init.ModDataComponents;
 import io.github.scuba10steve.s3.blockentity.BaseBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -14,10 +17,12 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.Nullable;
@@ -153,5 +158,32 @@ public class TankBlockEntity extends BaseBlockEntity {
         CompoundTag tag = new CompoundTag();
         writeFluidState(tag, registries);
         return tag;
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        // Only write non-default state so empty, unlocked tanks stack with freshly crafted ones.
+        if (!tank.isEmpty()) {
+            components.set(ModDataComponents.TANK_FLUID.get(), SimpleFluidContent.copyOf(tank.getFluid()));
+        }
+        if (lockedFluid != null) {
+            components.set(ModDataComponents.LOCKED_FLUID.get(), BuiltInRegistries.FLUID.wrapAsHolder(lockedFluid));
+        }
+    }
+
+    @Override
+    protected void applyImplicitComponents(BlockEntity.DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        tank.setFluid(input.getOrDefault(ModDataComponents.TANK_FLUID.get(), SimpleFluidContent.EMPTY).copy());
+        Holder<Fluid> locked = input.get(ModDataComponents.LOCKED_FLUID.get());
+        lockedFluid = (locked == null || locked.value() == Fluids.EMPTY) ? null : locked.value();
+    }
+
+    @Override
+    public void removeComponentsFromTag(CompoundTag tag) {
+        super.removeComponentsFromTag(tag);
+        tag.remove("Tank");
+        tag.remove("LockedFluid");
     }
 }

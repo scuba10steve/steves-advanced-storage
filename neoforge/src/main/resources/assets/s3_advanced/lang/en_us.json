@@ -66,5 +66,7 @@
   "block.s3_advanced.basic_tank": "Basic Tank",
   "block.s3_advanced.advanced_tank": "Advanced Tank",
   "block.s3_advanced.super_tank": "Super Tank",
-  "block.s3_advanced.hyper_tank": "Hyper Tank"
+  "block.s3_advanced.hyper_tank": "Hyper Tank",
+  "tooltip.s3_advanced.tank.contents": "%s: %s mB",
+  "gui.s3_advanced.tank.locked": "Locked: %s"
 }

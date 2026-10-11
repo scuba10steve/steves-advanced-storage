@@ -3,8 +3,27 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [{ "type": "minecraft:item", "name": "s3_advanced:hyper_tank" }],
-      "conditions": [{ "condition": "minecraft:survives_explosion" }]
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "s3_advanced:hyper_tank",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "s3_advanced:tank_fluid",
+                "s3_advanced:locked_fluid"
+              ]
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
     }
   ]
 }
