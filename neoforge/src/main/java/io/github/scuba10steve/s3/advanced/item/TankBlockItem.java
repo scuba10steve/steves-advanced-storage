@@ -28,7 +28,7 @@ public class TankBlockItem extends BlockItem {
         if (content != null && !content.isEmpty()) {
             FluidStack fluid = content.copy();
             tooltip.add(Component.translatable("tooltip.s3_advanced.tank.contents",
-                fluid.getHoverName(), fluid.getAmount()).withStyle(ChatFormatting.GRAY));
+                fluid.getFluid().getFluidType().getDescription(), fluid.getAmount()).withStyle(ChatFormatting.GRAY));
         }
         Holder<Fluid> locked = stack.get(ModDataComponents.LOCKED_FLUID.get());
         if (locked != null && locked.value() != Fluids.EMPTY) {

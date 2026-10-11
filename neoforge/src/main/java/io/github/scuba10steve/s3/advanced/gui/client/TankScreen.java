@@ -98,17 +98,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         TankBlockEntity be = menu.getBlockEntity();
         FluidStack fluid = be.getTank().getFluid();
         Fluid locked = be.getLockedFluid();
-        Component name;
-        int color = 0x404040;
-        if (!fluid.isEmpty()) {
-            name = fluid.getHoverName();
-        } else if (locked != null) {
-            name = locked.getFluidType().getDescription();
-            color = 0x888888;
-        } else {
-            name = Component.translatable("gui.s3_advanced.tank.empty");
-        }
-        g.drawString(font, name, 104, 22, color, false);
+        Fluid shown = fluid.isEmpty() ? locked : fluid.getFluid();
+        Component name = shown == null
+            ? Component.translatable("gui.s3_advanced.tank.empty")
+            : shown.getFluidType().getDescription();
+        g.drawString(font, name, 104, 22, fluid.isEmpty() ? 0x888888 : 0x404040, false);
         if (locked != null) {
             g.drawString(font, Component.translatable("gui.s3_advanced.tank.locked_flag"), 104, 34, 0x888888, false);
         }
