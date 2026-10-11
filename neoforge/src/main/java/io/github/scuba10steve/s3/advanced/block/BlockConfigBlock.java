@@ -41,4 +41,12 @@ public class BlockConfigBlock extends StorageMultiblock implements EntityBlock {
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ConfigBlockBlockEntity be) {
+            BlockDrops.dropContents(level, pos, be.handler);
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
+    }
 }

@@ -67,4 +67,12 @@ public class BlockCoalGenerator extends Block implements EntityBlock {
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CoalGeneratorBlockEntity be) {
+            BlockDrops.dropContents(level, pos, be.fuelHandler);
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
+    }
 }
