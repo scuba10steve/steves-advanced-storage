@@ -17,4 +17,4 @@ A [NeoForge](https://neoforged.net/) mod for Minecraft 1.21.1 that adds advanced
 
 ## Credits
 
-Block textures for **Block Storage I** (`device_diskdrive_front_off`) and **Recipe Memory Box** (`device_workbench_top`) are sourced from [malcolmriley/unused-textures](https://github.com/malcolmriley/unused-textures) via a [personal fork](https://github.com/scuba10steve/unused-minecraft-textures), used under the [Creative Commons Attribution 4.0 International License (CC-BY-4.0)](https://creativecommons.org/licenses/by/4.0/).
+Block textures for **Block Storage I** (`device_diskdrive_front_off`), **Recipe Memory Box** (`device_workbench_top`) and the **Tanks** (`metal_tank_copper_window`, `metal_tank_copper_ends`, recolored per tier) are sourced from [malcolmriley/unused-textures](https://github.com/malcolmriley/unused-textures) via a [personal fork](https://github.com/scuba10steve/unused-minecraft-textures), used under the [Creative Commons Attribution 4.0 International License (CC-BY-4.0)](https://creativecommons.org/licenses/by/4.0/).
