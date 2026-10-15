@@ -9,9 +9,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -52,6 +56,48 @@ public class BlockDropGameTests {
         }
         if (!missing.isEmpty()) {
             helper.fail("Blocks without a loot table: " + String.join(", ", missing));
+            return;
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
+    public static void every_block_drops_itself(GameTestHelper helper) {
+        List<String> missing = new ArrayList<>();
+        for (var entry : ModBlocks.BLOCKS.getEntries()) {
+            Block block = entry.get();
+            helper.setBlock(FREE_POS, block);
+            breakWithDrops(helper, FREE_POS);
+            List<ItemEntity> drops = helper.getEntities(EntityType.ITEM, FREE_POS, DROP_RADIUS);
+            if (drops.stream().noneMatch(e -> e.getItem().is(block.asItem()))) {
+                missing.add(entry.getId().toString());
+            }
+            drops.forEach(ItemEntity::discard);
+        }
+        if (!missing.isEmpty()) {
+            helper.fail("Blocks that don't drop themselves: " + String.join(", ", missing));
+            return;
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "core_with_block_storage_1", setupTicks = 5)
+    public static void every_block_drops_itself_when_survival_player_breaks_it(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        List<String> missing = new ArrayList<>();
+        for (var entry : ModBlocks.BLOCKS.getEntries()) {
+            Block block = entry.get();
+            helper.setBlock(FREE_POS, block);
+            player.gameMode.destroyBlock(helper.absolutePos(FREE_POS));
+            List<ItemEntity> drops = helper.getEntities(EntityType.ITEM, FREE_POS, DROP_RADIUS);
+            if (drops.stream().noneMatch(e -> e.getItem().is(block.asItem()))) {
+                missing.add(entry.getId().toString());
+            }
+            drops.forEach(ItemEntity::discard);
+        }
+        if (!missing.isEmpty()) {
+            helper.fail("Blocks that don't drop themselves for a survival player: " + String.join(", ", missing));
             return;
         }
         helper.succeed();
