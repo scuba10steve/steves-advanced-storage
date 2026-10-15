@@ -1,0 +1,17 @@
+{
+  "name": "Tanks",
+  "category": "s3_advanced:storage_blocks",
+  "icon": "s3_advanced:basic_tank",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "s3_advanced:basic_tank",
+      "text": "$(bold)Tanks$() hold a single fluid each: 16, 64, 256 or 1024 buckets from Basic to Hyper. They work on their own or as part of an advanced storage system, where each tank draws a little power."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Right-click with a bucket to fill or drain. Right-click with an empty hand to open the tank, where you can lock it to its current fluid so it only ever accepts that fluid, even when empty.$(br2)Broken tanks keep their fluid. Upgrading a tank by crafting destroys its contents, so empty it first."
+    }
+  ]
+}

@@ -74,6 +74,11 @@ public class ModMenuTypes {
             IMenuTypeExtension.create((windowId, inv, data) ->
                 new ConfigBlockMenu(windowId, inv, data)));
 
+    public static final Supplier<MenuType<TankMenu>> TANK =
+        MENU_TYPES.register("tank", () ->
+            IMenuTypeExtension.create((windowId, inv, data) ->
+                new TankMenu(windowId, inv, data)));
+
     public static void register(IEventBus eventBus) {
         MENU_TYPES.register(eventBus);
     }

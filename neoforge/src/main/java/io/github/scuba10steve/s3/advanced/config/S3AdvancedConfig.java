@@ -16,6 +16,14 @@ public class S3AdvancedConfig {
     public static final ModConfigSpec.IntValue ADVANCED_STATISTICS_ENERGY_PER_TICK;
     public static final ModConfigSpec.IntValue BLOCK_STORAGE_1_SLOT_ENERGY_PER_TICK;
     public static final ModConfigSpec.IntValue CONFIG_BLOCK_SLOT_ENERGY_PER_TICK;
+    public static final ModConfigSpec.IntValue BASIC_TANK_CAPACITY_MB;
+    public static final ModConfigSpec.IntValue BASIC_TANK_ENERGY_PER_TICK;
+    public static final ModConfigSpec.IntValue ADVANCED_TANK_CAPACITY_MB;
+    public static final ModConfigSpec.IntValue ADVANCED_TANK_ENERGY_PER_TICK;
+    public static final ModConfigSpec.IntValue SUPER_TANK_CAPACITY_MB;
+    public static final ModConfigSpec.IntValue SUPER_TANK_ENERGY_PER_TICK;
+    public static final ModConfigSpec.IntValue HYPER_TANK_CAPACITY_MB;
+    public static final ModConfigSpec.IntValue HYPER_TANK_ENERGY_PER_TICK;
 
     // Solar Generator
     public static final ModConfigSpec.IntValue SOLAR_CAPACITY;
@@ -59,6 +67,30 @@ public class S3AdvancedConfig {
         CONFIG_BLOCK_SLOT_ENERGY_PER_TICK = builder
             .comment("FE consumed per tick per occupied Config Block slot in the multiblock")
             .defineInRange("config_block_slot_energy_per_tick", 10, 0, Integer.MAX_VALUE);
+        BASIC_TANK_CAPACITY_MB = builder
+            .comment("Fluid capacity in mB of a Basic Tank")
+            .defineInRange("basic_tank_capacity_mb", 16_000, 1, Integer.MAX_VALUE);
+        BASIC_TANK_ENERGY_PER_TICK = builder
+            .comment("FE consumed per tick per Basic Tank in the multiblock")
+            .defineInRange("basic_tank_energy_per_tick", 5, 0, Integer.MAX_VALUE);
+        ADVANCED_TANK_CAPACITY_MB = builder
+            .comment("Fluid capacity in mB of an Advanced Tank")
+            .defineInRange("advanced_tank_capacity_mb", 64_000, 1, Integer.MAX_VALUE);
+        ADVANCED_TANK_ENERGY_PER_TICK = builder
+            .comment("FE consumed per tick per Advanced Tank in the multiblock")
+            .defineInRange("advanced_tank_energy_per_tick", 10, 0, Integer.MAX_VALUE);
+        SUPER_TANK_CAPACITY_MB = builder
+            .comment("Fluid capacity in mB of a Super Tank")
+            .defineInRange("super_tank_capacity_mb", 256_000, 1, Integer.MAX_VALUE);
+        SUPER_TANK_ENERGY_PER_TICK = builder
+            .comment("FE consumed per tick per Super Tank in the multiblock")
+            .defineInRange("super_tank_energy_per_tick", 20, 0, Integer.MAX_VALUE);
+        HYPER_TANK_CAPACITY_MB = builder
+            .comment("Fluid capacity in mB of a Hyper Tank")
+            .defineInRange("hyper_tank_capacity_mb", 1_024_000, 1, Integer.MAX_VALUE);
+        HYPER_TANK_ENERGY_PER_TICK = builder
+            .comment("FE consumed per tick per Hyper Tank in the multiblock")
+            .defineInRange("hyper_tank_energy_per_tick", 40, 0, Integer.MAX_VALUE);
         builder.pop();
 
         builder.comment("Solar Generator").push("solar_generator");

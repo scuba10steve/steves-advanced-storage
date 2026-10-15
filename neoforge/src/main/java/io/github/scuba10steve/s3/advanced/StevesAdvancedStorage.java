@@ -18,6 +18,7 @@ public class StevesAdvancedStorage {
         modContainer.registerConfig(ModConfig.Type.SERVER, S3AdvancedConfig.SPEC, "s3_advanced-server.toml");
 
         ModBlocks.register(modEventBus);
+        ModDataComponents.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
@@ -45,5 +46,10 @@ public class StevesAdvancedStorage {
             Capabilities.ItemHandler.BLOCK,
             ModBlockEntities.COAL_GENERATOR.get(),
             (be, side) -> be.fuelHandler);
+
+        event.registerBlockEntity(
+            Capabilities.FluidHandler.BLOCK,
+            ModBlockEntities.TANK.get(),
+            (be, side) -> be.getTank());
     }
 }

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["IGI", "GUG", "IXI"],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "G": {"item": "minecraft:glass"},
+    "U": {"item": "minecraft:bucket"},
+    "X": {"item": "s3:blank_box"}
+  },
+  "result": {"id": "s3_advanced:basic_tank", "count": 1}
+}

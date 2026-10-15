@@ -62,5 +62,16 @@
   "block.s3_advanced.brown_storage_cable": "Brown Storage Cable",
   "block.s3_advanced.green_storage_cable": "Green Storage Cable",
   "block.s3_advanced.red_storage_cable": "Red Storage Cable",
-  "block.s3_advanced.black_storage_cable": "Black Storage Cable"
+  "block.s3_advanced.black_storage_cable": "Black Storage Cable",
+  "block.s3_advanced.basic_tank": "Basic Tank",
+  "block.s3_advanced.advanced_tank": "Advanced Tank",
+  "block.s3_advanced.super_tank": "Super Tank",
+  "block.s3_advanced.hyper_tank": "Hyper Tank",
+  "tooltip.s3_advanced.tank.contents": "%s: %s mB",
+  "gui.s3_advanced.tank.locked": "Locked: %s",
+  "gui.s3_advanced.tank.locked_flag": "Locked",
+  "gui.s3_advanced.tank.empty": "Empty",
+  "gui.s3_advanced.tank.lock": "Lock",
+  "gui.s3_advanced.tank.unlock": "Unlock",
+  "gui.s3_advanced.tank.amount": "%s / %s mB"
 }

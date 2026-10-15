@@ -32,6 +32,9 @@ public class ModCreativeTabs {
                 for (var entry : ModItems.STORAGE_CABLE_ITEMS.entrySet()) {
                     output.accept(entry.getValue().get());
                 }
+                for (var entry : ModItems.TANK_ITEMS.entrySet()) {
+                    output.accept(entry.getValue().get());
+                }
             })
             .build()
     );

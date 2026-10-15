@@ -2,6 +2,7 @@ package io.github.scuba10steve.s3.advanced.init;
 
 import io.github.scuba10steve.s3.advanced.StevesAdvancedStorage;
 import io.github.scuba10steve.s3.advanced.block.*;
+import io.github.scuba10steve.s3.advanced.block.TankTier;
 import io.github.scuba10steve.s3.advanced.config.S3AdvancedConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
@@ -10,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import io.github.scuba10steve.s3.advanced.block.BlockStorageCable;
 import net.minecraft.world.item.DyeColor;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -46,13 +48,25 @@ public class ModBlocks {
     public static final Supplier<Block> BLOCK_CONFIG_BLOCK =
         BLOCKS.register("config_block", BlockConfigBlock::new);
 
-    public static final Map<DyeColor, Supplier<Block>> STORAGE_CABLES = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, Supplier<Block>> STORAGE_CABLES = registerStorageCables();
 
-    static {
+    private static Map<DyeColor, Supplier<Block>> registerStorageCables() {
+        Map<DyeColor, Supplier<Block>> cables = new EnumMap<>(DyeColor.class);
         for (DyeColor color : DyeColor.values()) {
             String name = color.getName() + "_storage_cable";
-            STORAGE_CABLES.put(color, BLOCKS.register(name, BlockStorageCable::new));
+            cables.put(color, BLOCKS.register(name, BlockStorageCable::new));
         }
+        return Collections.unmodifiableMap(cables);
+    }
+
+    public static final Map<TankTier, Supplier<Block>> TANKS = registerTanks();
+
+    private static Map<TankTier, Supplier<Block>> registerTanks() {
+        Map<TankTier, Supplier<Block>> tanks = new EnumMap<>(TankTier.class);
+        for (TankTier tier : TankTier.values()) {
+            tanks.put(tier, BLOCKS.register(tier.getSerializedName() + "_tank", () -> new BlockTank(tier)));
+        }
+        return Collections.unmodifiableMap(tanks);
     }
 
     public static void register(IEventBus eventBus) {
