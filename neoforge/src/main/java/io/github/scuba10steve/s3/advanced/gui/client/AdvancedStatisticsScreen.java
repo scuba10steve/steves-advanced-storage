@@ -274,10 +274,12 @@ public class AdvancedStatisticsScreen extends AbstractContainerScreen<AdvancedSt
 
         int relX = mouseX - leftPos;
         int relY = mouseY - topPos;
-        for (ComponentIcon icon : componentIcons) {
-            if (relX >= icon.x && relX < icon.x + 16 && relY >= icon.y && relY < icon.y + 16) {
-                graphics.renderTooltip(font, icon.name, mouseX, mouseY);
-                return;
+        if (activeTab == Tab.GENERAL) {
+            for (ComponentIcon icon : componentIcons) {
+                if (relX >= icon.x && relX < icon.x + 16 && relY >= icon.y && relY < icon.y + 16) {
+                    graphics.renderTooltip(font, icon.name, mouseX, mouseY);
+                    return;
+                }
             }
         }
 
