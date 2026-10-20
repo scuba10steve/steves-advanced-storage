@@ -110,7 +110,6 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        renderBackground(g, mouseX, mouseY, partialTick);
         super.render(g, mouseX, mouseY, partialTick);
         if (isHovering(BAR_X, BAR_Y, BAR_W, BAR_H, mouseX, mouseY)) {
             g.renderTooltip(font, Component.translatable("gui.s3_advanced.tank.amount",

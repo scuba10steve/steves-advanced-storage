@@ -37,7 +37,6 @@ public class MachineInterfaceScreen extends AbstractContainerScreen<MachineInter
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
         renderContent(graphics, mouseX, mouseY);
         this.renderTooltip(graphics, mouseX, mouseY);

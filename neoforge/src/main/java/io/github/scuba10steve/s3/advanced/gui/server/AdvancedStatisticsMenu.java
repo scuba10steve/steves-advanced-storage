@@ -5,12 +5,14 @@ import io.github.scuba10steve.s3.advanced.blockentity.AdvancedStorageCoreBlockEn
 import io.github.scuba10steve.s3.advanced.blockentity.MachineInterfaceBlockEntity;
 import io.github.scuba10steve.s3.advanced.blockentity.RecipeMemoryBoxBlockEntity;
 import io.github.scuba10steve.s3.advanced.crafting.RecipePattern;
+import io.github.scuba10steve.s3.advanced.init.ModBlocks;
 import io.github.scuba10steve.s3.advanced.init.ModMenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -159,7 +161,8 @@ public class AdvancedStatisticsMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return player.distanceToSqr(
-            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64.0;
+        return AbstractContainerMenu.stillValid(
+            ContainerLevelAccess.create(player.level(), pos),
+            player, ModBlocks.ADVANCED_STATISTICS.get());
     }
 }

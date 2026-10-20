@@ -54,7 +54,6 @@ public class AdvancedStorageCoreScreen extends AbstractContainerScreen<AdvancedS
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        renderBackground(g, mouseX, mouseY, partialTick);
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
     }
