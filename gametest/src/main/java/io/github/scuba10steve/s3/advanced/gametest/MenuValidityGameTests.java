@@ -23,7 +23,9 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import static io.github.scuba10steve.s3.advanced.gametest.TankGameTests.LOOSE_POS;
 
 /**
  * Menus must become invalid once their block is gone (#52). These assert {@code stillValid}
@@ -38,57 +40,52 @@ public class MenuValidityGameTests {
     private static final BlockPos AUTO_CRAFTER_POS      = new BlockPos(0, 1, 1); // core_with_auto_crafter
     private static final BlockPos MACHINE_INTERFACE_POS = new BlockPos(0, 1, 1); // core_with_machine_interface
     private static final BlockPos RMB_POS               = new BlockPos(2, 1, 1); // core_with_rmb_and_crafter
-    private static final BlockPos LOOSE_POS             = new BlockPos(0, 1, 0); // touches nothing in core_with_storage_box
 
     @GameTest(template = "core_with_auto_crafter")
     public static void auto_crafter_menu_invalid_after_block_removed(GameTestHelper h) {
-        assertInvalidAfterBlockRemoved(h, AUTO_CRAFTER_POS, AutoCrafterBlockEntity.class,
-            (player, be) -> new AutoCrafterMenu(0, player.getInventory(), be));
+        assertInvalidAfterBlockRemoved(h, AUTO_CRAFTER_POS, player -> new AutoCrafterMenu(0, player.getInventory(),
+            (AutoCrafterBlockEntity) h.getBlockEntity(AUTO_CRAFTER_POS)));
     }
 
     @GameTest(template = "core_with_machine_interface")
     public static void machine_interface_menu_invalid_after_block_removed(GameTestHelper h) {
-        assertInvalidAfterBlockRemoved(h, MACHINE_INTERFACE_POS, MachineInterfaceBlockEntity.class,
-            (player, be) -> new MachineInterfaceMenu(0, player.getInventory(), be));
+        assertInvalidAfterBlockRemoved(h, MACHINE_INTERFACE_POS, player -> new MachineInterfaceMenu(0, player.getInventory(),
+            (MachineInterfaceBlockEntity) h.getBlockEntity(MACHINE_INTERFACE_POS)));
     }
 
     @GameTest(template = "core_with_rmb_and_crafter")
     public static void recipe_memory_box_menu_invalid_after_block_removed(GameTestHelper h) {
-        assertInvalidAfterBlockRemoved(h, RMB_POS, RecipeMemoryBoxBlockEntity.class,
-            (player, be) -> new RecipeMemoryBoxMenu(0, player.getInventory(), be));
+        assertInvalidAfterBlockRemoved(h, RMB_POS, player -> new RecipeMemoryBoxMenu(0, player.getInventory(),
+            (RecipeMemoryBoxBlockEntity) h.getBlockEntity(RMB_POS)));
     }
 
     @GameTest(template = "core_with_rmb_and_crafter")
     public static void recipe_pattern_menu_invalid_after_block_removed(GameTestHelper h) {
-        assertInvalidAfterBlockRemoved(h, RMB_POS, RecipeMemoryBoxBlockEntity.class,
-            (player, be) -> new RecipePatternMenu(0, player.getInventory(), be, 0));
+        assertInvalidAfterBlockRemoved(h, RMB_POS, player -> new RecipePatternMenu(0, player.getInventory(),
+            (RecipeMemoryBoxBlockEntity) h.getBlockEntity(RMB_POS), 0));
     }
 
     @GameTest(template = "core_with_storage_box")
     public static void solar_generator_menu_invalid_after_block_removed(GameTestHelper h) {
         h.setBlock(LOOSE_POS, ModBlocks.SOLAR_GENERATOR.get());
-        assertInvalidAfterBlockRemoved(h, LOOSE_POS, SolarGeneratorBlockEntity.class,
-            (player, be) -> new SolarGeneratorMenu(0, player.getInventory(), be));
+        assertInvalidAfterBlockRemoved(h, LOOSE_POS, player -> new SolarGeneratorMenu(0, player.getInventory(),
+            (SolarGeneratorBlockEntity) h.getBlockEntity(LOOSE_POS)));
     }
 
     @GameTest(template = "core_with_storage_box")
     public static void advanced_statistics_menu_invalid_after_block_removed(GameTestHelper h) {
         h.setBlock(LOOSE_POS, ModBlocks.ADVANCED_STATISTICS.get());
-        assertInvalidAfterBlockRemoved(h, LOOSE_POS, AdvancedStatisticsBlockEntity.class,
-            (player, be) -> new AdvancedStatisticsMenu(0, player.getInventory(), be));
+        assertInvalidAfterBlockRemoved(h, LOOSE_POS, player -> new AdvancedStatisticsMenu(0, player.getInventory(),
+            (AdvancedStatisticsBlockEntity) h.getBlockEntity(LOOSE_POS)));
     }
 
-    private static <T> void assertInvalidAfterBlockRemoved(GameTestHelper h, BlockPos pos, Class<T> beClass,
-                                                           BiFunction<Player, T, AbstractContainerMenu> menuFactory) {
-        if (!beClass.isInstance(h.getBlockEntity(pos))) {
-            h.fail("Expected " + beClass.getSimpleName() + " at " + pos);
-            return;
-        }
+    private static void assertInvalidAfterBlockRemoved(GameTestHelper h, BlockPos pos,
+                                                       Function<Player, AbstractContainerMenu> menuFactory) {
         // makeMockPlayer spawns at BlockPos.ZERO; stand on top of the block so it is within reach.
         Player player = h.makeMockPlayer(GameType.SURVIVAL);
         Vec3 standAt = Vec3.atBottomCenterOf(h.absolutePos(pos.above()));
         player.moveTo(standAt.x, standAt.y, standAt.z);
-        AbstractContainerMenu menu = menuFactory.apply(player, beClass.cast(h.getBlockEntity(pos)));
+        AbstractContainerMenu menu = menuFactory.apply(player);
 
         h.assertTrue(menu.stillValid(player), "Menu should be valid while its block is present");
         h.setBlock(pos, Blocks.AIR);
